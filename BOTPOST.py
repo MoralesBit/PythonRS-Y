@@ -84,11 +84,10 @@ def server_time():
   minute = int(time.strftime("%M"))
  
   for i in intervals:
-    if minute == i:
+    if minute == i and second == 3:
       for symbol in symbols:
         indicator(symbol)
 
 while (True):
-  time.sleep(180)
   server_time()
   

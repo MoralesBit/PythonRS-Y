@@ -78,6 +78,6 @@ if __name__ == '__main__':
   ]
 #symbols = ["BTCUSDT", "TRXUSDT", "BNBUSDT", "ETHUSDT", "ETCUSDT", "MATICUSDT", "XRPUSDT", "AVAXUSDT", "DOGEUSDT", "ADAUSDT"]
 
-   for symbol in symbols:
-        indicator(symbol)
-        ti.sleep(2)
+  for symbol in symbols:
+    indicator(symbol)
+    ti.sleep(2)

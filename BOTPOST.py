@@ -82,4 +82,4 @@ for symbol in symbols:
   indicator(symbol)
   
 while (True):
-  indicator()
+  indicator(symbol)

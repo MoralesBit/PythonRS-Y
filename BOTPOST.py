@@ -83,4 +83,4 @@ if __name__ == '__main__':
         indicator(symbol)
 
 while (True):
-  indicator()
+  indicator(symbol)

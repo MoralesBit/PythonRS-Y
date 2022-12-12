@@ -6,7 +6,6 @@ import Telegram_bot as Tb
 import  schedule as schedule
 import time
 import requests
-import ccxt
 
 Pkey = ''
 Skey = ''

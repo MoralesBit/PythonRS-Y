@@ -78,6 +78,17 @@ if __name__ == '__main__':
   ]
 #symbols = ["BTCUSDT", "TRXUSDT", "BNBUSDT", "ETHUSDT", "ETCUSDT", "MATICUSDT", "XRPUSDT", "AVAXUSDT", "DOGEUSDT", "ADAUSDT"]
 
-for symbol in symbols:
-  indicator(symbol)
+def server_time():
+  time_server = client.get_server_time()
+  time = pd.to_datetime(time_server["serverTime"], unit="ms")
+  minute = int(time.strftime("%M"))
+ 
+  for i in intervals:
+    if minute == i:
+      for symbol in symbols:
+        indicator(symbol)
+
+while (True):
+  time.sleep(180)
+  server_time()
   

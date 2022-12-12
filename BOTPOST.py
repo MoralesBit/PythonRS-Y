@@ -87,7 +87,7 @@ def server_time():
     if minute == i:
       for symbol in symbols:
         indicator(symbol)
-        ti.time(2)
+        ti.sleep(2)
         
 while (True):
   

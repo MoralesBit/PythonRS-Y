@@ -78,9 +78,14 @@ if __name__ == '__main__':
   ]
 #symbols = ["BTCUSDT", "TRXUSDT", "BNBUSDT", "ETHUSDT", "ETCUSDT", "MATICUSDT", "XRPUSDT", "AVAXUSDT", "DOGEUSDT", "ADAUSDT"]
 
+def server_time():
+  
   for symbol in symbols:
     indicator(symbol)
     ti.sleep(0.5)
-    
-    
+        
+        
+while (True):
+  
+  server_time()
   

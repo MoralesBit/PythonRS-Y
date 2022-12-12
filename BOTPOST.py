@@ -81,6 +81,3 @@ if __name__ == '__main__':
  
   for symbol in symbols:
         indicator(symbol)
-
-while (True):
-  indicator(symbol)

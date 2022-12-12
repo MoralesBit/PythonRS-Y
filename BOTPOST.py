@@ -1,4 +1,3 @@
-import binance.client
 from binance.client import Client
 import pandas as pd
 import numpy
@@ -7,7 +6,6 @@ import Telegram_bot as Tb
 import  schedule as schedule
 import time
 import requests
-from webserver import keep_alive
 
 Pkey = ''
 Skey = ''
@@ -21,7 +19,7 @@ connection = ""
 period = 14
 def indicator(symbol):
   rsi_stat = ""
-  kline = client.futures_historical_klines(symbol, "3m", "1 hours ago UTC+1",limit=10)
+  kline = client.futures_historical_klines(symbol, "3m", "2 hours ago UTC+1",limit=100)
   df = pd.DataFrame(kline)
   if not df.empty:
     df.columns = [
@@ -56,16 +54,16 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol
   }
-  
   print(symbol)
   print(rsi[-2:].values[0])
   print(rsi[-1:].values[0])
   print(roc[-1])
-    
-  if (rsi[-2:].values[0] < 20) and (rsi[-1:].values[0] > 20) and (roc[-1] < -3):
+  #print(df_new['Volume'][-1])
+  
+  if (rsi[-2:].values[0] < 25) and (rsi[-1:].values[0] > 25) and (roc[-1] < -3):
     requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=LARGO)
     Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🌵 LONG \n 💵 Precio: " + df['Close'][-1] + "\n 🔃 % ROC: " + str(round(roc[-1],2)) + "\n 📉 RSI : " + str(round(rsi[-1],2)))
-  elif (rsi[-2:].values[0] > 80) and (rsi[-1:].values[0] < 80) and (roc[-1] > 3):
+  elif (rsi[-2:].values[0] > 75) and (rsi[-1:].values[0] < 75) and (roc[-1] > 3):
     requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CORTO)
     Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🩸 SHORT \n 💵 Precio: " + df['Close'][-1] + "\n 🔃 % ROC: " + str(round(roc[-1],2)) + "\n 📈 RSI : " + str(round(rsi[-1],2)))
 
@@ -80,7 +78,23 @@ if __name__ == '__main__':
   ]
 #symbols = ["BTCUSDT", "TRXUSDT", "BNBUSDT", "ETHUSDT", "ETCUSDT", "MATICUSDT", "XRPUSDT", "AVAXUSDT", "DOGEUSDT", "ADAUSDT"]
 
+def server_time():
+  status = client.get_system_status()
+  stat = status["status"]
+  time_server = client.get_server_time()
+  if stat == 0:
+    connection = "Connected"
+  else:
+    connection = "Disconnected"
+  time = pd.to_datetime(time_server["serverTime"], unit="ms")
+  minute = int(time.strftime("%M"))
+  second = int(time.strftime("%S"))
+  time_ = time.strftime("%H:%M:%S")
 
-keep_alive()
+  for i in intervals:
+    if minute == i:
+      for symbol in symbols:
+        indicator(symbol)
+
 while (True):
-  indicator()
+  server_time()

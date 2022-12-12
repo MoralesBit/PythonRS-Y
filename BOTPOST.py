@@ -74,7 +74,7 @@ def indicator(symbol):
 if __name__ == '__main__':
   monedas = client.futures_exchange_info()
   # 1. Obtener todas las monedas tradeables de futuros
-   symbols = [
+  symbols = [
     symbol['symbol'] for symbol in monedas['symbols']
     if symbol['status'] == "TRADING"
   ]

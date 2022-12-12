@@ -6,8 +6,8 @@ import talib as ta
 import Telegram_bot as Tb
 import  schedule as schedule
 import time
-
 import requests
+from webserver import keep_alive
 
 Pkey = ''
 Skey = ''
@@ -97,6 +97,6 @@ def server_time():
     if minute == i:
       for symbol in symbols:
         indicator(symbol)
-
+keep_alive()
 while (True):
   server_time()

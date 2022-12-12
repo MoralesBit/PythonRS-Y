@@ -6,6 +6,7 @@ import Telegram_bot as Tb
 import  schedule as schedule
 import time
 import requests
+import ccxt
 
 Pkey = ''
 Skey = ''
@@ -78,12 +79,5 @@ if __name__ == '__main__':
   ]
 #symbols = ["BTCUSDT", "TRXUSDT", "BNBUSDT", "ETHUSDT", "ETCUSDT", "MATICUSDT", "XRPUSDT", "AVAXUSDT", "DOGEUSDT", "ADAUSDT"]
 
- 
-  for symbol in symbols:
-        indicator(symbol)
-      
- schedule.every(10).seconds.do(indicator)
-
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+for symbol in symbols:
+  indicator(symbol)

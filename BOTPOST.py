@@ -9,8 +9,8 @@ import time
 
 import requests
 
-Pkey = 'igIRbMZgwBe1TpL2IRElXxPcquGZX5CgHm9P1L5Wvf9BhiWnrbyYWMsNzIcIC1lm'
-Skey = '6ryLduchUTlNq1jv2pUSVQqEssKE17dD1lFC9rydn5JpdJJEyDT6Xkod8jIAT8Tq'
+Pkey = ''
+Skey = ''
 
 client = Client(api_key=Pkey, api_secret=Skey)
 
@@ -56,6 +56,11 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol
   }
+  
+  print(symbol)
+  print(rsi[-2:].values[0])
+  print(rsi[-1:].values[0])
+  print(roc[-1])
     
   if (rsi[-2:].values[0] < 20) and (rsi[-1:].values[0] > 20) and (roc[-1] < -3):
     requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=LARGO)

@@ -9,8 +9,8 @@ import time
 
 import requests
 
-Pkey = ''
-Skey = ''
+Pkey = 'igIRbMZgwBe1TpL2IRElXxPcquGZX5CgHm9P1L5Wvf9BhiWnrbyYWMsNzIcIC1lm'
+Skey = '6ryLduchUTlNq1jv2pUSVQqEssKE17dD1lFC9rydn5JpdJJEyDT6Xkod8jIAT8Tq'
 
 client = Client(api_key=Pkey, api_secret=Skey)
 

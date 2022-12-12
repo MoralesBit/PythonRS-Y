@@ -74,11 +74,11 @@ def indicator(symbol):
 if __name__ == '__main__':
   monedas = client.futures_exchange_info()
   # 1. Obtener todas las monedas tradeables de futuros
-  # symbols = [
-  #  symbol['symbol'] for symbol in monedas['symbols']
-  #  if symbol['status'] == "TRADING"
-  # ]
-symbols = ["BTCUSDT", "TRXUSDT", "BNBUSDT", "ETHUSDT", "ETCUSDT", "MATICUSDT", "XRPUSDT", "AVAXUSDT", "DOGEUSDT", "ADAUSDT"]
+   symbols = [
+    symbol['symbol'] for symbol in monedas['symbols']
+    if symbol['status'] == "TRADING"
+  ]
+#symbols = ["BTCUSDT", "TRXUSDT", "BNBUSDT", "ETHUSDT", "ETCUSDT", "MATICUSDT", "XRPUSDT", "AVAXUSDT", "DOGEUSDT", "ADAUSDT"]
 
 def server_time():
   status = client.get_system_status()

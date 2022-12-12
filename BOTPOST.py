@@ -81,3 +81,9 @@ if __name__ == '__main__':
  
   for symbol in symbols:
         indicator(symbol)
+      
+ schedule.every(10).seconds.do(indicator)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)

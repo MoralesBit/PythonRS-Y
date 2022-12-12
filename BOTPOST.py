@@ -21,7 +21,7 @@ connection = ""
 period = 14
 def indicator(symbol):
   rsi_stat = ""
-  kline = client.futures_historical_klines(symbol, "3m", "1 hours ago UTC+1")
+  kline = client.futures_historical_klines(symbol, "3m", "1 hours ago UTC+1",limit=500)
   df = pd.DataFrame(kline)
   if not df.empty:
     df.columns = [

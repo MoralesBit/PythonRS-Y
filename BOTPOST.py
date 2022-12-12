@@ -79,18 +79,10 @@ if __name__ == '__main__':
 #symbols = ["BTCUSDT", "TRXUSDT", "BNBUSDT", "ETHUSDT", "ETCUSDT", "MATICUSDT", "XRPUSDT", "AVAXUSDT", "DOGEUSDT", "ADAUSDT"]
 
 def server_time():
-  status = client.get_system_status()
-  stat = status["status"]
   time_server = client.get_server_time()
-  if stat == 0:
-    connection = "Connected"
-  else:
-    connection = "Disconnected"
   time = pd.to_datetime(time_server["serverTime"], unit="ms")
   minute = int(time.strftime("%M"))
-  second = int(time.strftime("%S"))
-  time_ = time.strftime("%H:%M:%S")
-
+ 
   for i in intervals:
     if minute == i:
       for symbol in symbols:

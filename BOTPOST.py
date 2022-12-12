@@ -94,7 +94,7 @@ def server_time():
   time_ = time.strftime("%H:%M:%S")
 
   for i in intervals:
-    if minute == i:
+   if minute == i and second == 3:
       for symbol in symbols:
         indicator(symbol)
 keep_alive()

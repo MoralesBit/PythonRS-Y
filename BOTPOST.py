@@ -80,4 +80,7 @@ if __name__ == '__main__':
 
   for symbol in symbols:
     indicator(symbol)
-    ti.sleep(2)
+    ti.sleep(1)
+    
+    
+  

@@ -84,7 +84,7 @@ def server_time():
   
   for symbol in symbols:
     indicator(symbol)
-    ti.sleep(0.5)
+    ti.sleep(0.4)
         
 keep_alive()       
 while (True):

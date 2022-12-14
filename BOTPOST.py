@@ -62,10 +62,10 @@ def indicator(symbol):
   print(roc[-1])
   #print(df_new['Volume'][-1])
   
-  if (rsi[-2:].values[0] < 25) and (rsi[-1:].values[0] > 25) and (roc[-1] < -3)):
+  if (rsi[-2:].values[0] < 25) and (rsi[-1:].values[0] > 25) and (roc[-1] < -3):
     requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=LARGO)
     Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🌵 LONG \n 💵 Precio: " + df['Close'][-1] + "\n 🔃 % ROC: " + str(round(roc[-1],2)) + "\n 📉 RSI : " + str(round(rsi[-1],2)))
-  elif (rsi[-2:].values[0] > 75) and (rsi[-1:].values[0] < 75) and (roc[-1] > 3)):
+  elif (rsi[-2:].values[0] > 75) and (rsi[-1:].values[0] < 75) and (roc[-1] > 3):
     requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CORTO)
     Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🩸 SHORT \n 💵 Precio: " + df['Close'][-1] + "\n 🔃 % ROC: " + str(round(roc[-1],2)) + "\n 📈 RSI : " + str(round(rsi[-1],2)))
 

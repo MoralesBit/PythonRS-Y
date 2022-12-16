@@ -67,10 +67,10 @@ def indicator(symbol):
    
   #print(df_new['Volume'][-1])
   
-  if (rsi[-2:].values[0] > 25) and (rsi[-1:].values[0] < 25) and (mfi[-2] > 20) and (mfi[-1] < 20) and (adx[-2] < 23) and (adx[-1] > 23) and (roc[-1] < -1):
+  if (middleband[-2] >= ema[-1] > middleband[-1]) and (rsi[-2] >= 20 > rsi[-1]) and (mfi[-2] >= 20 > mfi[-1]):
     requests.post('https://hook.finandy.com/yOiR__CztpkFLaRKqFUK', json=CORTO)
     Tb.telegram_send_message(" 🔴 SHORT  " + symbol + "\n 💵 Precio: " + df['Close'][-1])
-  elif (rsi[-2:].values[0] < 75) and (rsi[-1:].values[0] > 75) and (mfi[-2] < 80) and (mfi[-1] > 80) and (adx[-2] < 23) and (adx[-1] > 23) and (roc[-1] < 1):
+  elif (middleband[-2] <= ema[-1] < middleband[-1]) and (rsi[-2] <= 80 < rsi[-1]) and (mfi[-2] <= 80 < mfi[-1]): 
     requests.post('https://hook.finandy.com/A81ci3iO7HXP9btKqFUK', json=LARGO)
     Tb.telegram_send_message(" 🟢 LONG  " + symbol + "\n 💵 Precio: " + df['Close'][-1])
     

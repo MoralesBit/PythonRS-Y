@@ -39,7 +39,7 @@ def indicator(symbol):
   roc = ta.ROC(df['Close'], timeperiod=10)
   adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
-  ema = ta.EMA(df['Close'], timeperiod=50)
+  ema = ta.EMA(df['Close'], timeperiod = 50)
   #bars = client.futures_ticker()
   #df_new = pd.DataFrame(bars, columns=['Open', 'High', 'Low', 'Close', 'Volume'])
     
@@ -64,7 +64,7 @@ def indicator(symbol):
 }
   print(symbol)
   print(rsi[-1:].values[0])
-  print(ema[-2])
+  print(ema)
   print(middleband[-1])
    
   #print(df_new['Volume'][-1])

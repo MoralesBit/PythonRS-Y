@@ -64,7 +64,7 @@ def indicator(symbol):
 }
   print(symbol)
   print(rsi[-1:].values[0])
-  print(ema[-1:].values[0])
+  print(ema[-2:])
    
   #print(df_new['Volume'][-1])
   

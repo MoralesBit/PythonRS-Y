@@ -71,7 +71,7 @@ def indicator(symbol):
   if (middleband[-2:].values[0] >= ema[-1:].values[0]) and (ema[-1:].values[0] > middleband[-1:].values[0]) and (rsi[-2:].values[0] >= 20 > rsi[-1:].values[0]) and (mfi[-2:].values[0] >= 20 > mfi[-1:].values[0]):
     requests.post('https://hook.finandy.com/yOiR__CztpkFLaRKqFUK', json=CORTO)
     Tb.telegram_send_message(" 🔴 SHORT  " + symbol + "\n 💵 Precio: " + df['Close'][-1])
-  elif (middleband[-2] <= ema[-1] < middleband[-1]) and (rsi[-2] <= 80 < rsi[-1]) and (mfi[-2] <= 80 < mfi[-1]): 
+  elif (middleband[-2:].values[0] <= ema[-1:].values[0]) and ( ema[-1:].values[0] < middleband[-1:].values[0]) and (rsi[-2:].values[0] <= 80 < rsi[-1:].values[0]) and (mfi[-2:].values[0] <= 80 < mfi[-1:].values[0]): 
     requests.post('https://hook.finandy.com/A81ci3iO7HXP9btKqFUK', json=LARGO)
     Tb.telegram_send_message(" 🟢 LONG  " + symbol + "\n 💵 Precio: " + df['Close'][-1])
     

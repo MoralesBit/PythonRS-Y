@@ -63,9 +63,9 @@ def indicator(symbol):
   }
 }
   print(symbol)
-  print(rsi[-1:].values[0])
-  print(df['EMA'][-1])
-  print(middleband[-1])
+  print(mfi[-2])
+  print(df['EMA'][-2])
+  print(middleband[-2])
    
   #print(df_new['Volume'][-1])
   

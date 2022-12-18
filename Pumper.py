@@ -72,7 +72,7 @@ def indicator(symbol):
   if (middleband[-2] >= df['EMA'][-1]) and (df['EMA'][-1] > middleband[-1]) and (mfi[-1] < 20):
     requests.post('https://hook.finandy.com/yOiR__CztpkFLaRKqFUK', json=CORTO)
     Tb.telegram_send_message(" 🔴 SHORT  " + symbol + "\n 💵 Precio: " + df['Close'][-1])
-  elif (middleband[-2] <= df['EMA'][-1]) and (df['EMA'][-1] < middleband[-1]) and (mfi[-1] > 80): 
+  elif (middleband[-2] < df['EMA'][-1]) and (df['EMA'][-1] < middleband[-1]) and (mfi[-1] > 80): 
     requests.post('https://hook.finandy.com/A81ci3iO7HXP9btKqFUK', json=LARGO)
     Tb.telegram_send_message(" 🟢 LONG  " + symbol + "\n 💵 Precio: " + df['Close'][-1])
     

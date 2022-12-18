@@ -39,7 +39,7 @@ def indicator(symbol):
   roc = ta.ROC(df['Close'], timeperiod=10)
   adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
-  df['EMA'] = ta.EMA(df['Close'], timeperiod = 50)
+  df['EMA'] = ta.EMA(df['Close'], timeperiod = 30)
   #bars = client.futures_ticker()
   #df_new = pd.DataFrame(bars, columns=['Open', 'High', 'Low', 'Close', 'Volume'])
     
@@ -69,7 +69,7 @@ def indicator(symbol):
    
   #print(df_new['Volume'][-1])
   
-  if (middleband[-3] > df['EMA'][-3]) and (df['EMA'][-2] > middleband[-2]) and (mfi[-2] < 20):
+  if (middleband[-3] > df['EMA'][-3]) and (middleband[-2] < df['EMA'][-2]) and (mfi[-2] < 20)  :
     requests.post('https://hook.finandy.com/yOiR__CztpkFLaRKqFUK', json=CORTO)
     Tb.telegram_send_message(" 🔴 SHORT  " + symbol + "\n 💵 Precio: " + df['Close'][-1])
   elif (middleband[-3] < df['EMA'][-3]) and (df['EMA'][-2] < middleband[-2]) and (mfi[-2] > 80): 

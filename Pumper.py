@@ -39,7 +39,7 @@ def indicator(symbol):
   roc = ta.ROC(df['Close'], timeperiod=10)
   adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
-  df['EMA'] = ta.EMA(df['Close'], timeperiod = 5)
+  df['EMA'] = ta.EMA(df['Close'], timeperiod = 50)
   #bars = client.futures_ticker()
   #df_new = pd.DataFrame(bars, columns=['Open', 'High', 'Low', 'Close', 'Volume'])
     

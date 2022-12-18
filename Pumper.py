@@ -69,7 +69,7 @@ def indicator(symbol):
    
   #print(df_new['Volume'][-1])
   
-  if (middleband[-2] >= df['EMA'][-2]) and (df['EMA'][-1] > middleband[-1]) and (rsi[-2:].values[0] >= 20) and (20 > rsi[-1:].values[0]):
+  if (middleband[-2] >= df['EMA'][-2]) and (df['EMA'][-1] > middleband[-1]) and (rsi[-1:].values[0] < 20):
     requests.post('https://hook.finandy.com/yOiR__CztpkFLaRKqFUK', json=CORTO)
     Tb.telegram_send_message(" 🔴 SHORT  " + symbol + "\n 💵 Precio: " + df['Close'][-1])
   elif (middleband[-2] <= df['EMA'][-2]) and (df['EMA'][-1] < middleband[-1]) and (rsi[-2:].values[0] <= 80) and (80 < rsi[-1:].values[0]): 

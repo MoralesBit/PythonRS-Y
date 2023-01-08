@@ -6,7 +6,7 @@ import Telegram_bot as Tb
 import  schedule as schedule
 import time as ti
 import requests
-from webserver import keep_alive
+
 
 Pkey = ''
 Skey = ''
@@ -86,7 +86,7 @@ def server_time():
     indicator(symbol)
     ti.sleep(0.4)
         
-keep_alive()       
+   
 while (True):
   
   server_time()

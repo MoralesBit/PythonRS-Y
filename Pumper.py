@@ -6,6 +6,7 @@ import Telegram_bot as Tb
 import  schedule as schedule
 import time as ti
 import requests
+import pandas_ta as tra
 
 Pkey = ''
 Skey = ''
@@ -33,8 +34,8 @@ def indicator(symbol):
     
   upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                timeperiod=20,
-                                               nbdevup=2,
-                                               nbdevdn=2,
+                                               nbdevup=3,
+                                               nbdevdn=3,
                                                matype=0)
   roc = ta.ROC(df['Close'], timeperiod=10)
   adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
@@ -42,7 +43,15 @@ def indicator(symbol):
   df['EMA'] = ta.EMA(df['Close'], timeperiod = 30)
   #bars = client.futures_ticker()
   #df_new = pd.DataFrame(bars, columns=['Open', 'High', 'Low', 'Close', 'Volume'])
-    
+  Close = float(df['Close'][-1])
+  High = float(df['High'][-1])
+  Low = float(df['Low'][-1])
+  diff = abs((High / Low -1) * 100)
+  slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+  will = ta.WILLR(df['High'], df['Low'], df['Close'], timeperiod=14)
+  
+  #ma = ta.SMA(oh, timeperiod=3)
+  
   CORTO = {
   "name": "PUM SHORT",
   "secret": "sa19z0p2jl",
@@ -63,19 +72,17 @@ def indicator(symbol):
   }
 }
   print(symbol)
-  print(mfi[-2])
-  print(df['EMA'][-2])
-  print(middleband[-2])
-   
+  print(diff)
+  #print(oh)
+  #print(ma)
   #print(df_new['Volume'][-1])
   
-  if (middleband[-3] > df['EMA'][-3]) and (middleband[-2] < df['EMA'][-2]) and (mfi[-2] < 20)  :
-    requests.post('https://hook.finandy.com/yOiR__CztpkFLaRKqFUK', json=CORTO)
-    Tb.telegram_send_message(" 🔴 SHORT  " + symbol + "\n 💵 Precio: " + df['Close'][-1])
-  elif (middleband[-3] < df['EMA'][-3]) and (df['EMA'][-2] < middleband[-2]) and (mfi[-2] > 80): 
-    requests.post('https://hook.finandy.com/A81ci3iO7HXP9btKqFUK', json=LARGO)
-    Tb.telegram_send_message(" 🟢 LONG  " + symbol + "\n 💵 Precio: " + df['Close'][-1])
+  if (diff > 1) and (lowerband[-2] > Close) and (rsi[-2] < 30) and (slowk[-2] < 20) and (will < -20 ):
     
+    Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1])
+  elif (diff >1) and (upperband[-2] < Close) and (rsi[-2] > 70) and (slowk[-2] > 90) and (will > -80 ):
+
+    Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1])
 
   return round(last_rsi, 1), rsi_stat
 
@@ -92,7 +99,7 @@ def server_time():
   
   for symbol in symbols:
     indicator(symbol)
-    ti.sleep(0.25)
+    ti.sleep(0.15)
         
         
 while (True):

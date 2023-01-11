@@ -6,7 +6,7 @@ import Telegram_bot as Tb
 import  schedule as schedule
 import time as ti
 import requests
-import pandas_ta as tra
+
 
 Pkey = ''
 Skey = ''

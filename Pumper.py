@@ -34,8 +34,8 @@ def indicator(symbol):
     
   upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                timeperiod=20,
-                                               nbdevup=3,
-                                               nbdevdn=3,
+                                               nbdevup=2.5,
+                                               nbdevdn=2.5,
                                                matype=0)
   roc = ta.ROC(df['Close'], timeperiod=10)
   adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)

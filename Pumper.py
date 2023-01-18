@@ -56,21 +56,17 @@ def indicator(symbol):
   "name": "CORTO EST 1 PORC",
   "secret": "w48ulz23f6",
   "side": "sell",
-  "symbol": symbol,
-  "open": {
-    "price": ""
-  }
+  "symbol": "{{ticker}}"
 }
 
+
   LARGO = {
-  "name": "CORTO EST 1 PORC",
-  "secret": "w48ulz23f6",
+  "name": "LARGO EST 1 PORC",
+  "secret": "xxuxkqf0gpj",
   "side": "buy",
-  "symbol": symbol,
-  "open": {
-    "price": ""
-  }
+  "symbol": "{{ticker}}"
 }
+  
   print(symbol)
   print(diff)
   #print(oh)

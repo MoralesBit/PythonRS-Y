@@ -56,7 +56,7 @@ def indicator(symbol):
   "name": "CORTO EST 1 PORC",
   "secret": "w48ulz23f6",
   "side": "sell",
-  "symbol": "{{ticker}}"
+  "symbol": symbol
 }
 
 
@@ -64,7 +64,7 @@ def indicator(symbol):
   "name": "LARGO EST 1 PORC",
   "secret": "xxuxkqf0gpj",
   "side": "buy",
-  "symbol": "{{ticker}}"
+  "symbol": symbol
 }
   
   print(symbol)

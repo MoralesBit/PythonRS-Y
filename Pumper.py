@@ -69,7 +69,7 @@ def indicator(symbol):
   "name": "CORTO1%",
   "secret": "uluh5jwl0p",
   "side": "sell",
-  "symbol": "{{ticker}}"
+  "symbol": symbol
 }
   LARGO = {
   "name": "LARGO EST 1 PORC",

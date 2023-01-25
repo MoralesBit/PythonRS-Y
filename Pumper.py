@@ -85,7 +85,7 @@ def indicator(symbol):
   #print(df_new['Volume'][-1])
   
   if (diff > 1) and (lowerband[-2] > Close) and (rsi[-2] < 30) and (slowk[-2] < 5):
-    requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=LARGO)
+    requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=LARGO)
     Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1])
   elif (diff > 1) and (upperband[-2] < Close) and (rsi[-2] > 70) and (slowk[-2] > 95):
     requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CORTO)

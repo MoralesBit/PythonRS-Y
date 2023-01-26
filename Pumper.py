@@ -59,12 +59,6 @@ def indicator(symbol):
   "symbol": symbol
 }
 
-  CARLOS = {
-  "name": "CORTO1%",
-  "secret": "z5xxvuk4at",
-  "side": "sell",
-  "symbol": symbol
-}
   CARLOSEXC = {
   "name": "CORTO1%",
   "secret": "uluh5jwl0p",
@@ -89,7 +83,6 @@ def indicator(symbol):
     Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1])
   elif (diff > 1) and (upperband[-2] < Close) and (rsi[-2] > 70) and (slowk[-2] > 95):
     requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CORTO)
-    requests.post('https://hook.finandy.com/FKKTzdtEzR9lsQrcqFUK', json=CARLOS)
     requests.post('https://hook.finandy.com/Xk9inkBl1iEVw-reqFUK', json=CARLOSEXC)
     Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1])
 

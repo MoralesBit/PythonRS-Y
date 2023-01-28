@@ -59,10 +59,17 @@ def indicator(symbol):
   "symbol": symbol
 }
 
-  U003 = {
+  U003S = {
   "name": "CORTO1%",
   "secret": "uluh5jwl0p",
   "side": "sell",
+  "symbol": symbol
+}
+  
+  U003L = {
+  "name": "LARGO1%",
+  "secret": "zhbg0ei79jg",
+  "side": "buy",
   "symbol": symbol
 }
   LARGO = {
@@ -72,9 +79,16 @@ def indicator(symbol):
   "symbol": symbol
 }
 
-  U008  = {
+  U008S  = {
   "name": "BOT SHORT 1%",
   "secret": "bv6nraz31sn",
+  "side": "sell",
+  "symbol": symbol
+}
+  
+  U009S  = {
+  "name": "BOT SHORT 1%",
+  "secret": "hyrk4rb79rk",
   "side": "sell",
   "symbol": symbol
 }
@@ -87,11 +101,13 @@ def indicator(symbol):
   
   if (diff > 1) and (lowerband[-2] > Close) and (rsi[-2] < 30) and (slowk[-2] < 5):
     requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=LARGO)
+    requests.post('https://hook.finandy.com/fc5QlbF36Dekt67GqFUK', json=U003L)
     Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1])
   elif (diff > 1) and (upperband[-2] < Close) and (rsi[-2] > 70) and (slowk[-2] > 95):
     requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CORTO)
-    requests.post('https://hook.finandy.com/Xk9inkBl1iEVw-reqFUK', json=U003)
-    requests.post('https://hook.finandy.com/3F3FwTTDgZfXoIjHqFUK', json=U008)
+    requests.post('https://hook.finandy.com/Xk9inkBl1iEVw-reqFUK', json=U003S)
+    requests.post('https://hook.finandy.com/3F3FwTTDgZfXoIjHqFUK', json=U008S)
+    requests.post('https://hook.finandy.com/qNBxosIET33e9VDHqFUK', json=U009S)
     Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1])
 
   return round(last_rsi, 1), rsi_stat

@@ -58,7 +58,14 @@ def indicator(symbol):
   "side": "sell",
   "symbol": symbol
 }
-
+  
+  LARGO = {
+  "name": "LARGO EST 1 PORC",
+  "secret": "xxuxkqf0gpj",
+  "side": "buy",
+  "symbol": symbol
+}
+  
   U003S = {
   "name": "CORTO1%",
   "secret": "uluh5jwl0p",
@@ -72,13 +79,7 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol
 }
-  LARGO = {
-  "name": "LARGO EST 1 PORC",
-  "secret": "xxuxkqf0gpj",
-  "side": "buy",
-  "symbol": symbol
-}
-
+   
   U008S  = {
   "name": "BOT SHORT 1%",
   "secret": "bv6nraz31sn",

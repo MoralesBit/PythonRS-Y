@@ -79,7 +79,12 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol
 }
-   
+   U004S  = {
+  "name": "BOT SHORT 1%",
+  "secret": "cutm8ggcvde",
+  "side": "sell",
+  "symbol": symbol
+}   
   U008S  = {
   "name": "BOT SHORT 1%",
   "secret": "bv6nraz31sn",
@@ -93,6 +98,7 @@ def indicator(symbol):
   "side": "sell",
   "symbol": symbol
 }
+ 
   
   print(symbol)
   print(diff)
@@ -107,6 +113,7 @@ def indicator(symbol):
   elif (diff > 1) and (upperband[-2] < Close) and (rsi[-2] > 70) and (slowk[-2] > 95):
     requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CORTO)
     requests.post('https://hook.finandy.com/Xk9inkBl1iEVw-reqFUK', json=U003S)
+    requests.post('https://hook.finandy.com/r5cQN9H916sGrlFmqFUK', json=U004S)
     requests.post('https://hook.finandy.com/3F3FwTTDgZfXoIjHqFUK', json=U008S)
     requests.post('https://hook.finandy.com/qNBxosIET33e9VDHqFUK', json=U009S)
     Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1])

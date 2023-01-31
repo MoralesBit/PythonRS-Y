@@ -79,12 +79,14 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol
 }
-   U004S  = {
+  
+  U004S  = {
   "name": "CORTO",
   "secret": "cutm8ggcvde",
   "side": "sell",
   "symbol": symbol
-}   
+}
+  
   U008S  = {
   "name": "BOT SHORT 1%",
   "secret": "bv6nraz31sn",

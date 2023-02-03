@@ -116,8 +116,8 @@ def indicator(symbol):
     requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CORTO)
     requests.post('https://hook.finandy.com/Xk9inkBl1iEVw-reqFUK', json=U003S)
     requests.post('https://hook.finandy.com/r5cQN9H916sGrlFmqFUK', json=U004S)
-    requests.post('https://hook.finandy.com/3F3FwTTDgZfXoIjHqFUK', json=U008S)
-    requests.post('https://hook.finandy.com/qNBxosIET33e9VDHqFUK', json=U009S)
+    #requests.post('https://hook.finandy.com/3F3FwTTDgZfXoIjHqFUK', json=U008S)
+    #requests.post('https://hook.finandy.com/qNBxosIET33e9VDHqFUK', json=U009S)
     Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1])
 
   return round(last_rsi, 1), rsi_stat

@@ -42,7 +42,7 @@ def indicator(symbol):
   Close = float(df['Close'][-2])
   diff = abs((High / Low -1) * 100)
   slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
- 
+  High = float(df['High'][-1])
     
   CORTO = {
   "name": "USUARIO 002 - CORTO",

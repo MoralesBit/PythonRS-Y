@@ -34,14 +34,15 @@ def indicator(symbol):
     
   upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                timeperiod=20,
-                                               nbdevup=2,
-                                               nbdevdn=2,
+                                               nbdevup=3,
+                                               nbdevdn=3,
                                                matype=0)
   roc = ta.ROC(df['Close'], timeperiod=10)
-  #dema = ta.DEMA(df['Close'],timeperiod=30)
-  
-  #bars = client.futures_ticker()
-  #df_new = pd.DataFrame(bars, columns=['Open', 'High', 'Low', 'Close', 'Volume'])
+  Open = float(df['Open'][-1])
+  Close = float(df['Close'][-2])
+  diff = abs((High / Low -1) * 100)
+  slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+ 
     
   CORTO = {
   "name": "USUARIO 002 - CORTO",
@@ -62,12 +63,13 @@ def indicator(symbol):
   print(roc[-1])
   #print(df_new['Volume'][-1])
   
-  if (rsi[-1:].values[0] < 10) and (rsi[-3:].values[0] < rsi[-1:].values[0]) and (rsi[-2:].values[0] > rsi[-3:].values[0]) and (roc[-1] < -2):
-    requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=LARGO)
-    Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🌵 LONG \n 💵 Precio: " + df['Close'][-1] + "\n 🔃 % ROC: " + str(round(roc[-1],2)) + "\n 📉 RSI : " + str(round(rsi[-1],2)))
-  elif (rsi[-1:].values[0] > 90) and (rsi[-3:].values[0] > rsi[-1:].values[0]) and (rsi[-3:].values[0] < rsi[-2:].values[0]) and (roc[-1] > 2):
-    requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CORTO)
-    Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🩸 SHORT \n 💵 Precio: " + df['Close'][-1] + "\n 🔃 % ROC: " + str(round(roc[-1],2)) + "\n 📈 RSI : " + str(round(rsi[-1],2)))
+  if Open = Open:
+    if (diff > 3) and (rsi[-2] < 20) and (slowk[-2] < 20) and (lowerband[-2] >= Close):
+      requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=LARGO)
+      Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🌵 LONG \n 💵 Precio: " + df['Close'][-1] + "\n 🔃 % ROC: " + str(round(roc[-1],2)) + "\n 📉 RSI : " + str(round(rsi[-1],2)))
+    elif (diff > 3) and (rsi[-2] > 80) and (slowk[-2] < 80) and (upperband[-2] < Close):
+      requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CORTO)
+      Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🩸 SHORT \n 💵 Precio: " + df['Close'][-1] + "\n 🔃 % ROC: " + str(round(roc[-1],2)) + "\n 📈 RSI : " + str(round(rsi[-1],2)))
 
   return round(last_rsi, 1), rsi_stat
 

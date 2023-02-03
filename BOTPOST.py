@@ -60,7 +60,7 @@ def indicator(symbol):
  
   print(symbol)
    
-  if Open = Open:
+  if Close = Open:
     if (diff > 3) and (rsi[-2] < 20) and (slowk[-2] < 20) and (lowerband[-2] >= Close):
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=LARGO)
       Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🌵 LONG \n 💵 Precio: " + df['Close'][-1] + "\n 🔃 % ROC: " + str(round(roc[-1],2)) + "\n 📉 RSI : " + str(round(rsi[-1],2)))

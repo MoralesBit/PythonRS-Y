@@ -57,12 +57,9 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol
   }
+ 
   print(symbol)
-  print(rsi[-2:].values[0])
-  print(rsi[-1:].values[0])
-  print(roc[-1])
-  #print(df_new['Volume'][-1])
-  
+   
   if Open = Open:
     if (diff > 3) and (rsi[-2] < 20) and (slowk[-2] < 20) and (lowerband[-2] >= Close):
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=LARGO)

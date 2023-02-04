@@ -55,7 +55,7 @@ def indicator(symbol):
                                     slowperiod=26, 
                                     signalperiod=9)
   
-  BB = ((Close - lowerband[-1])/(upperband[-1] - lowerband[-1])) 
+  #BB = ((Close - lowerband[-1])/(upperband[-1] - lowerband[-1])) 
   
   print(symbol)
  

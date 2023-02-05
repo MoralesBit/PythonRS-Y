@@ -74,10 +74,10 @@ def indicator(symbol):
   "symbol": symbol
 }
     
-  if (df['MA13'][-1] < df['MA100'][-1]) and (df['MA100'][0] < df['MA13'][0]) and (macd[-1] < macd[0]):
+  if (df['MA13'][-2] < df['MA100'][-2]) and (df['MA100'][-1] < df['MA13'][-1]) and (macd[-2] < macd[-1]):
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=LONG)
       Tb.telegram_send_message(" Cruce EMA 13-100 " + symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1])
-  elif (df['MA13'][-1] > df['MA100'][-1]) and (df['MA100'][0] > df['MA13'][0]) and (macd[-1] > macd[0]):
+  elif (df['MA13'][-2] > df['MA100'][-2]) and (df['MA100'][-1] > df['MA13'][-1]) and (macd[-2] > macd[-1]):
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=SHORT)  
       Tb.telegram_send_message(" Cruce EMA 13-100 " + symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1])
 

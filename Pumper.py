@@ -108,11 +108,11 @@ def indicator(symbol):
   #print(ma)
   #print(df_new['Volume'][-1])
   
-  if (roc[-1] < -5) and (diff > 1) and (lowerband[-2] > Close) and (rsi[-2] < 30) and (slowk[-2] < 5):
+  if (roc[-1] < -3) and (diff > 1) and (lowerband[-2] > Close) and (rsi[-2] < 30) and (slowk[-2] < 5):
     requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=LARGO)
     requests.post('https://hook.finandy.com/fc5QlbF36Dekt67GqFUK', json=U003L)
     Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1])
-  elif (roc[-1] > 5) and (diff > 1) and (upperband[-2] < Close) and (rsi[-2] > 70) and (slowk[-2] > 95):
+  elif (roc[-1] > 3) and (diff > 1) and (upperband[-2] < Close) and (rsi[-2] > 70) and (slowk[-2] > 95):
     requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CORTO)
     requests.post('https://hook.finandy.com/Xk9inkBl1iEVw-reqFUK', json=U003S)
     requests.post('https://hook.finandy.com/r5cQN9H916sGrlFmqFUK', json=U004S)

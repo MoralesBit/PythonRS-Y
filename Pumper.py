@@ -186,7 +186,7 @@ def indicator(symbol):
         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=SHORT1P)
         Tb.telegram_send_message( symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1] + "\n ESTOCASTICO + RSI 5 MINUTOS \n")
   elif (float(df_new['Close'][-2]) > lowerband5[-2]) and (rsi2[-2] < 20) and (slowk5[-2] < 5):
-        requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=LONG1P)
+        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=LONG1P)
         Tb.telegram_send_message( symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1] + "\n ESTOCASTICO + RSI 5 MINUTOS \n")
   
   #TENDENCIA EN 3 MIN CUANDO BTC HACE PUM:

@@ -78,7 +78,7 @@ def indicator(symbol):
                                     slowperiod=26, 
                                     signalperiod=9)
   
-  BB = ((float(df['Close'][-1]) - lowerband3[-1])/(upperband3[-1] - lowerband3[-1]))
+  #BB = ((float(df['Close'][-1]) - lowerband3[-1])/(upperband3[-1] - lowerband3[-1]))
   obv = ta.OBV(df['Close'], df['Volume'])
   ad = ta.AD(df['High'], df['Low'], df['Close'], df['Volume'])
   aroondown, aroonup = ta.AROON(df['High'], df['Low'], timeperiod=14)

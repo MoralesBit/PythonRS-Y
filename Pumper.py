@@ -183,7 +183,7 @@ def indicator(symbol):
   #5 MINUTOS PYTHON
  
   if (float(df_new['Close'][-2]) > upperband5[-2]) and (rsi2[-2] > 80) and (slowk5[-2] > 95):
-        requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=SHORT1P)
+        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=SHORT1P)
         Tb.telegram_send_message( symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1] + "\n ESTOCASTICO + RSI 5 MINUTOS \n")
   elif (float(df_new['Close'][-2]) > lowerband5[-2]) and (rsi2[-2] < 20) and (slowk5[-2] < 5):
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=LONG1P)

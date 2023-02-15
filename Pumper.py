@@ -215,12 +215,12 @@ def indicator(symbol):
   
   #Tendicia con CCI
   
-  if (cci[-2] < 0) and (cci[-1] > 0) and (Close15 > df_new['MA50'][-1]) and  (hist15[-2] < hist15[-1]) and (slowk15[-2] < slowk15[-1]):
-      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
-      Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 Alcista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
-  elif (cci[-2] > 0) and (cci[-1] < 0) and (Close15 < df_new['MA50'][-1]) and (hist15[-2] > hist15[-1]) and (slowk15[-2] > slowk15[-1]):
-      requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
-      Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 Bajista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
+  #if (cci[-2] < 0) and (cci[-1] > 0) and (Close15 > df_new['MA50'][-1]) and  (hist15[-2] < hist15[-1]) and (slowk15[-2] < slowk15[-1]):
+      #requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
+      #Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 Alcista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
+  #elif (cci[-2] > 0) and (cci[-1] < 0) and (Close15 < df_new['MA50'][-1]) and (hist15[-2] > hist15[-1]) and (slowk15[-2] > slowk15[-1]):
+      #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
+      #Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 Bajista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
 
     #Alertas 1% BOT
   if (roc[-1] < -1.5) and (diff > 1) and (lowerband3[-2] > Close) and (rsi[-2] < 30) and (slowk[-2] < 5):
@@ -256,4 +256,4 @@ def server_time():
           ti.sleep(0.05)
      
 while (True):
-  server_time() 
+  server_time()  

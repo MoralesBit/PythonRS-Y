@@ -19,24 +19,25 @@ connection = ""
 period = 14
 period2 = 13
  
+
 def indicator(symbol):
   rsi_stat = ""
   kline5 = client.futures_historical_klines(symbol, "15m", "24 hours ago UTC+1",limit=500) 
   kline = client.futures_historical_klines(symbol, "3m", "24 hours ago UTC+1",limit=500)
   df = pd.DataFrame(kline)
   df_new = pd.DataFrame(kline5)
-  
-    if not df.empty:
+    
+  if not df.empty:
     df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'IGNORE',
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
     
-  if not df_new.empty:  
-    df_new.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'IGNORE',
-      'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
-    df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
-    df_new = df_new.set_index('Date')
+    if not df_new.empty:  
+      df_new.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'IGNORE',
+        'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
+      df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
+      df_new = df_new.set_index('Date')
     
   rsi = ta.RSI(df["Close"], timeperiod=period)
   rsi2 = ta.RSI(df["Close"], timeperiod=period2)
@@ -90,9 +91,11 @@ def indicator(symbol):
   #HMA = ma(2*ma(n/2) - ma(n)),sqrt(n)
   #ma = ta.MA()
   #var = taVAR()
-    
+  
+  
   print(symbol)
-       
+  
+     
   CORTOT = {
   "name": "TENDENCIA-SHORT",
   "secret": "hgw3399vhh",

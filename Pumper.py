@@ -206,11 +206,11 @@ def indicator(symbol):
       #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=)  
       Tb.telegram_send_message( symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1] + "\n Tendencia Numero 2 ")
 
-  if (roc[-1] < -2) and (diff > 1) and (lowerband3[-2] > Close) and (rsi[-2] < 30) and (slowk[-2] < 5):
+  if (roc[-1] < -1.5) and (diff > 1) and (lowerband3[-2] > Close) and (rsi[-2] < 30) and (slowk[-2] < 5):
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=LARGO)
       requests.post('https://hook.finandy.com/fc5QlbF36Dekt67GqFUK', json=U003L)
       Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1])
-  elif (roc[-1] > 2) and (diff > 1) and (upperband3[-2] < Close) and (rsi[-2] > 70) and (slowk[-2] > 95):
+  elif (roc[-1] > 1.5) and (diff > 1) and (upperband3[-2] < Close) and (rsi[-2] > 70) and (slowk[-2] > 95):
     requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CORTO)
     requests.post('https://hook.finandy.com/Xk9inkBl1iEVw-reqFUK', json=U003S)
     requests.post('https://hook.finandy.com/r5cQN9H916sGrlFmqFUK', json=U004S)

@@ -72,7 +72,7 @@ def indicator(symbol):
   diff_M = abs((High - Close)/High)*100
   df['VolumeP'] = df['Volume'].ewm(span=10).mean()
   slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
-  slowk5, slowd5 = ta.STOCH(df_new['High'], df_new['Low'], df_new['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+  slowk15, slowd15 = ta.STOCH(df_new['High'], df_new['Low'], df_new['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
   Open = float(df['Open'][-1])
   #df['MA100'] = df['Close'].ewm(span=100).mean()
   macd, signal, hist = ta.MACD(df['Close'], 
@@ -95,12 +95,6 @@ def indicator(symbol):
   
   
   print(symbol)
-  print(cci[-1])
-  print(cci[-2])
-  print(hist15[-1])
-  print(hist15[-2])
-  print(Close15)
-  print(df_new['MA50'][-1])
   
      
   CORTOT = {
@@ -205,10 +199,10 @@ def indicator(symbol):
   
   #30 MINUTOS PYTHON
  
-  if (float(df_new['Close'][-2]) > upperband5[-2]) and (rsi2[-2] > 80) and (slowk5[-2] > 95) and (cci[-1] > 180):
+  if (float(df_new['Close'][-2]) > upperband5[-2]) and (rsi2[-2] > 80) and (slowk15[-2] > 95) and (cci[-1] > 180):
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=SHORT1P)
         Tb.telegram_send_message( symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1] + "\n ESTOCASTICO +\n RSI 15 MINUTOS")
-  elif (float(df_new['Close'][-2]) > lowerband5[-2]) and (rsi2[-2] < 20) and (slowk5[-2] < 5) and (cci[-1] <-180):
+  elif (float(df_new['Close'][-2]) > lowerband5[-2]) and (rsi2[-2] < 20) and (slowk15[-2] < 5) and (cci[-1] <-180):
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=LONG1P)
         Tb.telegram_send_message( symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1] + "\n ESTOCASTICO +\n RSI 15 MINUTOS")
   
@@ -222,10 +216,10 @@ def indicator(symbol):
   
   #Tendicia con CCI
   
-  if (cci[-2] < 0) and (cci[-1] > 0) and (Close15 > df_new['MA50'][-1]) and  (hist15[-2] < hist15[-1]):
+  if (cci[-2] < 0) and (cci[-1] > 0) and (Close15 > df_new['MA50'][-1]) and  (hist15[-2] < hist15[-1]) and (slowk15[-2] < slowk15[-1]):
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
       Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 Alcista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
-  elif (cci[-2] > 0) and (cci[-1] < 0) and (Close15 < df_new['MA50'][-1]) and (hist15[-2] > hist15[-1]):
+  elif (cci[-2] > 0) and (cci[-1] < 0) and (Close15 < df_new['MA50'][-1]) and (hist15[-2] > hist15[-1]) and (slowk15[-2] > slowk15[-1]):
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
       Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 Bajista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
 

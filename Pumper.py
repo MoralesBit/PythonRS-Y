@@ -22,7 +22,7 @@ period2 = 13
 
 def indicator(symbol):
   rsi_stat = ""
-  kline5 = client.futures_historical_klines(symbol, "5m", "24 hours ago UTC+1",limit=500) 
+  kline5 = client.futures_historical_klines(symbol, "15m", "24 hours ago UTC+1",limit=500) 
   kline = client.futures_historical_klines(symbol, "3m", "24 hours ago UTC+1",limit=500)
   df = pd.DataFrame(kline)
   df_new = pd.DataFrame(kline5)
@@ -57,12 +57,14 @@ def indicator(symbol):
   adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
   df['EMA'] = ta.EMA(df['Close'], timeperiod = 13)
+  df_new['MA50'] = df_new['Close'].ewm(span=50).mean()
   df['EMA200'] = ta.EMA(df['Close'], timeperiod = 200)
   df['EMA500'] = ta.EMA(df['Close'], timeperiod = 500)
   #df['ADV']=pd.mean(df['Volume'], window=9)
   
   #df_new = pd.DataFrame(bars, columns=['Open', 'High', 'Low', 'Close', 'Volume'])
   Close = float(df['Close'][-1])
+  Close15 = float(df_new['Close'][-1])
   High = float(df['High'][-1])
   Low = float(df['Low'][-1])
   diff = abs((High / Low -1) * 100)
@@ -77,12 +79,15 @@ def indicator(symbol):
                                     fastperiod=12, 
                                     slowperiod=26, 
                                     signalperiod=9)
-  
-  #BB = ((float(df['Close'][-1]) - lowerband3[-1])/(upperband3[-1] - lowerband3[-1]))
+  macd15, signal15, hist15 = ta.MACD(df_new['Close'], 
+                                    fastperiod=12, 
+                                    slowperiod=26, 
+                                    signalperiod=9)
+  BB = ((float(df['Close'][-1]) - lowerband3[-1])/(upperband3[-1] - lowerband3[-1]))
   obv = ta.OBV(df['Close'], df['Volume'])
   ad = ta.AD(df['High'], df['Low'], df['Close'], df['Volume'])
   aroondown, aroonup = ta.AROON(df['High'], df['Low'], timeperiod=14)
-  cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=14)
+  cci = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=20)
   #wma = ta.WMA() 
   #HMA = ma(2*ma(n/2) - ma(n)),sqrt(n)
   #ma = ta.MA()
@@ -90,6 +95,12 @@ def indicator(symbol):
   
   
   print(symbol)
+  print(cci[-1])
+  print(cci[-2])
+  print(hist15[-1])
+  print(hist15[-2])
+  print(Close15)
+  print(df_new['MA50'][-1])
   
      
   CORTOT = {
@@ -168,6 +179,18 @@ def indicator(symbol):
   "side": "sell",
   "symbol": symbol
 }
+  CCISHORT = {
+  "name": "CCI SHORT",
+  "secret": "w48ulz23f6",
+  "side": "sell",
+  "symbol": symbol
+}
+  CCILONG = {
+  "name": "CCI LONG",
+  "secret": "xxuxkqf0gpj",
+  "side": "buy",
+  "symbol": symbol
+}
 
 #Copia Merlin
   if diff_M != 0:
@@ -180,36 +203,37 @@ def indicator(symbol):
   else:
     print(diff_M)
   
-  #5 MINUTOS PYTHON
+  #30 MINUTOS PYTHON
  
-  if (float(df_new['Close'][-2]) > upperband5[-2]) and (rsi2[-2] > 80) and (slowk5[-2] > 95):
-        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=SHORT1P)
-        Tb.telegram_send_message( symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1] + "\n ESTOCASTICO + RSI 5 MINUTOS \n")
-  elif (float(df_new['Close'][-2]) > lowerband5[-2]) and (rsi2[-2] < 20) and (slowk5[-2] < 5):
-        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=LONG1P)
-        Tb.telegram_send_message( symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1] + "\n ESTOCASTICO + RSI 5 MINUTOS \n")
+  if (float(df_new['Close'][-2]) > upperband5[-2]) and (rsi2[-2] > 80) and (slowk5[-2] > 95) and (cci[-1] > 180):
+        requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=SHORT1P)
+        Tb.telegram_send_message( symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1] + "\n ESTOCASTICO +\n RSI 15 MINUTOS")
+  elif (float(df_new['Close'][-2]) > lowerband5[-2]) and (rsi2[-2] < 20) and (slowk5[-2] < 5) and (cci[-1] <-180):
+        requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=LONG1P)
+        Tb.telegram_send_message( symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1] + "\n ESTOCASTICO +\n RSI 15 MINUTOS")
   
   #TENDENCIA EN 3 MIN CUANDO BTC HACE PUM:
-  if  (float(df['VolumeP'][-1]) < float(df['Volume'][-1])) and (macd[-2] > signal[-2]) and (signal[-1] > macd[-1]) and (hist[-2] > 0) and (hist[-1] < 0) and (cci[-1] < 0) and (rsi[-1] < 40) and (rsi[-1] > 30):
-      Tb.telegram_send_message( symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1] + "\n Tendencia ")
-      requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CORTOT)
-  elif (float(df['VolumeP'][-1]) < float(df['Volume'][-1])) and (macd[-2] < signal[-2]) and (signal[-1] < macd[-1]) and (hist[-2] < 0) and (hist[-1] > 0) and (cci[-1] > 0) and (rsi[-1] > 60) and (rsi[-1] < 70):
-      Tb.telegram_send_message( symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1] + "\n Tendencia")
-      requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=LARGOT)
+  #if  (float(df['VolumeP'][-1]) < float(df['Volume'][-1])) and (macd[-2] > signal[-2]) and (signal[-1] > macd[-1]) and (hist[-2] > 0) and (hist[-1] < 0) and (cci[-1] < 0) and (rsi[-1] < 40) and (rsi[-1] > 30):
+      #Tb.telegram_send_message( " ⚡️ " + symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1] + "\n Tendencia ")
+      #requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CORTOT)
+  #elif (cci[-1] > 180) and (float(df['VolumeP'][-1]) < float(df['Volume'][-1])) and (macd[-2] < signal[-2]) and (signal[-1] < macd[-1]) and (hist[-2] < 0) and (hist[-1] > 0) and (cci[-1] > 0) and (rsi[-1] > 60) and (rsi[-1] < 70):
+      #Tb.telegram_send_message( " ⚡️ " + symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1] + "\n Tendencia")
+      #requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=LARGOT)
   
-  #Tendicia con otros parametros
+  #Tendicia con CCI
   
-  if (float(df['Close'][-2]) > df['EMA500'][-2]) and (float(df['Close'][-2]) < lowerband3[-2]) and (cci[-2] < -100) and (rsi[-2] < 30):
-      #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=)
-      Tb.telegram_send_message( symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1] + "\n Tendencia Numero 2 ")
-  elif (float(df['Close'][-2]) < df['EMA500'][-2]) and (float(df['Close'][-2]) > upperband3[-2]) and (cci[-2] > 100) and (rsi[-2] > 70):
-      #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=)  
-      Tb.telegram_send_message( symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1] + "\n Tendencia Numero 2 ")
+  if (cci[-2] < 0) and (cci[-1] > 0) and (Close15 > df_new['MA50'][-1]) and  (hist15[-2] < hist15[-1]):
+      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
+      Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 Alcista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
+  elif (cci[-2] > 0) and (cci[-1] < 0) and (Close15 < df_new['MA50'][-1]) and (hist15[-2] > hist15[-1]):
+      requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
+      Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 Bajista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
 
+    #Alertas 1% BOT
   if (roc[-1] < -1.5) and (diff > 1) and (lowerband3[-2] > Close) and (rsi[-2] < 30) and (slowk[-2] < 5):
-      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=LARGO)
-      requests.post('https://hook.finandy.com/fc5QlbF36Dekt67GqFUK', json=U003L)
-      Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1])
+    requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=LARGO)
+    requests.post('https://hook.finandy.com/fc5QlbF36Dekt67GqFUK', json=U003L)
+    Tb.telegram_send_message(" ⚡️ " + symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1])
   elif (roc[-1] > 1.5) and (diff > 1) and (upperband3[-2] < Close) and (rsi[-2] > 70) and (slowk[-2] > 95):
     requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CORTO)
     requests.post('https://hook.finandy.com/Xk9inkBl1iEVw-reqFUK', json=U003S)
@@ -239,4 +263,4 @@ def server_time():
           ti.sleep(0.05)
      
 while (True):
-  server_time()  
+  server_time() 

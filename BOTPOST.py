@@ -130,4 +130,4 @@ def server_time():
      
 while (True):
   server_time()
-  ti.sleep(300)
+  ti.sleep(120)

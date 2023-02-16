@@ -12,14 +12,10 @@ Skey = ''
 
 client = Client(api_key=Pkey, api_secret=Skey)
 
-intervals = [
- 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57
-]
+intervals = [15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
 connection = ""
 period = 14
-period2 = 13
  
-
 def indicator(symbol):
   rsi_stat = ""
    
@@ -32,9 +28,7 @@ def indicator(symbol):
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
-    
-   
-    
+     
   rsi = ta.RSI(df["Close"], timeperiod=period)
  
   last_rsi = rsi   
@@ -78,8 +72,7 @@ def indicator(symbol):
   #HMA = ma(2*ma(n/2) - ma(n)),sqrt(n)
   #ma = ta.MA()
   #var = taVAR()
-  
-  
+    
   print(symbol)
      
   CCISHORT = {
@@ -94,15 +87,13 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol
 }
-
   
-  if (cci[-3] < 0) and (cci[-2] > 0) and (Close > df['MA50'][-1]) and  (hist[-2] < hist[-1]) and (slowk[-2] < slowk[-1]):
+  if (cci[-3] < 0) and (cci[-2] > 0) and (Close > df['MA50'][-1]) and  (hist[-2] < hist[-1]) and (slowk[-2] < slowk[-1]) and (hist[-1] > 0):
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
       Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 Alcista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
-  elif (cci[-3] > 0) and (cci[-2] < 0) and (Close < df['MA50'][-1]) and (hist[-2] > hist[-1]) and (slowk[-2] > slowk[-1]):
+  elif (cci[-3] > 0) and (cci[-2] < 0) and (Close < df['MA50'][-1]) and (hist[-2] > hist[-1]) and (slowk[-2] > slowk[-1]) and (hist[-1] < 0):
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
       Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 Bajista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
-
     
   return round(last_rsi, 1), rsi_stat,  print(diff_M)
 

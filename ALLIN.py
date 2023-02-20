@@ -12,7 +12,7 @@ Skey = ''
 
 client = Client(api_key=Pkey, api_secret=Skey)
 
-intervals = [15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
+intervals = [6, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
 connection = ""
 period = 14
  
@@ -88,10 +88,10 @@ def indicator(symbol):
   "symbol": symbol
 }
   
-  if (cci[-2] < 0) and (cci[-1] > 0) and (Close < df['MA50'][-1]) and  (hist[-2] < hist[-1]) and (slowk[-2] < slowk[-1]):
+  if (cci[-2] < 0) and (cci[-1] > 0) and (Close < df['MA50'][-1]) and (df['MA50'][-2] < df['MA50'][-1]) and (hist[-2] < hist[-1]) and (slowk[-2] < slowk[-1]):
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
       Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 Alcista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
-  elif (cci[-2] > 0) and (cci[-1] < 0) and (Close > df['MA50'][-1]) and (hist[-2] > hist[-1]) and (slowk[-2] > slowk[-1]):
+  elif (cci[-2] > 0) and (cci[-1] < 0) and (Close > df['MA50'][-1]) and (df['MA50'][-2] > df['MA50'][-1]) and (hist[-2] > hist[-1]) and (slowk[-2] > slowk[-1]):
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
       Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 Bajista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
     
@@ -115,11 +115,11 @@ def server_time():
   
   for symbol in symbols:
     for i in intervals:
-    	if minute == i:
+    	if minute == 5:
           indicator(symbol)
           ti.sleep(0.15)
      
 while (True):
   server_time()
-  ti.sleep(15)
+  ti.sleep(60)
  

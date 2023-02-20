@@ -12,7 +12,7 @@ Skey = ''
 
 client = Client(api_key=Pkey, api_secret=Skey)
 
-intervals = [3, 6, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
+intervals = [0, 3, 6, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
 connection = ""
 period = 14
  
@@ -117,9 +117,9 @@ def server_time():
     for i in intervals:
     	if minute == i:
           indicator(symbol)
-          ti.sleep(0.15)
+          ti.sleep(0.1)
      
 while (True):
   server_time()
-  ti.sleep(60)
+  ti.sleep(30)
  

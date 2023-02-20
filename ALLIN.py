@@ -42,7 +42,7 @@ def indicator(symbol):
   adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
   df['EMA'] = ta.EMA(df['Close'], timeperiod = 13)
-  df['MA50'] = df['Close'].ewm(span=50).mean()
+  df['MA50'] = df['Close'].ewm(span=45).mean()
   df['EMA200'] = ta.EMA(df['Close'], timeperiod = 200)
   df['EMA500'] = ta.EMA(df['Close'], timeperiod = 500)
   #df['ADV']=pd.mean(df['Volume'], window=9)

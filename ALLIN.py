@@ -88,10 +88,10 @@ def indicator(symbol):
   "symbol": symbol
 }
   
-  if (cci[-2] < 0) and (cci[-1] > 0) and (Close < df['MA50'][-1]) and (df['MA50'][-2] < df['MA50'][-1]):
+  if (cci[-3] < 0) and (cci[-2] > 0) and (Close > df['MA50'][-1]) and (df['MA50'][-2] < df['MA50'][-1]) and  (hist[-2] < hist[-1]) and (slowk[-2] < slowk[-1]):
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
       Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 Alcista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
-  elif (cci[-2] > 0) and (cci[-1] < 0) and (Close > df['MA50'][-1]) and (df['MA50'][-2] > df['MA50'][-1]):
+  elif (cci[-3] > 0) and (cci[-2] < 0) and (Close < df['MA50'][-1]) and (df['MA50'][-2] > df['MA50'][-1]) and (hist[-2] > hist[-1]) and (slowk[-2] > slowk[-1]):
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
       Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 Bajista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
     

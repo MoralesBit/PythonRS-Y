@@ -115,9 +115,9 @@ def server_time():
   
   for symbol in symbols:
     indicator(symbol)
-    ti.sleep(0.1)
+    ti.sleep(1)
      
 while (True):
   server_time()
-  ti.sleep(60)
+  ti.sleep(1)
  

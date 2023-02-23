@@ -48,7 +48,7 @@ def indicator(symbol):
   #df['ADV']=pd.mean(df['Volume'], window=9)
   
   #df_new = pd.DataFrame(bars, columns=['Open', 'High', 'Low', 'Close', 'Volume'])
-  Close = float(df['Close'][-2])
+  Close = float(df['Close'][-1])
   High = float(df['High'][-1])
   Low = float(df['Low'][-1])
   diff = abs((High / Low -1) * 100)

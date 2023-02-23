@@ -48,7 +48,7 @@ def indicator(symbol):
   #df['ADV']=pd.mean(df['Volume'], window=9)
   
   #df_new = pd.DataFrame(bars, columns=['Open', 'High', 'Low', 'Close', 'Volume'])
-  Close = float(df['Close'][-1])
+  Close = float(df['Close'][-2])
   High = float(df['High'][-1])
   Low = float(df['Low'][-1])
   diff = abs((High / Low -1) * 100)
@@ -88,10 +88,10 @@ def indicator(symbol):
   "symbol": symbol
 }
   
-  if (macd[-2] < signal[-2]) and (macd[-1] > signal[-1]) and (hist[-2] < 0) and (hist[-1] > 0) and (Close > df['MA50'][-1]):
+  if if (cci[-2] < 0) and (cci[-1] > 0) and (Close > df['MA50'][-1]) and (hist[-2] < hist[-1]) and (slowk[-2] < slowk[-1]):
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
       Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 ALCISTA \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
-  elif (macd[-2] > signal[-2]) and (macd[-1] < signal[-1]) and (hist[-2] > 0) and (hist[-1] < 0) and (Close < df['MA50'][-1]):
+  elif (cci[-2] > 0) and (cci[-1] < 0) and (Close < df['MA50'][-1]) and (hist[-2] > hist[-1]) and (slowk[-2] > slowk[-1]):
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
       Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 BAJISTA \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
     

@@ -77,7 +77,7 @@ def indicator(symbol):
   if  (slowk[-1] <= 20) and (cci[-1] >= -200) and (rsi[-1]  < 20) and (Close < lowerband[-1]):
       #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=LONGREV)
       Tb.telegram_send_message(" 💰 " + symbol + "\n 🟢 LONG \n 💵 Precio: " + df['Close'][-1])
-  elif (slowk[-1] >= 80) and (cci[-1] >= 200) and (rsi[-1]  > 80) and (Close > upperband[-1]:
+  elif (slowk[-1] >= 80) and (cci[-1] >= 200) and (rsi[-1]  > 80) and (Close > upperband[-1]):
       #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=CORTOREV)  
       Tb.telegram_send_message(" 💰 " + symbol + "\n 🔴 SHORT \n 💵 Precio: " + df['Close'][-1])
 

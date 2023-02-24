@@ -45,7 +45,12 @@ def indicator(symbol):
   df['EMA50'] = df['Close'].ewm(50).mean()
   df['EMA100'] = df['Close'].ewm(100).mean()
   df['EMA200'] = df['Close'].ewm(200).mean()
-  #df['ADV']=pd.mean(df['Volume'], window=9)
+  
+  df['signal'] = 0
+    
+  df['signal'] = np.where(df['EMA13'] > df['EMA100'], 1,0)
+  
+  df['Positions'] = df['signal'].diff()
   
   #df_new = pd.DataFrame(bars, columns=['Open', 'High', 'Low', 'Close', 'Volume'])
   Close = float(df['Close'][-1])
@@ -87,7 +92,14 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol
 }
-  
+   if (df['Positions'][-1] == -1.0) and (Close > (df['EMA200'][-1])):
+      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
+      Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
+       
+  if (df['Positions'][-1] == 1.0) and (Close < (df['EMA200'][-1])):
+      requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
+      Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
+  #Tendencia Original     
   if (cci[-2] < 100) and (cci[-1] > 100) and (Close > (df['EMA200'][-1])) and (hist[-1] > macd[-1] > signal[-1]) and (hist[-1] > 0):
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
       Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 ALCISTA \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")

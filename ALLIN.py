@@ -41,8 +41,9 @@ def indicator(symbol):
   roc = ta.ROC(df['Close'], timeperiod=10)
   adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
-  df['EMA'] = ta.EMA(df['Close'], timeperiod = 13)
   df['MA50'] = df['Close'].ewm(span=50).mean()
+  df['MA13'] = df['Close'].ewm(span=13).mean()
+  df['MA100'] = df['Close'].ewm(span=100).mean()
   df['EMA200'] = ta.EMA(df['Close'], timeperiod = 200)
   df['EMA500'] = ta.EMA(df['Close'], timeperiod = 500)
   #df['ADV']=pd.mean(df['Volume'], window=9)
@@ -88,10 +89,10 @@ def indicator(symbol):
   "symbol": symbol
 }
   
-  if (cci[-2] < 0) and (cci[-1] > 0) and (cci[-1] < 20) and (Close > df['MA50'][-1]) and (hist[-2] < hist[-1]) and (slowk[-2] < slowk[-1]):
+  if (df['MA13'][-2] < df['MA100'][-2]) and (df['MA13'][-1] > df['MA100'][-1]) and (cci[-1] > 50):
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
       Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 ALCISTA \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
-  elif (cci[-2] > 0) and (cci[-1] < 0) and (cci[-1] > -20) and (Close < df['MA50'][-1]) and (hist[-2] > hist[-1]) and (slowk[-2] > slowk[-1]) :
+  elif (df['MA13'][-2] > df['MA100'][-2]) and (df['MA13'][-1] < df['MA100'][-1]) and (cci[-1] < -50) :
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
       Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 BAJISTA \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
     

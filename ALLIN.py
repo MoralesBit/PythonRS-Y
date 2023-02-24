@@ -1,6 +1,6 @@
 from binance.client import Client
 import pandas as pd
-import numpy
+import numpy as np
 import talib as ta
 import Telegram_bot as Tb
 import  schedule as schedule

@@ -93,7 +93,7 @@ def indicator(symbol):
   "symbol": symbol
 }
    
-  if (df['Positions'][-1] == str(-1)):
+  if (df['Positions'][-1] == -1):
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
       Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
        

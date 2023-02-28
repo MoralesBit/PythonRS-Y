@@ -23,14 +23,14 @@ def indicator(symbol):
   kline = client.futures_historical_klines(symbol, "15m", "24 hours ago UTC+1",limit=500)
   df = pd.DataFrame(kline)
   
-  info = client.futures_historical_klines("BTCUSDT", "15m", "24 hours ago UTC+1",limit=1000) 
-  df_new = pd.DataFrame(info)
-     
   if not df.empty:
     df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
+  
+  info = client.futures_historical_klines("BTCUSDT", "15m", "24 hours ago UTC+1",limit=1000) 
+  df_new = pd.DataFrame(info)
        
   if not df_new.empty:
         df_new.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
@@ -64,6 +64,8 @@ def indicator(symbol):
   df['signal'] = np.where(df['EMA13'] > df['EMA100'], 1,0)
   
   df['Positions'] = df['signal'].diff()
+  
+  
    
   #Close = float(df['Close'][-1])
   #High = float(df['High'][-1])

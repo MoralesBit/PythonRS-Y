@@ -79,7 +79,7 @@ def indicator(symbol):
                                     slowperiod=26, 
                                     signalperiod=9)
    
-  cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=14)
+  cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
   #atr = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
   #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])
   

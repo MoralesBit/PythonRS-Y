@@ -113,12 +113,12 @@ def indicator(symbol):
   if (cciB[-2] < 0) and (cciB[-1] > 0) and (histB[-1] > 0):
     if (cci[-1] > 50) and (adxr[-1] > 25):
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
-      Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 Alcista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
+      Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 BOT TENDENCIA")
        
   if  (cciB[-2] > 0) and (cciB[-1] < 0) and (histB[-1] < 0): 
     if (cci[-1] < -50) and (adxr[-1] > 25):
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
-      Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 Bajista \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar")
+      Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")
     
   return round(last_rsi, 1), rsi_stat
 

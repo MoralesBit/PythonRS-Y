@@ -55,6 +55,8 @@ def indicator(symbol):
   adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
   
   rsi = ta.RSI(df["Close"], timeperiod=period)
+  
+  Close = float(df['Close'][-1])
  
   last_rsi = rsi 
   
@@ -74,7 +76,7 @@ def indicator(symbol):
   #roc = ta.ROC(df['Close'], timeperiod=10)
   #adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   #mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
-  #Close = float(df['Close'][-1])
+  
   #High = float(df['High'][-1])
   #Low = float(df['Low'][-1])
   #Open = float(df['Open'][-1])

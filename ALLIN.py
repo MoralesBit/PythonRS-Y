@@ -20,7 +20,7 @@ period = 14
 def indicator(symbol):
   rsi_stat = ""
    
-  kline = client.futures_historical_klines(symbol, "15m", "24 hours ago UTC+1",limit=500)
+  kline = client.futures_historical_klines(symbol, "15m", "24 hours ago UTC+1",limit=1000)
   df = pd.DataFrame(kline)
   
   if not df.empty:
@@ -50,7 +50,7 @@ def indicator(symbol):
                                     slowperiod=26, 
                                     signalperiod=9)
    
-  cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=14)
+  cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
   
   adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
   
@@ -68,7 +68,7 @@ def indicator(symbol):
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
   df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
   df_new = df_new.set_index('Date')
-  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=14)
+  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=28)
   macdB, signalB, histB = ta.MACD(df_new['Close'], 
                                     fastperiod=12, 
                                     slowperiod=26, 
@@ -86,7 +86,8 @@ def indicator(symbol):
   #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])
   
   print(symbol)
-  print(adxr[-1])
+ 
+  print(cci[-1])
  
        
   CCISHORT = {
@@ -111,17 +112,17 @@ def indicator(symbol):
     if (df['Positions'][-1] == -1.0) and (cci[-1] < 0):
       #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
       Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
-  
+       
   #Tendencia ORIGINAL    
   if (cciB[-2] < 0) and (cciB[-1] > 0) and (histB[-1] > 0):
-    if (cci[-1] > 50) and (adxr[-1] > 25):
-      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
-      Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 BOT TENDENCIA")
+      if (cci[-1] > 15) and (adxr[-1] > 25):
+        requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
+        Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 BOT TENDENCIA")
        
-  if  (cciB[-2] > 0) and (cciB[-1] < 0) and (histB[-1] < 0): 
-    if (cci[-1] < -50) and (adxr[-1] > 25):
-      requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
-      Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")
+  if  (cciB[-2] > 0) and (cciB[-1] < 0) and (histB[-1] < 0):
+      if (cci[-1] < -15) and (adxr[-1] > 25):
+        requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
+        Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")
     
   return round(last_rsi, 1), rsi_stat
 

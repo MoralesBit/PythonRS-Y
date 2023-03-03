@@ -125,13 +125,13 @@ def indicator(symbol):
         #Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")     
   
   #Tendencia ORIGINAL    
-  if (cciB[-2] < cciB[-1]) and (cciB[-1] > 0) and (rocB[-1] > 0.3):
-      if (cci[-2] < 0) and (cci[-1] > 0) and (hist[-1] > 0):
+  if (cciB[-2] < cciB[-1]) and (cciB[-1] > 0):
+      if (cci[-2] < 0) and (cci[-1] > 0) and (hist[-1] > 0) and (adxr[-2] < adxr[-1]) and (adxr[-1] > 20):
         requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
         Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 BOT TENDENCIA")
        
-  if  (cciB[-2] > cciB[-1]) and (cciB[-1] < 0) and (rocB[-1] < -0.3):
-      if (cci[-2] > 0) and (cci[-1] < 0) and (hist[-1] < 0):
+  if  (cciB[-2] > cciB[-1]) and (cciB[-1] < 0):
+      if (cci[-2] > 0) and (cci[-1] < 0) and (hist[-1] < 0) and (adxr[-2] < adxr[-1]):
         requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
         Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")
     

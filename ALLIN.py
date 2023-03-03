@@ -103,13 +103,6 @@ def indicator(symbol):
   "symbol": symbol
   }
   
-  #BTC uera de ROC
-  if (rocB[-1] > 0.5):
-      Tb.telegram_canal_prueba( "BOT ACTIVO BUSCANDO 🟢 LONGS ")
-      ti.sleep(500)
-  if (rocB[-1] > -0.5) :    
-      Tb.telegram_canal_prueba( "BOT ACTIVO BUSCANDO 🔴 SHORTS ")
-      ti.sleep(500)
       
   if df['EMA200'][-1] < Close :
     if (df['Positions'][-1] == 1.0) and (cci[-1] > 0):

@@ -50,7 +50,7 @@ def indicator(symbol):
                                     slowperiod=26, 
                                     signalperiod=9)
    
-  cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
+  cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
   
   adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
   
@@ -68,7 +68,7 @@ def indicator(symbol):
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
   df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
   df_new = df_new.set_index('Date')
-  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=28)
+  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=58)
   macdB, signalB, histB = ta.MACD(df_new['Close'], 
                                     fastperiod=12, 
                                     slowperiod=26, 

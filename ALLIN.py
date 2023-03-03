@@ -157,7 +157,7 @@ def server_time():
     for i in intervals:
         if minute == i:
             indicator(symbol)
-            ti.sleep(0.1)
+            ti.sleep(0.5)
           
      
 while (True):

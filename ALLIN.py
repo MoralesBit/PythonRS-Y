@@ -73,7 +73,7 @@ def indicator(symbol):
                                     fastperiod=12, 
                                     slowperiod=26, 
                                     signalperiod=9)   
-  #roc = ta.ROC(df['Close'], timeperiod=10)
+  rocB = ta.ROC(df_new['Close'], timeperiod=10)
   #adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   #mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
   
@@ -125,12 +125,12 @@ def indicator(symbol):
         #Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")     
   
   #Tendencia ORIGINAL    
-  if (cciB[-2] < cciB[-1]) and (cciB[-1] > 0):
+  if (cciB[-2] < cciB[-1]) and (cciB[-1] > 0) and (rocB[-1] > 0.6):
       if (cci[-2] < 0) and (cci[-1] > 0) and (hist[-1] > 0):
         requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
         Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 BOT TENDENCIA")
        
-  if  (cciB[-2] > cciB[-1]) and (cciB[-1] < 0):
+  if  (cciB[-2] > cciB[-1]) and (cciB[-1] < 0) and (rocB[-1] < -0.6):
       if (cci[-2] > 0) and (cci[-1] < 0) and (hist[-1] < 0):
         requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
         Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")
@@ -157,9 +157,9 @@ def server_time():
     for i in intervals:
         if minute == i:
             indicator(symbol)
-            ti.sleep(1)
+            ti.sleep(0.1)
           
      
 while (True):
   server_time()
-  ti.sleep(1)
+  ti.sleep(60)

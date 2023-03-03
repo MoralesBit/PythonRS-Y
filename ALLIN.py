@@ -103,7 +103,12 @@ def indicator(symbol):
   "symbol": symbol
   }
   
-  #EMA 13
+  #BTC uera de ROC
+  if (rocB[-1] > 0.5):
+      Tb.telegram_canal_prueba( "BOT ACTIVO BUSCANDO 🟢 LONGS ")
+  if (rocB[-1] > -0.5) :    
+      Tb.telegram_canal_prueba( "BOT ACTIVO BUSCANDO 🔴 SHORTS ")
+      
   if df['EMA200'][-1] < Close :
     if (df['Positions'][-1] == 1.0) and (cci[-1] > 0):
       #requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)

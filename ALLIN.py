@@ -50,9 +50,11 @@ def indicator(symbol):
                                     slowperiod=26, 
                                     signalperiod=9)
    
-  cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=5)
+  cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
   
   adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
+  
+  roc = ta.ROC(df['Close'], timeperiod=10)
   
   rsi = ta.RSI(df["Close"], timeperiod=period)
   
@@ -68,7 +70,7 @@ def indicator(symbol):
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
   df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
   df_new = df_new.set_index('Date')
-  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=5)
+  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=58)
   macdB, signalB, histB = ta.MACD(df_new['Close'], 
                                     fastperiod=12, 
                                     slowperiod=26, 
@@ -126,13 +128,13 @@ def indicator(symbol):
         #Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")     
   
   #Tendencia ORIGINAL    
-  if (cciB[-2] < cciB[-1]) and (cciB[-1] > 0) and (rocB[-1] > 0.5):
-      if (cci[-2] < 0) and (cci[-1] > 0) and (adxr[-2] < adxr[-1]) and (adxr[-1] >= 25):
+  if (cciB[-2] < cciB[-1]) and (cciB[-1] > 0) and (rocB[-1] > 0):
+      if (cci[-2] < 0) and (cci[-1] > 0) and (roc[-1] > 0):
         requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
         Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 BOT TENDENCIA")
        
-  if  (cciB[-2] > cciB[-1]) and (cciB[-1] < 0) and (rocB[-1] < -0.5):
-      if (cci[-2] > 0) and (cci[-1] < 0) and (adxr[-2] < adxr[-1]) and (adxr[-1] >= 25):
+  if  (cciB[-2] > cciB[-1]) and (cciB[-1] < 0) and (rocB[-1] < 0):
+      if (cci[-2] > 0) and (cci[-1] < 0) and (roc[-1] < 0):
         requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
         Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")
     

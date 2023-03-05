@@ -12,7 +12,7 @@ Skey = ''
 
 client = Client(api_key=Pkey, api_secret=Skey)
 
-intervals = [0, 3, 6, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
+intervals = [15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
 connection = ""
 period = 14
 
@@ -87,19 +87,6 @@ def indicator(symbol):
   #atr = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
   #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])
   
-  #Bot 3 Min
-  bot3 = client.futures_historical_klines(symbol, "3m", "24 hours ago UTC+1",limit=1000) 
-  df_3min = pd.DataFrame(bot3)
-       
-  if not df_3min.empty:
-        df_3min.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
-      'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
-  df_3min['Date'] = pd.to_datetime(df_3min['Date'], unit='ms')
-  df_3min = df_3min.set_index('Date')
-  
-  adx = ta.ADX(df_3min['High'], df_3min['Low'], df_3min['Close'], timeperiod=14)
-  roc3min = ta.ROC(df_3min['Close'], timeperiod=10)
-  
   print(symbol)
  
       
@@ -116,18 +103,7 @@ def indicator(symbol):
   "symbol": symbol
   }
   
-  # BOT 1%
-  
-  if (adx[-3] <= adx[-1] < adx[-2]) or (adx[-3] >= adx[-1] > adx[-2]):
-    if (roc3min[-1] < -1):
-      #requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
-      Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n BOT 1% ")
-  
-  if (adx[-3] <= adx[-1] < adx[-2]) or (adx[-3] >= adx[-1] > adx[-2]):
-    if (roc3min[-1] > 1):
-      #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
-      Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n BOT 1% ")
-  
+    
   #EMA
         
   if df['EMA200'][-1] < Close :

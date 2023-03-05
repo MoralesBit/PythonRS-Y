@@ -16,7 +16,6 @@ intervals = [0, 3, 6, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57
 connection = ""
 period = 14
 
-
 def indicator(symbol):
   rsi_stat = ""
    

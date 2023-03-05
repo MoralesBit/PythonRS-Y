@@ -106,8 +106,6 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol
   }
-  
-  
         
   if (adx[-3] <= adx[-1] < adx[-2]) and (roc[-1] > 1):
       #requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
@@ -115,8 +113,7 @@ def indicator(symbol):
   if (adx[-3] >= adx[-1] > adx[-2]) and (roc[-1] < -1):
       #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
       Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
-  
-  
+   
   return round(last_rsi, 1), rsi_stat
 
 if __name__ == '__main__':
@@ -140,7 +137,6 @@ def server_time():
         if minute == i and second == 1:
             indicator(symbol)
             ti.sleep(1)
-          
-     
+               
 while (True):
   server_time()

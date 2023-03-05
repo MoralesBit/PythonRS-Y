@@ -158,11 +158,10 @@ def server_time():
   
   for symbol in symbols:
     for i in intervals:
-        if minute == i:
+        if minute == i and second == 0.1:
             indicator(symbol)
-            ti.sleep(0.5)
+            ti.sleep(0.25)
           
      
 while (True):
   server_time()
-  ti.sleep(60)

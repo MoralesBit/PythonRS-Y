@@ -108,11 +108,11 @@ def indicator(symbol):
   }
    
         
-  if (adx[-3] <= adx[-1] < adx[-2]) or (adx[-3] >= adx[-1] > adx[-2]):
+  if (adx[-3] <= adx[-1] < adx[-2]):
     if (roc[-1] < -1):
       #requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1])
-  if (adx[-3] <= adx[-1] < adx[-2]) or (adx[-3] >= adx[-1] > adx[-2]):
+  if (adx[-3] >= adx[-1] > adx[-2]):
     if (roc[-1] > 1):
       #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1])
@@ -141,8 +141,7 @@ def server_time():
         if minute == i and second == 1:
             indicator(symbol)
             ti.sleep(1)
-          
-     
+        
 while (True):
   server_time()
   ti.sleep(1)

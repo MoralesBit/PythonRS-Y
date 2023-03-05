@@ -12,7 +12,7 @@ Skey = ''
 
 client = Client(api_key=Pkey, api_secret=Skey)
 
-intervals = [15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
+intervals = [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
 connection = ""
 period = 14
 
@@ -50,7 +50,7 @@ def indicator(symbol):
                                     slowperiod=26, 
                                     signalperiod=9)
    
-  cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
+  cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=5)
   
   adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
   
@@ -127,13 +127,13 @@ def indicator(symbol):
         #Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")     
   
   #Tendencia ORIGINAL    
-  if (cciB[-2] < cciB[-1]) and (rocB[-1] > 0):
-      if (cci[-2] < 0) and (cci[-1] > 0) and (roc[-1] > 0) and (adxr[-2] < adxr[-1]):
+  if (cciB[-2] < cciB[-1]) and (histB[-1] > 0):
+      if (cci[-2] < 0) and (cci[-1] > 0) and (roc[-1] > 0) and (adxr[-2] < adxr[-1]) and (adxr[-1] > 25):
         requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
         Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 BOT TENDENCIA")
        
-  if (cciB[-2] > cciB[-1]) and (rocB[-1] < 0):
-      if (cci[-2] > 0) and (cci[-1] < 0) and (roc[-1] < 0) and (adxr[-2] < adxr[-1]):
+  if (cciB[-2] > cciB[-1]) and (histB[-1] < 0):
+      if (cci[-2] > 0) and (cci[-1] < 0) and (roc[-1] < 0) and (adxr[-2] < adxr[-1]) and (adxr[-1] > 25) :
         requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
         Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")
     
@@ -154,14 +154,13 @@ def server_time():
   time = pd.to_datetime(time_server["serverTime"], unit="ms")
   minute = int(time.strftime("%M"))
   second = int(time.strftime("%S"))
-  
+ 
   for symbol in symbols:
     for i in intervals:
-        if minute == i and second == 1:
+      if minute == i :
             indicator(symbol)
             ti.sleep(1)
-          
-     
+        
 while (True):
   server_time()
   ti.sleep(1)

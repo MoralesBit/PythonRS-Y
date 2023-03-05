@@ -12,7 +12,7 @@ Skey = ''
 
 client = Client(api_key=Pkey, api_secret=Skey)
 
-intervals = [15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
+intervals = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
 connection = ""
 period = 14
 
@@ -106,17 +106,16 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol
   }
-  
-  
+   
         
   if (adx[-3] <= adx[-1] < adx[-2]) or (adx[-3] >= adx[-1] > adx[-2]):
     if (roc[-1] < -1):
       #requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
-      Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
+      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1])
   if (adx[-3] <= adx[-1] < adx[-2]) or (adx[-3] >= adx[-1] > adx[-2]):
     if (roc[-1] > 1):
       #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
-      Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
+      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1])
   
   
   return round(last_rsi, 1), rsi_stat
@@ -146,3 +145,4 @@ def server_time():
      
 while (True):
   server_time()
+  ti.sleep(1)

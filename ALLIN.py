@@ -130,12 +130,12 @@ def indicator(symbol):
       Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
   
   #Tendencia prueba    
-  if df['EMA200'][-1] < Close :
+  if df['EMA200'][-2] < Close :
     if (adx[-2] < adx[-1]) and (adx[-1] >= 20):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_canal_prueba( "PRUEBA 1 " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 BOT TENDENCIA")
        
-  if df['EMA200'][-1] > Close :
+  if df['EMA200'][-2] > Close :
     if (adx[-2] < adx[-1]) and (adx[-1] > 20) :
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_canal_prueba( "PRUEBA 1 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")
@@ -152,13 +152,13 @@ def indicator(symbol):
         #Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")     
   
   #Tendencia ORIGINAL    
-  if df_new['EMA200'][-1] < CloseB :
+  if df_new['EMA200'][-2] < CloseB :
       if (cci[-2] < 0) and ( 0 < cci[-1]):
         if (hist[-2] < hist[-1]) and (adx[-2] < adx[-1]) and (adx[-1] > 25):
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
           Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 BOT TENDENCIA")
        
-  if df['EMA200'][-1] > CloseB :
+  if df['EMA200'][-2] > CloseB :
       if (cci[-2] > 0) and (cci[-1] < 0):
         if (hist[-2] > hist[-1]) and (adx[-2] < adx[-1]) and (adx[-1] > 25) :
           requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  

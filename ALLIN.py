@@ -54,6 +54,8 @@ def indicator(symbol):
   
   adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
   
+  adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+  
   roc = ta.ROC(df['Close'], timeperiod=10)
   
   rsi = ta.RSI(df["Close"], timeperiod=period)
@@ -128,12 +130,12 @@ def indicator(symbol):
   
   #Tendencia ORIGINAL    
   if (cciB[-2] < cciB[-1]) and (histB[-1] > 0):
-      if (cci[-2] < 0) and (cci[-1] > 0) and (roc[-1] > 0) and (adxr[-2] < adxr[-1]) and (adxr[-1] > 25):
+      if (cci[-2] < 0) and (cci[-1] > 0) and (roc[-1] > 0) and (adx[-2] < adx[-1]) and (adx[-1] > 25):
         requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
         Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 BOT TENDENCIA")
        
   if (cciB[-2] > cciB[-1]) and (histB[-1] < 0):
-      if (cci[-2] > 0) and (cci[-1] < 0) and (roc[-1] < 0) and (adxr[-2] < adxr[-1]) and (adxr[-1] > 25) :
+      if (cci[-2] > 0) and (cci[-1] < 0) and (roc[-1] < 0) and (adx[-2] < adx[-1]) and (adx[-1] > 25) :
         requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
         Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")
     

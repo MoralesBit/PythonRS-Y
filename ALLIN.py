@@ -117,6 +117,17 @@ def indicator(symbol):
       #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
       Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
   
+  #Tendencia prueba    
+  if (cciB[-2] < 0) and (cciB[-1] > 0):
+    if (adx[-2] < adx[-1]) and (adx[-1] >= 20):
+      #requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
+      Tb.telegram_canal_prueba( "PRUEBA 1 " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 BOT TENDENCIA")
+       
+  if (cciB[-2] > 0) and (cciB[-1] < 0):
+    if (adx[-2] < adx[-1]) and (adx[-1] > 20) :
+      #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
+      Tb.telegram_canal_prueba( "PRUEBA 1 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")
+    
   #Backup  
   #if (cciB[-2] < 0) and (cciB[-1] > 0) and (histB[-1] > 0):
       #if (cci[-1] > 15) and (adxr[-1] > 25):

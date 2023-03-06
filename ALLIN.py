@@ -75,7 +75,7 @@ def indicator(symbol):
                                     signalperiod=9)   
   rocB = ta.ROC(df_new['Close'], timeperiod=10)
   df_new['EMA200'] = df_new['Close'].ewm(200).mean()
-  CloseB = df_new['Close'][-1]
+  CloseB = float(df_new['Close'][-1])
   #adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   #mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
   
@@ -181,11 +181,10 @@ def server_time():
   time_server = client.get_server_time()
   time = pd.to_datetime(time_server["serverTime"], unit="ms")
   minute = int(time.strftime("%M"))
-  second = int(time.strftime("%S"))
-  
+    
   for symbol in symbols:
     for i in intervals:
-        if minute == i and second == 1:
+    	if minute == i:
             indicator(symbol)
             ti.sleep(1)
         

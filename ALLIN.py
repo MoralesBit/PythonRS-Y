@@ -148,7 +148,7 @@ def indicator(symbol):
        
   if (cciB[-2] > cciB[-1]):
       if (cci[-2] > 0) and (cci[-1] < 0):
-        if (hist[-2] > hist[-1]) and (adx[-2] < adx[-1]) and (adx[-1] > 25) :
+        if (hist[-2] > hist[-1]) and (adx[-2] > adx[-1]) and (adx[-1] > 25) :
           requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
           Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")
     

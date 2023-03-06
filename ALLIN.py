@@ -13,6 +13,7 @@ Skey = ''
 
 client = Client(api_key=Pkey, api_secret=Skey)
 period = 14
+intervals = [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
 
 def indicator(symbol):
   
@@ -173,8 +174,6 @@ if __name__ == '__main__':
     if symbol['status'] == "TRADING"
   ]
 #symbols = ["BLZUSDT", "ARUSDT", "INJUSDT", "STORJUSDT","HNTUSDT", "ARPAUSDT"]
-
-intervals = [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
 
 def server_time():
       

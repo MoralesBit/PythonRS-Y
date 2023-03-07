@@ -81,8 +81,8 @@ def indicator(symbol):
   #adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   #mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
   
-  High = float(df['High'][-1])
-  Low = float(df['Low'][-1])
+  High = float(df['High'][-2])
+  Low = float(df['Low'][-2])
   #Open = float(df['Open'][-1])
   diff = abs((High / Low -1) * 100)
   slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
@@ -108,11 +108,11 @@ def indicator(symbol):
   }
    
         
-  if (diff[-2] > 3):
+  if (diff > 3):
     if (rsi[-2] < 20) and (slowk[-2] < 20):    
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=UNOLONG)
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1])
-  if (diff[-2] > 3):
+  if (diff > 3):
     if (rsi[-2] > 80) and (slowk[-2] > 80):   
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=UNOSHORT)  
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1])

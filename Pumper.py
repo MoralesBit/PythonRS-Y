@@ -133,7 +133,7 @@ def server_time():
           
   for symbol in symbols:
     indicator(symbol)
-    ti.sleep(0.1)
+    ti.sleep(1)
             
 schedule.every(3).minutes.do(server_time)
   

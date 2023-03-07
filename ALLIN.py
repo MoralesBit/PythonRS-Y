@@ -7,7 +7,6 @@ import  schedule as schedule
 import time as ti
 import requests
 
-
 Pkey = ''
 Skey = ''
 
@@ -59,6 +58,8 @@ def indicator(symbol):
   rsi = ta.RSI(df["Close"], timeperiod=period)
   
   Close = float(df['Close'][-2])
+  
+  df['banda'] = 0
   
   df['banda'] =  np.where(df['Close'] > upperband , 1,0)
  

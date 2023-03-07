@@ -19,7 +19,7 @@ def indicator(symbol):
   df = pd.DataFrame(kline)
   
   if not df.empty:
-    df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
+    df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close',
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
@@ -61,11 +61,11 @@ def indicator(symbol):
   
   df['banda'] = 0
   
-  df['banda'] =  np.where(df['Close'] > upperband , 1,0)
+  df['banda'] =  np.where(float(df['Close'][-2]) > upperband[-2] , 1,0)
  
-  df['bollinger'] = df['banda'].diff() 
-
-  last_rsi = rsi 
+  df['bollinger'] = df['banda'].diff()
+  
+  
   
   info = client.futures_historical_klines("BTCUSDT", "15m", "24 hours ago UTC+1",limit=1000) 
   df_new = pd.DataFrame(info)
@@ -95,7 +95,7 @@ def indicator(symbol):
   #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])
   
   print(symbol)
- 
+  print(df['bollinger'][-1])
       
   CCISHORT = {
   "name": "CCI SHORT",
@@ -136,11 +136,11 @@ def indicator(symbol):
       Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
   
   #Tendencia prueba    
-  if (df['bollinger'][-2] == -1.0) and (cci5[-2] < 0) and (cci5[-1] > 0):
+  if (df['bollinger'][-1] == -1.0) and (cci5[-2] < 0) and (cci5[-1] > 0):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 Fishing Pisha")
        
-  if (df['bollinger'][-2] == 1.0) and (cci5[-2] > 0) and (cci5[-1] < 0):
+  if (df['bollinger'][-1] == 1.0) and (cci5[-2] > 0) and (cci5[-1] < 0):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 Fishing Pisha")
     
@@ -154,9 +154,6 @@ def indicator(symbol):
       if (cci5[-1] < -0) and (adxr[-1] > 25):
         requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
         Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 Trend")     
- 
-    
-  return round(last_rsi, 1)
 
 if __name__ == '__main__':
   monedas = client.futures_exchange_info()
@@ -168,12 +165,11 @@ if __name__ == '__main__':
 #symbols = ["BLZUSDT", "ARUSDT", "INJUSDT", "STORJUSDT","HNTUSDT", "ARPAUSDT"]
 
 def server_time():
-          
-  for symbol in symbols:
+ for symbol in symbols:
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(15).minutes.do(server_time)
+schedule.every(1).minutes.do(server_time)
   
 while True:
     schedule.run_pending()

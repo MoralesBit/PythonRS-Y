@@ -108,11 +108,11 @@ def indicator(symbol):
   }
    
         
-  if (diff > 3):
+  if (diff > 1):
     if (rsi[-2] < 20) and (slowk[-2] < 20):    
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=UNOLONG)
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1])
-  if (diff > 3):
+  if (diff > 1):
     if (rsi[-2] > 80) and (slowk[-2] > 80):   
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=UNOSHORT)  
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1])

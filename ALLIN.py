@@ -38,15 +38,15 @@ def indicator(symbol):
   
   upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                timeperiod=20,
-                                               nbdevup=2,
-                                               nbdevdn=2,
+                                               nbdevup=1.9,
+                                               nbdevdn=1.9,
                                                matype=0)
   macd, signal, hist = ta.MACD(df['Close'], 
                                     fastperiod=12, 
                                     slowperiod=26, 
                                     signalperiod=9)
    
-  cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=5)
+  cci5 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=5)
   cci28 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
   cci58 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
   
@@ -122,48 +122,36 @@ def indicator(symbol):
   #EMA
         
   if df['EMA200'][-2] < Close :
-    if (df['Positions'][-1] == 1.0) and (cci[-1] > 0):
+    if (df['Positions'][-1] == 1.0) and (cci5[-1] > 0):
       #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=CCILONG)
       Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
   if df['EMA200'][-2] > Close :     
-    if (df['Positions'][-1] == -1.0) and (cci[-1] < 0):
+    if (df['Positions'][-1] == -1.0) and (cci5[-1] < 0):
       #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
       Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
   
   #Tendencia prueba    
-  if df['EMA200'][-2] < Close :
-    if (cci58[-2] < 0) and (cci58[-1] > 0) and (adx[-1] >= 20):
+  if Close < lowerband[-2]:
+    if (cci5[-2] < 0) and (cci5[-1] > 0):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_canal_prueba( "PRUEBA 4 " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 BOT TENDENCIA")
        
-  if df['EMA200'][-2] > Close :
-    if (cci58[-2] > 0) and (cci58[-1] < 0) and (adx[-1] >= 20):
+  if Close > upperband[-2] :
+    if (cci5[-2] > 0) and (cci5[-1] < 0):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_canal_prueba( "PRUEBA 4 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")
     
-  #Backup  
-  #if (cciB[-2] < 0) and (cciB[-1] > 0) and (histB[-1] > 0):
-      #if (cci[-1] > 15) and (adxr[-1] > 25):
-        #requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
-        #Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 BOT TENDENCIA")
+  #Tendencia  
+  if (cciB[-2] < 0) and (cciB[-1] > 0) and (histB[-1] > 0):
+      if (cci5[-1] > 0) and (adxr[-1] > 25):
+        requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
+        Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 BOT TENDENCIA")
        
-  #if  (cciB[-2] > 0) and (cciB[-1] < 0) and (histB[-1] < 0):
-      #if (cci[-1] < -15) and (adxr[-1] > 25):
-        #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
-        #Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")     
-  
-  #Tendencia ORIGINAL    
-  if df_new['EMA200'][-1] < CloseB :
-      if (cci28[-2] < 0) and ( 0 < cci28[-1]):
-        if (hist[-2] < hist[-1]) and (adx[-2] < adx[-1]) and (adx[-1] > 25):
-          requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
-          Tb.telegram_send_message( "🎱 " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 BOT TENDENCIA")
-       
-  if df['EMA200'][-1] > CloseB :
-      if (cci28[-2] > 0) and (cci28[-1] < 0):
-        if (hist[-2] > hist[-1]) and (adx[-2] < adx[-1]) and (adx[-1] > 25) :
-          requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
-          Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")
+  if  (cciB[-2] > 0) and (cciB[-1] < 0) and (histB[-1] < 0):
+      if (cci5[-1] < -0) and (adxr[-1] > 25):
+        requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
+        Tb.telegram_send_message( "🎱 " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 BOT TENDENCIA")     
+ 
     
   return round(last_rsi, 1)
 
@@ -176,21 +164,15 @@ if __name__ == '__main__':
   ]
 #symbols = ["BLZUSDT", "ARUSDT", "INJUSDT", "STORJUSDT","HNTUSDT", "ARPAUSDT"]
 
-intervals = [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
-
 def server_time():
-      
-  time_server = client.get_server_time()
-  time = pd.to_datetime(time_server["serverTime"], unit="ms")
-  minute = int(time.strftime("%M"))
-    
+          
   for symbol in symbols:
-    for i in intervals:
-    	if minute == i:
-            indicator(symbol)
-            ti.sleep(1)
-        
-while (True):
-  server_time()
-  ti.sleep(1)
+    indicator(symbol)
+    ti.sleep(1)
+            
+schedule.every(15).minutes.do(server_time)
+  
+while True:
+    schedule.run_pending()
+    ti.sleep(1)
      

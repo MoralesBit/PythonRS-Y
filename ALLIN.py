@@ -38,8 +38,8 @@ def indicator(symbol):
     
   upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                timeperiod=20,
-                                               nbdevup=2.5,
-                                               nbdevdn=2.5,
+                                               nbdevup=2,
+                                               nbdevdn=2,
                                                matype=0)
   macd, signal, hist = ta.MACD(df['Close'], 
                                     fastperiod=12, 

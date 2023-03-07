@@ -81,11 +81,11 @@ def indicator(symbol):
   #adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   #mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
   
-  #High = float(df['High'][-1])
-  #Low = float(df['Low'][-1])
+  High = float(df['High'][-1])
+  Low = float(df['Low'][-1])
   #Open = float(df['Open'][-1])
-  #diff = abs((High / Low -1) * 100)
-  #slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+  diff = abs((High / Low -1) * 100)
+  slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
   #atr = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
   #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])
   
@@ -94,27 +94,27 @@ def indicator(symbol):
   print(adx[-1])
  
        
-  CCISHORT = {
-  "name": "CCI SHORT",
-  "secret": "w48ulz23f6",
+  UNOSHORT = {
+  "name": "SHORT-REV",
+  "secret": "hgw3399vhh",
   "side": "sell",
   "symbol": symbol
   }
-  CCILONG = {
-  "name": "CCI LONG",
-  "secret": "xxuxkqf0gpj",
+  UNOLONG = {
+  "name": "LONG- REV",
+  "secret": "xjth0i3qgb",
   "side": "buy",
   "symbol": symbol
   }
    
         
-  if (adx[-3] <= adx[-1] < adx[-2]):
-    if (roc[-1] < -1):
-      #requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
+  if (diff[-2] > 3):
+    if (rsi[-2] < 20) and (slowk[-2] < 20):    
+      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=UNOLONG)
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1])
-  if (adx[-3] >= adx[-1] > adx[-2]):
-    if (roc[-1] > 1):
-      #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
+  if (diff[-2] > 3):
+    if (rsi[-2] > 80) and (slowk[-2] > 80):   
+      requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=UNOSHORT)  
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1])
   
   
@@ -130,18 +130,13 @@ if __name__ == '__main__':
 #symbols = ["BLZUSDT", "ARUSDT", "INJUSDT", "STORJUSDT","HNTUSDT", "ARPAUSDT"]
 
 def server_time():
-      
-  time_server = client.get_server_time()
-  time = pd.to_datetime(time_server["serverTime"], unit="ms")
-  minute = int(time.strftime("%M"))
-  second = int(time.strftime("%S"))
-  
+          
   for symbol in symbols:
-    for i in intervals:
-        if minute == i and second == 1:
-            indicator(symbol)
-            ti.sleep(1)
-        
-while (True):
-  server_time()
-  ti.sleep(1)
+    indicator(symbol)
+    ti.sleep(0.1)
+            
+schedule.every(3).minutes.do(server_time)
+  
+while True:
+    schedule.run_pending()
+    ti.sleep(1)

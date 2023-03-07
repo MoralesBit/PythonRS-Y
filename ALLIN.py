@@ -58,20 +58,7 @@ def indicator(symbol):
   rsi = ta.RSI(df["Close"], timeperiod=period)
   
   Close = float(df['Close'][-2])
-  
-  df['banda'] = 0
-  
-  df['banda'] =  np.where(float(df['Close'][-2]) > upperband[-2] , 1,0)
- 
-  df['bollinger'] = df['banda'].diff()
-  
-  df['cci5'] = 0
-  
-  df['cci5'] =  np.where(cci5[-1] > cci5[-2] , 1,0)
- 
-  df['cci5_signal'] = df['cci5'].diff()
-  
-  
+      
   info = client.futures_historical_klines("BTCUSDT", "15m", "24 hours ago UTC+1",limit=1000) 
   df_new = pd.DataFrame(info)
        
@@ -100,8 +87,7 @@ def indicator(symbol):
   #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])
   
   print(symbol)
-  print(df['bollinger'][-1])
-  print((df['cci5_signal'][-1]))
+  
       
   CCISHORT = {
   "name": "CCI SHORT",
@@ -142,11 +128,11 @@ def indicator(symbol):
       Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
   
   #Tendencia prueba    
-  if (df['bollinger'][-1] == -1.0) and (df['cci5_signal'][-1] == 1.0):
+  if (upperband[-2] <= Close) and (cci5[-2] < 0) and (cci5[-1] > 0):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 Fishing Pisha")
        
-  if (df['bollinger'][-1] == 1.0) and (df['cci5_signal'][-1] == -1.0):
+  if (lowerband[-2] >= Close) and (cci5[-2] > 0) and (cci5[-1] < 0):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 Fishing Pisha")
     
@@ -157,7 +143,7 @@ def indicator(symbol):
         Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 Trend")
        
   if  (cciB[-2] > 0) and (cciB[-1] < 0) and (histB[-1] < 0):
-      if (cci5[-1] < -0) and (adxr[-1] > 25):
+      if (cci5[-1] < 0) and (adxr[-1] > 25):
         requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
         Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 Trend")     
 

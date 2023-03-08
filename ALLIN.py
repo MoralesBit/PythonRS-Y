@@ -135,6 +135,8 @@ def indicator(symbol):
   else: 
     BB = 0
   
+  print(BB)
+  
   if (BB <= 0) and (cci5[-2] < 0) and (cci5[-1] > 0):
         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
         Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BBtop/BBdown) + " \n⚠️ No Operar \n📈 Fishing Pisha")
@@ -179,7 +181,7 @@ def server_time():
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(1).minutes.at(":05").do(server_time)
+schedule.every(15).minutes.at(":05").do(server_time)
   
 while True:
     schedule.run_pending()

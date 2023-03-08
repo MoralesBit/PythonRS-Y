@@ -15,7 +15,7 @@ period = 14
 
 def indicator(symbol):
   
-  kline = client.futures_historical_klines(symbol, "15m", "24 hours ago UTC+1",limit=1000)
+  kline = client.futures_historical_klines(symbol, "15m", "6 hours ago UTC+1",limit=500)
   df = pd.DataFrame(kline)
   
   if not df.empty:
@@ -34,6 +34,8 @@ def indicator(symbol):
   df['signal'] = np.where(df['EMA13'] > df['EMA100'], 1,0)
   
   df['Positions'] = df['signal'].diff() 
+  
+  BB = ((float(df['Close'][-2]) - lowerband[-2])/(upperband[-2] - lowerband[-2]))
   
     
   upperband, middleband, lowerband = ta.BBANDS(df['Close'],
@@ -86,6 +88,9 @@ def indicator(symbol):
   #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])
   
   print(symbol)
+  print(upperband[-2])
+  print(lowerband[-2])
+  
         
   CCISHORT = {
   "name": "CCI SHORT",
@@ -126,11 +131,11 @@ def indicator(symbol):
       Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
   
   #Tendencia prueba    
-  if (lowerband[-2] >= float(df['Close'][-2])) and (cci5[-2] < 0) and (cci5[-1] > 0):
+  if (BB > 1) and (cci5[-2] < 0) and (cci5[-1] > 0):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 Fishing Pisha")
        
-  if (upperband[-2] <= float(df['Close'][-2])) and (cci5[-2] > 0) and (cci5[-1] < 0):
+  if (BB < -1) and (cci5[-2] > 0) and (cci5[-1] < 0):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 Fishing Pisha")
     
@@ -163,4 +168,4 @@ schedule.every(15).minutes.at(":05").do(server_time)
   
 while True:
     schedule.run_pending()
-    ti.sleep(1)   
+    ti.sleep(1) 

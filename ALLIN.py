@@ -133,7 +133,7 @@ def indicator(symbol):
   if BBdown > 0 or BBdown < 0:
     BB = round((BBtop/BBdown),2) 
   else: 
-    BB = 0
+    BB = 0.5
   
   print(BB)
   

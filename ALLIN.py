@@ -56,9 +56,13 @@ def indicator(symbol):
   roc = ta.ROC(df['Close'], timeperiod=10)
   
   rsi = ta.RSI(df["Close"], timeperiod=period)
+
+  try:
+    BB = round(((float(df['Close'][-2]) - df['lowerband'][-2])/(df['upperband'][-2] - df['lowerband'][-2])),2)
+  except ZeroDivisionError:
+    return 0.5
   
-  BB = round(((float(df['Close'][-2]) - df['lowerband'][-2])/(df['upperband'][-2] - df['lowerband'][-2])),2)
-  
+
   info = client.futures_historical_klines("BTCUSDT", "15m", "24 hours ago UTC+1",limit=1000) 
   df_new = pd.DataFrame(info)
        
@@ -172,7 +176,7 @@ def server_time():
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(15).minutes.at(":05").do(server_time)
+schedule.every(1).minutes.at(":05").do(server_time)
   
 while True:
     schedule.run_pending()

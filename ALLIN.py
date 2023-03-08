@@ -35,9 +35,6 @@ def indicator(symbol):
   
   df['Positions'] = df['signal'].diff() 
   
-  BB = ((float(df['Close'][-2]) - lowerband[-2])/(upperband[-2] - lowerband[-2]))
-  
-    
   upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                timeperiod=20,
                                                nbdevup=2,
@@ -59,6 +56,8 @@ def indicator(symbol):
   roc = ta.ROC(df['Close'], timeperiod=10)
   
   rsi = ta.RSI(df["Close"], timeperiod=period)
+  
+  BB = ((float(df['Close'][-2]) - lowerband[-2])/(upperband[-2] - lowerband[-2]))
   
   info = client.futures_historical_klines("BTCUSDT", "15m", "24 hours ago UTC+1",limit=1000) 
   df_new = pd.DataFrame(info)

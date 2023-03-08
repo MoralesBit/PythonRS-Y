@@ -130,7 +130,7 @@ def indicator(symbol):
       #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
       Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
   
-  #Tendencia prueba    
+  # fishing Pisha    
   if (BB > 1) and (cci5[-2] < 0) and (cci5[-1] > 0):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 Fishing Pisha")
@@ -138,17 +138,28 @@ def indicator(symbol):
   if (BB < -1) and (cci5[-2] > 0) and (cci5[-1] < 0):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 Fishing Pisha")
-    
-  #Tendencia  
+  
+   #Top Trend  
+  if (cci58[-2] < 0) and (cci58[-1] > 0) and (hist[-1] > 0):
+      if (adxr[-1] > 25):
+        #requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=TOPLONG)
+        Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 Top Trend")
+       
+  if  (cci58[-2] > 0) and (cci58[-1] < 0) and (hist[-1] < 0):
+      if (adxr[-1] > 25):
+        #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=TOPSHORT)  
+        Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 Top Trend")
+          
+  #Master Trend  
   if (cciB[-2] < 0) and (cciB[-1] > 0) and (histB[-1] > 0):
       if (cci5[-1] > 0) and (adxr[-1] > 25):
         requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
-        Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 Trend")
+        Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 Master Trend")
        
   if  (cciB[-2] > 0) and (cciB[-1] < 0) and (histB[-1] < 0):
       if (cci5[-1] < 0) and (adxr[-1] > 25):
         requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
-        Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 Trend")     
+        Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 Master Trend")     
 
 if __name__ == '__main__':
   monedas = client.futures_exchange_info()
@@ -168,4 +179,4 @@ schedule.every(15).minutes.at(":05").do(server_time)
   
 while True:
     schedule.run_pending()
-    ti.sleep(1) 
+    ti.sleep(1)   

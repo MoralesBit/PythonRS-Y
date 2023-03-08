@@ -131,7 +131,7 @@ def indicator(symbol):
       #Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
   
   # fishing Pisha    
-  if BB == 0:
+  if BB == "inf":
         print ("marico el que lo lee")
   else: 
     if (BB <= 0) and (cci5[-2] < 0) and (cci5[-1] > 0):
@@ -178,7 +178,7 @@ def server_time():
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(15).minutes.at(":05").do(server_time)
+schedule.every(1).minutes.at(":05").do(server_time)
   
 while True:
     schedule.run_pending()

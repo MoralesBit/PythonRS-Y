@@ -132,14 +132,15 @@ def indicator(symbol):
       #Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
   
   # fishing Pisha    
-  if (float(BB) <= 0 ) and (cci5[-2] < 0) and (cci5[-1] > 0):
+  if (float(BB) <= 0 ) and (float(BB) != "-inf" ) and (cci5[-2] < 0) and (cci5[-1] > 0):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB) + " \n⚠️ No Operar \n📈 Fishing Pisha")
        
-  if (float(BB) >= 1) and (cci5[-2] > 0) and (cci5[-1] < 0):
+  if (float(BB) >= 1) and and (float(BB) != "-inf" ) and (cci5[-2] > 0) and (cci5[-1] < 0):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB)+ "\n⚠️ No Operar \n📉 Fishing Pisha")
-  
+  elif (float(BB) == "-inf" ):
+        print ("Zero")
    #Top Trend  
   if (cci58[-2] < 0) and (cci58[-1] > 0) and (hist[-1] > 0):
       if (adxr[-1] > 25):

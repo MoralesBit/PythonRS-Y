@@ -87,8 +87,8 @@ def indicator(symbol):
   #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])
   
   print(symbol)
-  print(upperband[-2])
-  print(lowerband[-2])
+  print(BB)
+ 
   
         
   CCISHORT = {
@@ -132,11 +132,11 @@ def indicator(symbol):
   # fishing Pisha    
   if (BB <= 0 ) and (cci5[-2] < 0) and (cci5[-1] > 0):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
-      Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📈 Fishing Pisha")
+      Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n BB : " + round(BB,2) + " \n⚠️ No Operar \n📈 Fishing Pisha")
        
   if (BB >= 1) and (cci5[-2] > 0) and (cci5[-1] < 0):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
-      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n⚠️ No Operar \n📉 Fishing Pisha")
+      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n BB : " + round(BB,2) + "\n⚠️ No Operar \n📉 Fishing Pisha")
   
    #Top Trend  
   if (cci58[-2] < 0) and (cci58[-1] > 0) and (hist[-1] > 0):

@@ -136,7 +136,7 @@ def indicator(symbol):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB) + " \n⚠️ No Operar \n📈 Fishing Pisha")
        
-  if (float(BB) >= 1) and and (float(BB) != "-inf" ) and (cci5[-2] > 0) and (cci5[-1] < 0):
+  if (float(BB) >= 1) and (float(BB) != "-inf" ) and (cci5[-2] > 0) and (cci5[-1] < 0):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB)+ "\n⚠️ No Operar \n📉 Fishing Pisha")
   elif (float(BB) == "-inf" ):
@@ -177,7 +177,7 @@ def server_time():
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(1).minutes.at(":05").do(server_time)
+schedule.every(15).minutes.at(":05").do(server_time)
   
 while True:
     schedule.run_pending()

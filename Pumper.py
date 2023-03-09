@@ -56,7 +56,7 @@ def indicator(symbol):
   
   roc = ta.ROC(df['Close'], timeperiod=10)
   
-  rsi = ta.RSI(df["Close"], timeperiod=period)
+  rsi = round(ta.RSI(df["Close"], timeperiod=period), 3)
   
   Close = float(df['Close'][-1])
   
@@ -84,7 +84,7 @@ def indicator(symbol):
   High = float(df['High'][-2])
   Low = float(df['Low'][-2])
   #Open = float(df['Open'][-1])
-  diff = abs((High / Low -1) * 100)
+  diff = round(abs((High / Low -1) * 100), 3)
   slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
   #atr = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
   #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])
@@ -109,13 +109,13 @@ def indicator(symbol):
    
         
   if (diff > 1):
-    if (rsi[-2] < 30) and (slowk[-2] < 20) and (adx[-2] > 30):    
+    if (rsi[-2] < 30) and (slowk[-2] < 20) and (adx[-2] > 40):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
-      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + round(str(diff), 3) + " %" + "\n📈  RSI: " + round(str(rsi[-1]), 3))
+      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📈  RSI: " + str(rsi[-1]))
   if (diff > 1):
-    if (rsi[-2] > 70) and (slowk[-2] > 80) and (adx[-2] > 30):   
+    if (rsi[-2] > 70) and (slowk[-2] > 80) and (adx[-2] > 40):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
-      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + round(str(diff), 3) + " %" + "\n📉  RSI: " + round(str(rsi[-1]), 3))
+      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📉  RSI: " + str(rsi[-1]))
   
   
   return round(last_rsi, 1), rsi_stat

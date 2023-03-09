@@ -139,20 +139,20 @@ def indicator(symbol):
   # fishing Pisha 
   if (BB <= 0) and (cci5[-2] < 0) and (cci5[-1] > 0) and (histB[-2] < histB[-1]):
         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
-        Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB) + "\n📈 Fishing Pisha")
+        Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB) + "\n🎣 Fishing Pisha")
   
   if (BB >= 1) and (cci5[-2] > 0) and (cci5[-1] < 0) and (histB[-2] > histB[-1]):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
-      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB)+ "\n📉 Fishing Pisha")
+      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB)+ "\n🎣 Fishing Pisha")
   
   #Top Trend  
-  if (cci58[-2] < 0) and (cci58[-1] > 0) and (histB[-1] > 0):
-      if (adxr[-1] > 20):
+  if (cci58[-2] < 0) and (cci58[-1] > 0) :
+      if (float(df['EMA200'][-2]) < float(df['Close'][-2])):
         #requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=TOPLONG)
         Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📈 Top Trend")
        
-  if  (cci58[-2] > 0) and (cci58[-1] < 0) and (histB[-1] < 0):
-      if (adxr[-1] > 20):
+  if  (cci58[-2] > 0) and (cci58[-1] < 0):
+      if (float(df['EMA200'][-2]) > float(df['Close'][-2])):
         #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=TOPSHORT)  
         Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📉 Top Trend")
           
@@ -181,7 +181,7 @@ def server_time():
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(5).minutes.at(":05").do(server_time)
+schedule.every(5).minutes.at(":01").do(server_time)
   
 while True:
     schedule.run_pending()

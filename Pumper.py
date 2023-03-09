@@ -109,11 +109,11 @@ def indicator(symbol):
    
         
   if (diff > 1):
-    if (rsi[-2] < 20) and (slowk[-2] < 10):    
+    if (rsi[-2] < 30) and (slowk[-2] < 20) and (adx[-2] > 30):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + round(diff, 3) + " %" + "\n📈  RSI: " + round(rsi[-1], 3))
   if (diff > 1):
-    if (rsi[-2] > 80) and (slowk[-2] > 90):   
+    if (rsi[-2] > 70) and (slowk[-2] > 80) and (adx[-2] > 30):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + round(diff, 3) + " %" + "\n📉  RSI: " + round(rsi[-1], 3))
   
@@ -135,7 +135,7 @@ def server_time():
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(3).minutes.do(server_time)
+schedule.every(3).minutes.at(":01").do(server_time)
   
 while True:
     schedule.run_pending()

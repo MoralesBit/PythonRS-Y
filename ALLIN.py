@@ -181,7 +181,7 @@ def server_time():
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(15).minutes.at(":05").do(server_time)
+schedule.every(5).minutes.at(":05").do(server_time)
   
 while True:
     schedule.run_pending()

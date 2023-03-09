@@ -109,7 +109,7 @@ def indicator(symbol):
    
         
   if (diff > 1):
-    if (rsi[-2] < 20) and (slowk[-2] > 20) and (adx[-2] < 40):    
+    if (rsi[-2] < 20) and (slowk[-2] > 20) and (adx[-2] > 40):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📈  RSI: " + str(rsi[-1]))
   if (diff > 1):

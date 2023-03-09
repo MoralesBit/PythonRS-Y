@@ -11,20 +11,15 @@ Pkey = ''
 Skey = ''
 
 client = Client(api_key=Pkey, api_secret=Skey)
-
-intervals = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
-connection = ""
 period = 14
 
-
 def indicator(symbol):
-  rsi_stat = ""
-   
-  kline = client.futures_historical_klines(symbol, "3m", "24 hours ago UTC+1",limit=1000)
+  
+  kline = client.futures_historical_klines(symbol, "15m", "6 hours ago UTC+1",limit=500)
   df = pd.DataFrame(kline)
   
   if not df.empty:
-    df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
+    df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close',
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
@@ -38,9 +33,9 @@ def indicator(symbol):
     
   df['signal'] = np.where(df['EMA13'] > df['EMA100'], 1,0)
   
-  df['Positions'] = df['signal'].diff()  
+  df['Positions'] = df['signal'].diff() 
   
-  upperband, middleband, lowerband = ta.BBANDS(df['Close'],
+  df['upperband'], df['middleband'], df['lowerband'] = ta.BBANDS(df['Close'],
                                                timeperiod=20,
                                                nbdevup=2,
                                                nbdevdn=2,
@@ -50,21 +45,24 @@ def indicator(symbol):
                                     slowperiod=26, 
                                     signalperiod=9)
    
-  cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
+  cci5 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=5)
+  cci28 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
+  cci58 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
   
   adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
   
+  adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+  
   roc = ta.ROC(df['Close'], timeperiod=10)
   
-  rsi = round(ta.RSI(df["Close"], timeperiod=period), 3)
+  rsi = ta.RSI(df["Close"], timeperiod=period)
+
   
-  Close = float(df['Close'][-1])
+  BBtop = (float(df['Close'][-2]) - df['lowerband'][-2])
+  BBdown = (df['upperband'][-2] - df['lowerband'][-2])
   
-  adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
- 
-  last_rsi = rsi 
-  
-  info = client.futures_historical_klines("BTCUSDT", "3m", "24 hours ago UTC+1",limit=1000) 
+
+  info = client.futures_historical_klines("BTCUSDT", "15m", "24 hours ago UTC+1",limit=1000) 
   df_new = pd.DataFrame(info)
        
   if not df_new.empty:
@@ -72,53 +70,102 @@ def indicator(symbol):
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
   df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
   df_new = df_new.set_index('Date')
-  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=58)
+  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=28)
   macdB, signalB, histB = ta.MACD(df_new['Close'], 
                                     fastperiod=12, 
                                     slowperiod=26, 
                                     signalperiod=9)   
   rocB = ta.ROC(df_new['Close'], timeperiod=10)
+  df_new['EMA200'] = df_new['Close'].ewm(200).mean()
+ 
   #adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   #mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
   
-  High = float(df['High'][-2])
-  Low = float(df['Low'][-2])
+  #High = float(df['High'][-1])
+  #Low = float(df['Low'][-1])
   #Open = float(df['Open'][-1])
-  diff = round(abs((High / Low -1) * 100), 3)
-  slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+  #diff = abs((High / Low -1) * 100)
+  #slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
   #atr = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
   #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])
   
   print(symbol)
- 
-  print(adx[-1])
- 
-       
-  UNOSHORT = {
-  "name": "SHORT-REV",
-  "secret": "hgw3399vhh",
+           
+  CCISHORT = {
+  "name": "CCI SHORT",
+  "secret": "w48ulz23f6",
   "side": "sell",
   "symbol": symbol
   }
-  UNOLONG = {
-  "name": "LONG- REV",
-  "secret": "xjth0i3qgb",
+  
+  PSHORT = {
+  "name": "PRUEBA SHORT",
+  "secret": "azsdb9x719",
+  "side": "sell",
+  "symbol": symbol
+  }
+  CCILONG = {
+  "name": "CCI LONG",
+  "secret": "xxuxkqf0gpj",
   "side": "buy",
   "symbol": symbol
   }
-   
+  
+  PLONG = {
+  "name": "PRUEBA LONG",
+  "secret": "0kivpja7tz89",
+  "side": "buy",
+  "symbol": symbol
+  }
+    
+  #EMA (mejorar)
         
-  if (diff > 1):
-    if (rsi[-2] < 20) and (slowk[-2] < 20) and (adx[-2] > 40):    
-      requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
-      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📈  RSI: " + str(rsi[-1]))
-  if (diff > 1):
-    if (rsi[-2] > 80) and (slowk[-2] > 80) and (adx[-2] > 40):   
-      requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
-      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📉  RSI: " + str(rsi[-1]))
+  #if df['EMA200'][-2] < float(df['Close'][-2]) :
+    #if (df['Positions'][-1] == 1.0) and (cci5[-1] > 0):
+      #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=CCILONG)
+      #Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
+  #if df['EMA200'][-2] > float(df['Close'][-2]):     
+    #if (df['Positions'][-1] == -1.0) and (cci5[-1] < 0):
+      #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
+      #Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
   
+  #Verificacion de division en 0   
+  if BBdown > 0 or BBdown < 0:
+    BB = round((BBtop/BBdown),2) 
+  else: 
+    BB = 0.55555
   
-  return round(last_rsi, 1), rsi_stat
+  print(BB)
+  # fishing Pisha 
+  if (BB <= 0) and (cci5[-2] < 0) and (cci5[-1] > 0) and (histB[-2] < histB[-1]):
+        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
+        Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB) + "\n🎣 Fishing Pisha")
+  
+  if (BB >= 1) and (cci5[-2] > 0) and (cci5[-1] < 0) and (histB[-2] > histB[-1]):
+      requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
+      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB)+ "\n🎣 Fishing Pisha")
+  
+  #Top Trend  
+  if (cci58[-2] < 0) and (cci58[-1] > 0) :
+      if (float(df['EMA200'][-2]) < float(df['Close'][-2])):
+        #requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=TOPLONG)
+        Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📈 Top Trend")
+       
+  if  (cci58[-2] > 0) and (cci58[-1] < 0):
+      if (float(df['EMA200'][-2]) > float(df['Close'][-2])):
+        #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=TOPSHORT)  
+        Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📉 Top Trend")
+          
+  #Master Trend  
+  if (cciB[-2] < 0) and (cciB[-1] > 0) and (histB[-1] > 0):
+      if (cci5[-1] > 0) and (adxr[-1] > 25):
+        requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
+        Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📈 Master Trend")
+       
+  if  (cciB[-2] > 0) and (cciB[-1] < 0) and (histB[-1] < 0):
+      if (cci5[-1] < 0) and (adxr[-1] > 25):
+        requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
+        Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📉 Master Trend")     
 
 if __name__ == '__main__':
   monedas = client.futures_exchange_info()
@@ -130,13 +177,12 @@ if __name__ == '__main__':
 #symbols = ["BLZUSDT", "ARUSDT", "INJUSDT", "STORJUSDT","HNTUSDT", "ARPAUSDT"]
 
 def server_time():
-          
-  for symbol in symbols:
+ for symbol in symbols:
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(3).minutes.at(":01").do(server_time)
+schedule.every(3).minutes.at(":05").do(server_time)
   
 while True:
     schedule.run_pending()
-    ti.sleep(1)
+    ti.sleep(1)   

@@ -50,7 +50,7 @@ def indicator(symbol):
                                     slowperiod=26, 
                                     signalperiod=9)
    
-  cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
+  cci3= ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=3)
   
   adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
   
@@ -109,11 +109,11 @@ def indicator(symbol):
    
         
   if (diff > 1):
-    if (rsi[-2] < 25) and (slowk[-2] > 20) and (adx[-2] > 35):    
+    if (rsi[-2] < 25) and (slowk[-2] > 20) and (cci3[-2] < 0) and (cci3[-1] > 0):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📈  RSI: " + str(rsi[-1]))
   if (diff > 1):
-    if (rsi[-2] > 75) and (slowk[-2] < 80) and (adx[-2] > 35):   
+    if (rsi[-2] > 75) and (slowk[-2] < 80) and (cci3[-2] > 0) and (cci3[-1] < 0):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📉  RSI: " + str(rsi[-1]))
   

@@ -136,8 +136,10 @@ def indicator(symbol):
          
   else: 
     BB2 = 0.55555
+    BB1 = 0.55555
      
   print(BB2)
+  print(BB1)
   # Fishing Pisha Nuevo 
   if (BB2 < 0) and (BB1 >= 0) and (cci3[-2] < 0) and (cci3[-1] > 0) and (adx[-2] > 20):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)

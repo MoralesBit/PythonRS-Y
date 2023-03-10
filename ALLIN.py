@@ -132,12 +132,17 @@ def indicator(symbol):
   #Verificacion de division en 0   
   if BBdown2 > 0 or BBdown2 < 0:
     BB2 = round((BBtop2/BBdown2),2)
-    BB1 = round((BBtop1/BBdown1),2)
          
   else: 
     BB2 = 0.55555
+  
+  if BBdown1 > 0 or BBdown1 < 0:
+    
+    BB1 = round((BBtop1/BBdown1),2)
+         
+  else: 
+    
     BB1 = 0.55555
-     
   print(BB2)
   print(BB1)
   # Fishing Pisha Nuevo 

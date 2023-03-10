@@ -44,7 +44,7 @@ def indicator(symbol):
                                     fastperiod=12, 
                                     slowperiod=26, 
                                     signalperiod=9)
-   
+  cci3 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=3) 
   cci5 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=5)
   cci28 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
   cci58 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
@@ -56,12 +56,12 @@ def indicator(symbol):
   roc = ta.ROC(df['Close'], timeperiod=10)
   
   rsi = ta.RSI(df["Close"], timeperiod=period)
-
   
-  BBtop = (float(df['Close'][-2]) - df['lowerband'][-2])
-  BBdown = (df['upperband'][-2] - df['lowerband'][-2])
+  BBtop2 = (float(df['Close'][-2]) - df['lowerband'][-2])
+  BBdown2 = (df['upperband'][-2] - df['lowerband'][-2])
+  BBtop1 = (float(df['Close'][-1]) - df['lowerband'][-1])
+  BBdown1 = (df['upperband'][-1] - df['lowerband'][-1])
   
-
   info = client.futures_historical_klines("BTCUSDT", "15m", "24 hours ago UTC+1",limit=1000) 
   df_new = pd.DataFrame(info)
        
@@ -130,20 +130,31 @@ def indicator(symbol):
       #Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
   
   #Verificacion de division en 0   
-  if BBdown > 0 or BBdown < 0:
-    BB = round((BBtop/BBdown),2) 
+  if BBdown2 > 0 or BBdown2 < 0:
+    BB2 = round((BBtop2/BBdown2),2)
+    BB1 = round((BBtop1/BBdown1),2)
+         
   else: 
-    BB = 0.55555
+    BB2 = 0.55555
+     
+  print(BB2)
+  # Fishing Pisha Nuevo 
+  if (BB2 < 0) and (BB1 >= 0) and (cci3[-2] < 0) and (cci3[-1] > 0) and (adx[-2] > 20):
+      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
+      Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB1) + "\n🎣 Fishing Pisha")
   
-  print(BB)
-  # fishing Pisha 
-  if (BB <= 0) and (cci5[-2] < 0) and (cci5[-1] > 0) and (adx[-2] > 20):
-        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
-        Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB) + "\n🎣 Fishing Pisha")
-  
-  if (BB >= 1) and (cci5[-2] > 0) and (cci5[-1] < 0) and (adx[-2] > 20):
+  if (BB2 > 1) and  (BB1 <= 0) and (cci3[-2] > 0) and (cci3[-1] < 0) and (adx[-2] > 20):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
-      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB)+ "\n🎣 Fishing Pisha")
+      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB1)+ "\n🎣 Fishing Pisha")
+      
+  # fishing Pisha Original
+  #if (BB2 <= 0) and (cci5[-2] < 0) and (cci5[-1] > 0) and (adx[-2] > 20):
+      #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
+      #Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB2) + "\n🎣 Fishing Pisha")
+  
+  #if (BB2 >= 1) and (cci5[-2] > 0) and (cci5[-1] < 0) and (adx[-2] > 20):
+      #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
+      #Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB2)+ "\n🎣 Fishing Pisha")
   
   #Top Trend  
   if (cci58[-2] < 0) and (cci58[-1] > 0) and (adx[-2] >= 20):

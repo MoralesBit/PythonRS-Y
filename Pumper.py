@@ -56,7 +56,7 @@ def indicator(symbol):
   
   roc = ta.ROC(df['Close'], timeperiod=10)
   
-  rsi = round(ta.RSI(df["Close"], timeperiod=period), 3)
+  rsi = round(ta.RSI(df["Close"], timeperiod=period), 2)
   
   Close = float(df['Close'][-1])
   
@@ -109,11 +109,11 @@ def indicator(symbol):
    
         
   if (diff > 1):
-    if (rsi[-2] < 20) and (slowk[-2] > 20) and (adx[-2] > 40):    
+    if (rsi[-2] < 35) and (slowk[-2] > 35) and (adx[-2] < 30):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📈  RSI: " + str(rsi[-1]))
   if (diff > 1):
-    if (rsi[-2] > 80) and (slowk[-2] < 80) and (adx[-2] > 40):   
+    if (rsi[-2] > 75) and (slowk[-2] < 75) and (adx[-2] > 30):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📉  RSI: " + str(rsi[-1]))
   

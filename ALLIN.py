@@ -179,7 +179,7 @@ def indicator(symbol):
           
   #Master Trend  
   if (cciB[-2] < 0) and (cciB[-1] > 0) and (histB[-1] > 0):
-      if (cci5[-1] > 0) and (adxr[-1] > 25):
+      if (cci5[-1] > 0) and (rsi[-1] < 30):
         requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
         Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📈 Master Trend")
        

@@ -184,7 +184,7 @@ def indicator(symbol):
         Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📈 Master Trend")
        
   if  (cciB[-2] > 0) and (cciB[-1] < 0) and (histB[-1] < 0):
-      if (cci5[-1] < 0) and (adxr[-1] > 25):
+      if (cci5[-1] < 0) and (rsi[-1] > 70):
         requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
         Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📉 Master Trend")     
 

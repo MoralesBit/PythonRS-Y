@@ -59,6 +59,7 @@ def indicator(symbol):
   
   BBtop2 = (float(df['Close'][-2]) - df['lowerband'][-2])
   BBdown2 = (df['upperband'][-2] - df['lowerband'][-2])
+  
   BBtop1 = (float(df['Close'][-1]) - df['lowerband'][-1])
   BBdown1 = (df['upperband'][-1] - df['lowerband'][-1])
   
@@ -131,14 +132,14 @@ def indicator(symbol):
   
   #Verificacion de division en 0   
   if BBdown2 > 0 or BBdown2 < 0:
-    BB2 = round((BBtop2/BBdown2),2)
+    BB2 = round((BBtop2/BBdown2),3)
          
   else: 
     BB2 = 0.55555
   
   if BBdown1 > 0 or BBdown1 < 0:
     
-    BB1 = round((BBtop1/BBdown1),2)
+    BB1 = round((BBtop1/BBdown1),3)
          
   else: 
     
@@ -148,11 +149,11 @@ def indicator(symbol):
   print(BB1)
   
   # Fishing Pisha Nuevo 
-  if (BB2 < 0) and (BB1 >= 0) and (cci3[-2] < 0) and (cci3[-1] > 0) and (adx[-2] > 20):
+  if (BB2 < 0) and (BB1 >= 0) and (cci3[-2] < 0) and (cci3[-1] > 0):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB1) + "\n🎣 Fishing Pisha")
   
-  if (BB2 > 1) and  (BB1 <= 0) and (cci3[-2] > 0) and (cci3[-1] < 0) and (adx[-2] > 20):
+  if (BB2 > 1) and  (BB1 <= 0) and (cci3[-2] > 0) and (cci3[-1] < 0):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB1)+ "\n🎣 Fishing Pisha")
       

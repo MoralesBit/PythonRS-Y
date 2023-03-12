@@ -145,7 +145,7 @@ def indicator(symbol):
     
     BB1 = 0.55555
     
-  print(float(df['EMA200'][-2]))
+  print(df['EMA200'][-2])
   print(float(df['Close'][-2]))
   
   # Fishing Pisha Nuevo 
@@ -168,12 +168,12 @@ def indicator(symbol):
   
   #Top Trend  
   if (cci58[-2] < 0) and (cci58[-1] > 0):
-      if (fdf['EMA200'][-2]) < float(df['Close'][-2])):
+      if (df['EMA200'][-2]) < float(df['Close'][-2]):
         #requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=TOPLONG)
         Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📈 Top Trend")
        
   if  (cci58[-2] > 0) and (cci58[-1] < 0):
-      if (df['EMA200'][-2]) > float(df['Close'][-2])):
+      if (df['EMA200'][-2]) > float(df['Close'][-2]):
         #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=TOPSHORT)  
         Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📉 Top Trend")
           

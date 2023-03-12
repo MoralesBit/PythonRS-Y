@@ -46,6 +46,7 @@ def indicator(symbol):
                                     signalperiod=9)
   cci3 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=3) 
   cci5 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=5)
+  cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
   cci28 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
   cci58 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
   
@@ -147,6 +148,16 @@ def indicator(symbol):
     
   print(df['EMA200'][-2])
   print(float(df['Close'][-2]))
+  
+  # Bouncy
+  if (rsi[-1] >= 70) and (cci20[-2] > 100) and (cci20[-1] > 100):
+      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
+      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n Bouncy")
+  
+  if (rsi[-1] <= 30) and (cci20[-2] < -100) and (cci20[-1] > -100):
+      requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
+      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n Bouncy")
+  
   
   # Fishing Pisha Nuevo 
   if (rsi[-1] < 30) and (cci3[-2] < 0) and (cci3[-1] > 0):

@@ -132,14 +132,14 @@ def indicator(symbol):
   
   #Verificacion de division en 0   
   if BBdown2 > 0 or BBdown2 < 0:
-    BB2 = round((BBtop2/BBdown2),3)
+    BB2 = BBtop2/BBdown2
          
   else: 
     BB2 = 0.55555
   
   if BBdown1 > 0 or BBdown1 < 0:
     
-    BB1 = round((BBtop1/BBdown1),3)
+    BB1 = BBtop1/BBdown1
          
   else: 
     

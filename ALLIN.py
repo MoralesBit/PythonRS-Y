@@ -149,13 +149,13 @@ def indicator(symbol):
   print(float(df['Close'][-2]))
   
   # Fishing Pisha Nuevo 
-  if (BB2 < 0) and (BB1 > 0) and (cci3[-2] < 0) and (cci3[-1] > 0):
+  if (rsi[-1] < 20) and (cci3[-2] < 0) and (cci3[-1] > 0):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
-      Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB1) + "\n🎣 Fishing Pisha")
+      Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   
-  if (BB2 > 1) and  (BB1 < 1) and (cci3[-2] > 0) and (cci3[-1] < 0):
+  if (rsi[-1] > 80) and (cci3[-2] > 0) and (cci3[-1] < 0):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
-      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB1)+ "\n🎣 Fishing Pisha")
+      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
       
   # fishing Pisha Original
   #if (BB2 <= 0) and (cci5[-2] < 0) and (cci5[-1] > 0) and (adx[-2] > 20):

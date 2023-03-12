@@ -149,11 +149,11 @@ def indicator(symbol):
   print(float(df['Close'][-2]))
   
   # Fishing Pisha Nuevo 
-  if (rsi[-1] > 70) and (cci3[-2] < 0) and (cci3[-1] > 0):
+  if (rsi[-1] < 30) and (cci3[-2] < 0) and (cci3[-1] > 0):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   
-  if (rsi[-1] < 30) and (cci3[-2] > 0) and (cci3[-1] < 0):
+  if (rsi[-1] > 70) and (cci3[-2] > 0) and (cci3[-1] < 0):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
       

@@ -166,8 +166,8 @@ def indicator(symbol):
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   #SHORT DE RETORNO
   if (histB[-1] < 0) and (rsi[-1] > 60) and (cci20[-2] > 100) and (cci20[-1] < 100):
-      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PSHORT)
-      Tb.telegram_canal_3por( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Bye Pisha")
+      requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)
+      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Bye Pisha")
   #SHORT FISHING
   if (histB[-1] < 0) and (rsi[-1] < 40) and (cci20[-2] < -100) and (cci20[-1] > -100) and (adx[-1] > 40):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
@@ -175,7 +175,7 @@ def indicator(symbol):
   #LONG DE RETORNO
   if (histB[-1] > 0) and (rsi[-1] < 40) and (cci20[-2] < -100) and (cci20[-1] > -100):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
-      Tb.telegram_canal_3por( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Hello Pisha")
+      Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Hello Pisha")
   
   # fishing Pisha Original
   #if (BB2 <= 0) and (cci5[-2] < 0) and (cci5[-1] > 0) and (adx[-2] > 20):

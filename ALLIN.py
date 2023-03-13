@@ -73,6 +73,7 @@ def indicator(symbol):
   df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
   df_new = df_new.set_index('Date')
   cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=28)
+  cciB58 = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=58)
   macdB, signalB, histB = ta.MACD(df_new['Close'], 
                                     fastperiod=12, 
                                     slowperiod=26, 
@@ -150,11 +151,11 @@ def indicator(symbol):
   print(float(df['Close'][-2]))
   
   # Bouncy
-  if (rsi[-1] > 65) and (cci20[-2] > 100) and (cci20[-1] < 100) and (30 < adx[-1] < 60):
+  if (cciB58 > 0) and (rsi[-1] > 65) and (cci20[-2] > 100) and (cci20[-1] < 100) and (30 < adx[-1] < 60):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n Bouncy")
   
-  if (rsi[-1] < 35) and (cci20[-2] < -100) and (cci20[-1] > -100) and (30 < adx[-1] < 60):
+  if (cciB58 < 0) and (rsi[-1] < 35) and (cci20[-2] < -100) and (cci20[-1] > -100) and (30 < adx[-1] < 60):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n Bouncy")
   

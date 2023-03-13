@@ -151,11 +151,11 @@ def indicator(symbol):
   print(float(df['Close'][-2]))
   
   # Bouncy
-  if (cciB58[-1] > 0) and (rsi[-1] > 65) and (cci28[-2] > 100) and (cci28[-1] < 100) and (30 < adx[-1] < 60):
+  if (macd[-1] > 0) and (rsi[-1] > 65) and (cci28[-2] > 100) and (cci28[-1] < 100) and (30 < adx[-1] < 60):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n Bouncy")
   
-  if (cciB58[-1] < 0) and (rsi[-1] < 35) and (cci28[-2] < -100) and (cci28[-1] > -100) and (30 < adx[-1] < 60):
+  if (macd[-1] < 0) and (rsi[-1] < 35) and (cci28[-2] < -100) and (cci28[-1] > -100) and (30 < adx[-1] < 60):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n Bouncy")
   

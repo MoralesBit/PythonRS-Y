@@ -15,7 +15,7 @@ period = 14
 
 def indicator(symbol):
   
-  kline = client.futures_historical_klines(symbol, "15m", "6 hours ago UTC+1",limit=500)
+  kline = client.futures_historical_klines(symbol, "15m", "24 hours ago UTC+1",limit=1000)
   df = pd.DataFrame(kline)
   
   if not df.empty:
@@ -149,7 +149,8 @@ def indicator(symbol):
     
     BB1 = 0.55555
     
-  print(rsi4[-1])
+  print(df['EMA200'][-1])
+  print(float(df['Close'][-1]))
   
   
   # Bouncy
@@ -224,5 +225,6 @@ def server_time():
 schedule.every(5).minutes.at(":01").do(server_time)
   
 while True:
+    #server_time()
     schedule.run_pending()
     ti.sleep(1)   

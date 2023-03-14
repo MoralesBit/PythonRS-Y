@@ -199,12 +199,12 @@ def indicator(symbol):
         #Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📉 Top Trend")
           
   #Master Trend  
-  if (cciB[-2] < 0) and (cciB[-1] > 0) and (histB[-1] > 0):
+  if (cciB[-2] < 0) and (cciB[-1] > 0) and (df['tendencia'][-1] == 1) and (histB[-1] > 0):
       if (cci5[-1] > 0) and (rsi[-1] < 30):
         requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
         Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📈 Master Trend")
        
-  if  (cciB[-2] > 0) and (cciB[-1] < 0) and (histB[-1] < 0):
+  if  (cciB[-2] > 0) and (cciB[-1] < 0) and (df['tendencia'][-1] == 0) and (histB[-1] < 0):
       if (cci5[-1] < 0) and (rsi[-1] > 70):
         requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
         Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📉 Master Trend")     

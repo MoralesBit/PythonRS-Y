@@ -59,7 +59,7 @@ def indicator(symbol):
   rsi = round(ta.RSI(df["Close"], timeperiod=period), 2)
   rsi4 = round(ta.RSI(df["Close"], timeperiod=4), 4)
   
-  df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA100'][-1]), 1,0)
+  df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA50'][-1]), 1,0)
   
   Close = float(df['Close'][-1])
   
@@ -114,11 +114,11 @@ def indicator(symbol):
   if (diff > 1) and (df['tendencia'][-1] == 1):
     if (rsi4[-2] < 30 < rsi4[-1]):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
-      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📈  RSI: " + str(rsi[-1]))
+      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📈  Fast Trend: ")
   if (diff > 1) and (df['tendencia'][-1] == 0):
     if (rsi4[-2] > 70 > rsi4[-1]):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
-      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📉  RSI: " + str(rsi[-1]))
+      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📉  Fast Trend: ")
   
   
   return round(last_rsi, 1), rsi_stat

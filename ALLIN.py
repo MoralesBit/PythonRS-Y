@@ -167,13 +167,13 @@ def indicator(symbol):
   # Fishing Pisha Nuevo 
   #LONG FISHING
   if (float(df['Close'][-1]) > df['EMA200'][-1] ):
-    if (cci14[-2] < 0) and (cci14[-1] > 0) and (rsi4[-1] > 70):    
+    if (cci14[-2] < 0) and (cci14[-1] > 0) and (rsi4[-1] > 75):    
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   
   #SHORT FISHING
   if (float(df['Close'][-1]) < df['EMA200'][-1]):
-    if (cci14[-2] > 0) and (cci14[-1] < 0) and (rsi4[-1] < 30):  
+    if (cci14[-2] > 0) and (cci14[-1] < 0) and (rsi4[-1] < 25):  
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   

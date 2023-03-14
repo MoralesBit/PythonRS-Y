@@ -66,6 +66,8 @@ def indicator(symbol):
   BBtop1 = (float(df['Close'][-1]) - df['lowerband'][-1])
   BBdown1 = (df['upperband'][-1] - df['lowerband'][-1])
   
+  df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA200'][-1]), 1,0)
+  
   info = client.futures_historical_klines("BTCUSDT", "15m", "24 hours ago UTC+1",limit=1000) 
   df_new = pd.DataFrame(info)
        
@@ -149,8 +151,7 @@ def indicator(symbol):
     
     BB1 = 0.55555
     
-  print(df['EMA200'][-1])
-  print(float(df['Close'][-1]))
+  print(df['tendencia'][-1])
   
   
   # Bouncy
@@ -166,13 +167,13 @@ def indicator(symbol):
   
   # Fishing Pisha Nuevo 
   #LONG FISHING
-  if (float(df['Close'][-1]) > df['EMA200'][-1] ):
+  if (df['tendencia'][-1] == 1):
     if (cci14[-2] < 0) and (cci14[-1] > 0) and (rsi4[-1] > 75):    
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   
   #SHORT FISHING
-  if (float(df['Close'][-1]) < df['EMA200'][-1]):
+  if (df['tendencia'][-1] == 0):
     if (cci14[-2] > 0) and (cci14[-1] < 0) and (rsi4[-1] < 25):  
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
@@ -187,15 +188,15 @@ def indicator(symbol):
       #Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB2)+ "\n🎣 Fishing Pisha")
   
   #Top Trend  
-  if (cci58[-2] < 0) and (cci58[-1] > 0):
-      if (cci5[-1] > 0):
+  #if (cci58[-2] < 0) and (cci58[-1] > 0):
+      #if (cci5[-1] > 0):
         #requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=TOPLONG)
-        Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📈 Top Trend")
+        #Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📈 Top Trend")
        
-  if  (cci58[-2] > 0) and (cci58[-1] < 0):
-      if (cci5[-1] < 0):
+  #if  (cci58[-2] > 0) and (cci58[-1] < 0):
+      #if (cci5[-1] < 0):
         #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=TOPSHORT)  
-        Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📉 Top Trend")
+        #Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📉 Top Trend")
           
   #Master Trend  
   if (cciB[-2] < 0) and (cciB[-1] > 0) and (histB[-1] > 0):

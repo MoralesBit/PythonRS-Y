@@ -46,6 +46,7 @@ def indicator(symbol):
                                     signalperiod=9)
   cci3 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=3) 
   cci5 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=5)
+  cci14 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=14)
   cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
   cci28 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
   cci58 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
@@ -57,6 +58,7 @@ def indicator(symbol):
   roc = ta.ROC(df['Close'], timeperiod=10)
   
   rsi = ta.RSI(df["Close"], timeperiod=period)
+  rsi4 = ta.RSI(df["Close"], timeperiod=4)
   
   BBtop2 = (float(df['Close'][-2]) - df['lowerband'][-2])
   BBdown2 = (df['upperband'][-2] - df['lowerband'][-2])
@@ -147,35 +149,32 @@ def indicator(symbol):
     
     BB1 = 0.55555
     
-  print(df['EMA200'][-2])
-  print(float(df['Close'][-2]))
+  print(rsi4[-1])
+  
   
   # Bouncy
-  if (macdB[-1] > 0) and (cci20[-2] > 100) and (cci20[-1] < 100) and (40 < adx[-1]):
-      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
-      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n Bouncy")
-  
-  if (macdB[-1] < 0) and (cci20[-2] < -100) and (cci20[-1] > -100) and (40 < adx[-1]):
-      requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
-      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n Bouncy")
-  
-    # Fishing Pisha Nuevo 
   #LONG FISHING
-  if (histB[-1] > 0) and (rsi[-1] > 60) and (cci20[-2] > 100) and (cci20[-1] < 100) and (adx[-1] > 40):
+  #if (rsi[-1] > 60) and (cci20[-2] > 100) and (cci20[-1] < 100):
+      #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
+      #Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
+  
+  #SHORT FISHING
+  #if (rsi[-1] < 40) and (cci20[-2] < -100) and (cci20[-1] > -100):
+      #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
+      #Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
+  
+  # Fishing Pisha Nuevo 
+  #LONG FISHING
+  if (float(df['Close'][-1]) > df['EMA200'][-1] ):
+    if (cci14[-2] < 0) and (cci14[-1] > 0) and (rsi4[-1] > 70):    
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
-  #SHORT DE RETORNO
-  if (histB[-1] < 0) and (rsi[-1] > 60) and (cci20[-2] > 100) and (cci20[-1] < 100):
-      requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)
-      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Bye Pisha")
+  
   #SHORT FISHING
-  if (histB[-1] < 0) and (rsi[-1] < 40) and (cci20[-2] < -100) and (cci20[-1] > -100) and (adx[-1] > 40):
+  if (float(df['Close'][-1]) < df['EMA200'][-1]):
+    if (cci14[-2] > 0) and (cci14[-1] < 0) and (rsi4[-1] < 30):  
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
-  #LONG DE RETORNO
-  if (histB[-1] > 0) and (rsi[-1] < 40) and (cci20[-2] < -100) and (cci20[-1] > -100):
-      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
-      Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Hello Pisha")
   
   # fishing Pisha Original
   #if (BB2 <= 0) and (cci5[-2] < 0) and (cci5[-1] > 0) and (adx[-2] > 20):

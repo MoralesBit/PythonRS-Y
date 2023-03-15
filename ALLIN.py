@@ -15,7 +15,7 @@ period = 14
 
 def indicator(symbol):
   
-  kline = client.futures_historical_klines(symbol, "15m", "24 hours ago UTC+1",limit=1000)
+  kline = client.futures_historical_klines(symbol, "15m", "2 Days ago UTC+1",limit=1000)
   df = pd.DataFrame(kline)
   
   if not df.empty:

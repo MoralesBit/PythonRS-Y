@@ -11,15 +11,20 @@ Pkey = ''
 Skey = ''
 
 client = Client(api_key=Pkey, api_secret=Skey)
+
+intervals = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
+connection = ""
 period = 14
 
+
 def indicator(symbol):
-  
-  kline = client.futures_historical_klines(symbol, "15m", "2 days ago UTC+1",limit=1000)
+  rsi_stat = ""
+   
+  kline = client.futures_historical_klines(symbol, "3m", "2 days ago UTC+1",limit=1000)
   df = pd.DataFrame(kline)
   
   if not df.empty:
-    df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close',
+    df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
@@ -33,9 +38,9 @@ def indicator(symbol):
     
   df['signal'] = np.where(df['EMA13'] > df['EMA100'], 1,0)
   
-  df['Positions'] = df['signal'].diff() 
+  df['Positions'] = df['signal'].diff()  
   
-  df['upperband'], df['middleband'], df['lowerband'] = ta.BBANDS(df['Close'],
+  upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                timeperiod=20,
                                                nbdevup=2,
                                                nbdevdn=2,
@@ -44,29 +49,25 @@ def indicator(symbol):
                                     fastperiod=12, 
                                     slowperiod=26, 
                                     signalperiod=9)
-  cci3 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=3) 
-  cci5 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=5)
-  cci14 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=14)
-  cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
-  cci28 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
-  cci58 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
+   
+  cci3= ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=3)
   
   adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
   
-  adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
-  
   roc = ta.ROC(df['Close'], timeperiod=10)
   
-  rsi = ta.RSI(df["Close"], timeperiod=period)
-  rsi4 = ta.RSI(df["Close"], timeperiod=4)
+  rsi = round(ta.RSI(df["Close"], timeperiod=period), 2)
+  rsi4 = round(ta.RSI(df["Close"], timeperiod=4), 4)
   
-    
-  #BBtop1 = (float(df['Close'][-1]) - df['lowerband'][-1])
-  #BBdown1 = (df['upperband'][-1] - df['lowerband'][-1])
+  df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA50'][-1]), 1,0)
   
-  df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA200'][-1]), 1,0)
+  Close = float(df['Close'][-1])
   
-  info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
+  adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+ 
+  last_rsi = rsi 
+  
+  info = client.futures_historical_klines("BTCUSDT", "3m", "24 hours ago UTC+1",limit=1000) 
   df_new = pd.DataFrame(info)
        
   if not df_new.empty:
@@ -74,76 +75,53 @@ def indicator(symbol):
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
   df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
   df_new = df_new.set_index('Date')
-  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=28)
-  cciB58 = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=58)
+  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=58)
   macdB, signalB, histB = ta.MACD(df_new['Close'], 
                                     fastperiod=12, 
                                     slowperiod=26, 
                                     signalperiod=9)   
+  rocB = ta.ROC(df_new['Close'], timeperiod=10)
+  #adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+  #mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
   
-  df_new['EMA200'] = df_new['Close'].ewm(200).mean()
- 
-  
+  High = float(df['High'][-2])
+  Low = float(df['Low'][-2])
+  #Open = float(df['Open'][-1])
+  diff = round(abs((High / Low -1) * 100), 3)
+  slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+  #atr = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
+  #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])
   
   print(symbol)
-           
-  CCISHORT = {
-  "name": "CCI SHORT",
-  "secret": "w48ulz23f6",
-  "side": "sell",
-  "symbol": symbol
-  }
-  
-  PSHORT = {
-  "name": "PRUEBA SHORT",
-  "secret": "azsdb9x719",
-  "side": "sell",
-  "symbol": symbol
-  }
-  CCILONG = {
-  "name": "CCI LONG",
-  "secret": "xxuxkqf0gpj",
-  "side": "buy",
-  "symbol": symbol
-  }
-  
-  PLONG = {
-  "name": "PRUEBA LONG",
-  "secret": "0kivpja7tz89",
-  "side": "buy",
-  "symbol": symbol
-  }
-         
-  print(df['tendencia'][-1])
-  
-  #Bouncy
-  if (cci28[-2] > 100) and (cci28[-1] < 100) and (rsi4[-1] > 60):
-      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
-      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\nBOUNCY")
-  
-  # Fishing Pisha Nuevo 
-  #LONG FISHING
-  if (df['tendencia'][-1] == 1):
-    if (cci14[-2] < 0) and (cci14[-1] > 0) and (rsi4[-1] > 70) and (rsi[-1] > 50):    
-      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
-      Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
-  
-  #SHORT FISHING
-  if (df['tendencia'][-1] == 0):
-    if (cci14[-2] > 0) and (cci14[-1] < 0) and (rsi4[-1] < 30) and (rsi[-1] < 50):  
-      requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
-      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
-  
-  #Master Trend  
-  if (cciB[-2] < 0) and (cciB[-1] > 0) and (df['tendencia'][-1] == 1) and (histB[-1] > 0):
-      if (cci5[-1] > 0) and (rsi[-1] < 30):
-        requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
-        Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📈 Master Trend")
+ 
+  print(adx[-1])
+ 
        
-  if  (cciB[-2] > 0) and (cciB[-1] < 0) and (df['tendencia'][-1] == 0) and (histB[-1] < 0):
-      if (cci5[-1] < 0) and (rsi[-1] > 70):
-        requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
-        Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📉 Master Trend")     
+  UNOSHORT = {
+  "name": "SHORT-REV",
+  "secret": "hgw3399vhh",
+  "side": "sell",
+  "symbol": symbol
+  }
+  UNOLONG = {
+  "name": "LONG- REV",
+  "secret": "xjth0i3qgb",
+  "side": "buy",
+  "symbol": symbol
+  }
+   
+        
+  if (diff > 1) and (df['tendencia'][-1] == 1):
+    if (rsi4[-2] < 30 < rsi4[-1]) and (rsi[-1] > 51):    
+      requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
+      Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📈  Fast Trend")
+  if (diff > 1) and (df['tendencia'][-1] == 0):
+    if (rsi4[-2] > 70 > rsi4[-1]) and (rsi[-1] < 49):   
+      requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
+      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📉  Fast Trend")
+  
+  
+  return round(last_rsi, 1), rsi_stat
 
 if __name__ == '__main__':
   monedas = client.futures_exchange_info()
@@ -155,13 +133,13 @@ if __name__ == '__main__':
 #symbols = ["BLZUSDT", "ARUSDT", "INJUSDT", "STORJUSDT","HNTUSDT", "ARPAUSDT"]
 
 def server_time():
- for symbol in symbols:
+          
+  for symbol in symbols:
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(5).minutes.at(":01").do(server_time)
+schedule.every(3).minutes.at(":01").do(server_time)
   
 while True:
-    #server_time()
     schedule.run_pending()
-    ti.sleep(1)   
+    ti.sleep(1)

@@ -68,7 +68,7 @@ def indicator(symbol):
  
   last_rsi = rsi 
   
-  info = client.futures_historical_klines("BTCUSDT", "3m", "24 hours ago UTC+1",limit=1000) 
+  info = client.futures_historical_klines("BTCUSDT", "15m", "24 hours ago UTC+1",limit=1000) 
   df_new = pd.DataFrame(info)
        
   if not df_new.empty:
@@ -76,7 +76,7 @@ def indicator(symbol):
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
   df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
   df_new = df_new.set_index('Date')
-  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=58)
+  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=14)
   macdB, signalB, histB = ta.MACD(df_new['Close'], 
                                     fastperiod=12, 
                                     slowperiod=26, 
@@ -110,13 +110,13 @@ def indicator(symbol):
   "symbol": symbol
   }
    
-        
-  if (rsi4[-2] < 30 < rsi4[-1]) and (cci14[-2] < -100 < cci14[-1]):    
+  if (cciB[-2] < cciB[-1]):      
+    if (rsi4[-2] < 30 < rsi4[-1]) and (cci14[-2] < -100 < cci14[-1]):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📈  Fast Trend")
   
-  
-  if (rsi4[-2] > 70 > rsi4[-1]) and (cci14[-2] > 100 > cci14[-1]):   
+  if (cciB[-2] > cciB[-1]):
+    if (rsi4[-2] > 70 > rsi4[-1]) and (cci14[-2] > 100 > cci14[-1]):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📉  Fast Trend")
   

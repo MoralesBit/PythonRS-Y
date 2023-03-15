@@ -111,12 +111,12 @@ def indicator(symbol):
    
         
   if (df['tendencia'][-1] == 1):
-    if (rsi5[-2] < 30 < rsi5[-1]) and (rsi[-1] < 40):    
+    if (rsi5[-2] < 30 < rsi5[-1]) and (rsi[-1] < 35):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📈  Fast Trend")
   
   if (df['tendencia'][-1] == 0):
-    if (rsi5[-2] > 70 > rsi5[-1]) and (rsi[-1] > 60):   
+    if (rsi5[-2] > 70 > rsi5[-1]) and (rsi[-1] > 65):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📉  Fast Trend")
   

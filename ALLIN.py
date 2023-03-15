@@ -123,11 +123,6 @@ def indicator(symbol):
   if (cci14[-2] < -100) and (cci14[-1] > -100) and (rsi4[-1] < 40):
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\nBOUNCY")
   
-  #Bouncy
-  if (df['tendencia'][-1] == 1):
-    if (rsi5[-2] < 30 < rsi5[-1]) and (rsi[-1] < 40): 
-      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
-      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\nFast Trend 15")
   
   # Fishing Pisha Nuevo 
   #LONG FISHING
@@ -142,16 +137,6 @@ def indicator(symbol):
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   
-  #Master Trend  
-  if (cciB[-2] < 0) and (cciB[-1] > 0) and (df['tendencia'][-1] == 1) and (histB[-1] > 0):
-      if (cci5[-1] > 0) and (rsi[-1] < 30):
-        requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CCILONG)
-        Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📈 Master Trend")
-       
-  if  (cciB[-2] > 0) and (cciB[-1] < 0) and (df['tendencia'][-1] == 0) and (histB[-1] < 0):
-      if (cci5[-1] < 0) and (rsi[-1] > 70):
-        requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
-        Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📉 Master Trend")     
 
 if __name__ == '__main__':
   monedas = client.futures_exchange_info()

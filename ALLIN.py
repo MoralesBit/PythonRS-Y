@@ -59,6 +59,7 @@ def indicator(symbol):
   
   rsi = ta.RSI(df["Close"], timeperiod=period)
   rsi4 = ta.RSI(df["Close"], timeperiod=4)
+  rsi5 = ta.RSI(df["Close"], timeperiod=5)
   
      
   #BBtop1 = (float(df['Close'][-1]) - df['lowerband'][-1])
@@ -118,6 +119,12 @@ def indicator(symbol):
   if (cci14[-2] > 100) and (cci14[-1] < 100) and (rsi4[-1] > 60):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\nBOUNCY")
+  
+  #Bouncy
+  if (df['tendencia'][-1] == 1):
+    if (rsi5[-2] < 30 < rsi5[-1]) and (rsi[-1] < 40): 
+      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
+      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\nFast Trend 15")
   
   # Fishing Pisha Nuevo 
   #LONG FISHING

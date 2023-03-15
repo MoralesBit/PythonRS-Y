@@ -116,16 +116,21 @@ def indicator(symbol):
          
   print(df['tendencia'][-1])
   
+  #Bouncy
+  if (cci28[-2] > 100) and (cci28[-1] < 100) and (rsi4[-1] > 60):
+      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
+      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\nBOUNCY")
+  
   # Fishing Pisha Nuevo 
   #LONG FISHING
   if (df['tendencia'][-1] == 1):
-    if (cci14[-2] < 0) and (cci14[-1] > 0) and (rsi4[-1] > 71) and (rsi[-1] > 51):    
+    if (cci14[-2] < 0) and (cci14[-1] > 0) and (rsi4[-1] > 70) and (rsi[-1] > 50):    
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   
   #SHORT FISHING
   if (df['tendencia'][-1] == 0):
-    if (cci14[-2] > 0) and (cci14[-1] < 0) and (rsi4[-1] < 29) and (rsi[-1] < 49):  
+    if (cci14[-2] > 0) and (cci14[-1] < 0) and (rsi4[-1] < 30) and (rsi[-1] < 50):  
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   

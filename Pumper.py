@@ -20,7 +20,7 @@ period = 14
 def indicator(symbol):
   rsi_stat = ""
    
-  kline = client.futures_historical_klines(symbol, "3m", "24 hours ago UTC+1",limit=1000)
+  kline = client.futures_historical_klines(symbol, "3m", "2 days ago UTC+1",limit=1000)
   df = pd.DataFrame(kline)
   
   if not df.empty:
@@ -59,7 +59,7 @@ def indicator(symbol):
   rsi = round(ta.RSI(df["Close"], timeperiod=period), 2)
   rsi4 = round(ta.RSI(df["Close"], timeperiod=4), 4)
   
-  df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA50'][-1]), 1,0)
+  df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA200'][-1]), 1,0)
   
   Close = float(df['Close'][-1])
   

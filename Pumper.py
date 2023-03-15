@@ -59,7 +59,7 @@ def indicator(symbol):
   rsi = round(ta.RSI(df["Close"], timeperiod=period), 2)
   rsi5 = round(ta.RSI(df["Close"], timeperiod=5), 4)
   
-  df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA50'][-1]), 1,0)
+  df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA50'][-1]), 1, 0)
   
   Close = float(df['Close'][-1])
   
@@ -93,9 +93,8 @@ def indicator(symbol):
   #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])
   
   print(symbol)
- 
-  print(adx[-1])
- 
+  print(df['EMA50'][-1])
+  print(df['Close'][-1])
        
   UNOSHORT = {
   "name": "SHORT-REV",
@@ -115,6 +114,7 @@ def indicator(symbol):
     if (rsi5[-2] < 30 < rsi5[-1]) and (rsi[-1] < 40):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📈  Fast Trend")
+  
   if (df['tendencia'][-1] == 0):
     if (rsi5[-2] > 70 > rsi5[-1]) and (rsi[-1] > 60):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  

@@ -15,7 +15,7 @@ period = 14
 
 def indicator(symbol):
   
-  kline = client.futures_historical_klines(symbol, "15m", "2 Days ago UTC+1",limit=1000)
+  kline = client.futures_historical_klines(symbol, "15m", "2 days ago UTC+1",limit=1000)
   df = pd.DataFrame(kline)
   
   if not df.empty:
@@ -60,15 +60,13 @@ def indicator(symbol):
   rsi = ta.RSI(df["Close"], timeperiod=period)
   rsi4 = ta.RSI(df["Close"], timeperiod=4)
   
-  BBtop2 = (float(df['Close'][-2]) - df['lowerband'][-2])
-  BBdown2 = (df['upperband'][-2] - df['lowerband'][-2])
-  
-  BBtop1 = (float(df['Close'][-1]) - df['lowerband'][-1])
-  BBdown1 = (df['upperband'][-1] - df['lowerband'][-1])
+    
+  #BBtop1 = (float(df['Close'][-1]) - df['lowerband'][-1])
+  #BBdown1 = (df['upperband'][-1] - df['lowerband'][-1])
   
   df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA200'][-1]), 1,0)
   
-  info = client.futures_historical_klines("BTCUSDT", "15m", "24 hours ago UTC+1",limit=1000) 
+  info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
   df_new = pd.DataFrame(info)
        
   if not df_new.empty:
@@ -82,19 +80,10 @@ def indicator(symbol):
                                     fastperiod=12, 
                                     slowperiod=26, 
                                     signalperiod=9)   
-  rocB = ta.ROC(df_new['Close'], timeperiod=10)
+  
   df_new['EMA200'] = df_new['Close'].ewm(200).mean()
  
-  #adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
-  #mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
   
-  #High = float(df['High'][-1])
-  #Low = float(df['Low'][-1])
-  #Open = float(df['Open'][-1])
-  #diff = abs((High / Low -1) * 100)
-  #slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
-  #atr = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
-  #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])
   
   print(symbol)
            
@@ -124,80 +113,22 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol
   }
-    
-  #EMA (mejorar)
-        
-  #if df['EMA200'][-2] < float(df['Close'][-2]) :
-    #if (df['Positions'][-1] == 1.0) and (cci5[-1] > 0):
-      #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=CCILONG)
-      #Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
-  #if df['EMA200'][-2] > float(df['Close'][-2]):     
-    #if (df['Positions'][-1] == -1.0) and (cci5[-1] < 0):
-      #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CCISHORT)  
-      #Tb.telegram_canal_prueba( "EMA 13-100: \n" + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n EMA 13 " + str(round((df['EMA13'][-1]),3)) + "\n EMA 100: " + str(round((df['EMA100'][-1]),3)))
-  
-  #Verificacion de division en 0   
-  if BBdown2 > 0 or BBdown2 < 0:
-    BB2 = BBtop2/BBdown2
          
-  else: 
-    BB2 = 0.55555
-  
-  if BBdown1 > 0 or BBdown1 < 0:
-    
-    BB1 = BBtop1/BBdown1
-         
-  else: 
-    
-    BB1 = 0.55555
-    
   print(df['tendencia'][-1])
-  
-  
-  # Bouncy
-  #LONG FISHING
-  #if (rsi[-1] > 60) and (cci20[-2] > 100) and (cci20[-1] < 100):
-      #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
-      #Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
-  
-  #SHORT FISHING
-  #if (rsi[-1] < 40) and (cci20[-2] < -100) and (cci20[-1] > -100):
-      #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
-      #Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   
   # Fishing Pisha Nuevo 
   #LONG FISHING
   if (df['tendencia'][-1] == 1):
-    if (cci14[-2] < 0) and (cci14[-1] > 0) and (rsi4[-1] > 71):    
+    if (cci14[-2] < 0) and (cci14[-1] > 0) and (rsi4[-1] > 71) and (rsi[-1] > 51):    
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   
   #SHORT FISHING
   if (df['tendencia'][-1] == 0):
-    if (cci14[-2] > 0) and (cci14[-1] < 0) and (rsi4[-1] < 29):  
+    if (cci14[-2] > 0) and (cci14[-1] < 0) and (rsi4[-1] < 29) and (rsi[-1] < 49):  
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   
-  # fishing Pisha Original
-  #if (BB2 <= 0) and (cci5[-2] < 0) and (cci5[-1] > 0) and (adx[-2] > 20):
-      #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
-      #Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB2) + "\n🎣 Fishing Pisha")
-  
-  #if (BB2 >= 1) and (cci5[-2] > 0) and (cci5[-1] < 0) and (adx[-2] > 20):
-      #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
-      #Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📶 BB : " + str(BB2)+ "\n🎣 Fishing Pisha")
-  
-  #Top Trend  
-  #if (cci58[-2] < 0) and (cci58[-1] > 0):
-      #if (cci5[-1] > 0):
-        #requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=TOPLONG)
-        #Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📈 Top Trend")
-       
-  #if  (cci58[-2] > 0) and (cci58[-1] < 0):
-      #if (cci5[-1] < 0):
-        #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=TOPSHORT)  
-        #Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n📉 Top Trend")
-          
   #Master Trend  
   if (cciB[-2] < 0) and (cciB[-1] > 0) and (df['tendencia'][-1] == 1) and (histB[-1] > 0):
       if (cci5[-1] > 0) and (rsi[-1] < 30):

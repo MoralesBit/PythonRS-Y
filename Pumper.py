@@ -74,9 +74,9 @@ def indicator(symbol):
                                     signalperiod=50)   
    
   Close = float(df_new['Close'][-1])
-  High2 = float(df_new['High'][-2])
-  Low2 = float(df_new['Low'][-2])
-  
+  High = float(df_new['High'][-1])
+  Low = float(df_new['Low'][-1])
+  Open = float(df_new['Open'][-1])
   
   print(symbol)
   print(histB[-1])
@@ -95,12 +95,12 @@ def indicator(symbol):
   "symbol": symbol
   }
    
-  if (histB[-3] < histB[-2]):      
+  if (histB[-3] < histB[-2]) and (Close > Open):      
     if (rsi4[-3] < 30 < rsi4[-2]) and (cci14[-3] < -100 < cci14[-2]):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + " %" + "\n📈  Fast Trend")
   
-  if (histB[-3] > histB[-2]):
+  if (histB[-3] > histB[-2]) and (Close < Open):
     if (rsi4[-3] > 70 > rsi4[-2]) and (cci14[-3] > 100 > cci14[-2]):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + " %" + "\n📉  Fast Trend")

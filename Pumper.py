@@ -90,7 +90,7 @@ def indicator(symbol):
   Open = float(df_new['Open'][-1])
   Open2 = float(df_new['Open'][-2])
   High = float(df_new['High'][-2])
-  Low = float(df_new['Low'][-2])
+  Low2 = float(df_new['Low'][-2])
   
   diff = round(abs((High / Low -1) * 100), 3)
   slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
@@ -114,12 +114,12 @@ def indicator(symbol):
   "symbol": symbol
   }
    
-  if (histB[-3] < histB[-2]) and (Open >= Open2):      
+  if (histB[-3] < histB[-2]) and (Close >= Open2):      
     if (rsi4[-3] < 30 < rsi4[-2]) and (cci14[-3] < -100 < cci14[-2]):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📈  Fast Trend")
   
-  if (histB[-3] > histB[-2])  and (Close <= Close2):
+  if (histB[-3] > histB[-2]) and (Close <= Low2):
     if (rsi4[-3] > 70 > rsi4[-2]) and (cci14[-3] > 100 > cci14[-2]):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📉  Fast Trend")

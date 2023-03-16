@@ -83,7 +83,10 @@ def indicator(symbol):
                                     signalperiod=9)   
   
   df_new['EMA200'] = df_new['Close'].ewm(200).mean()
- 
+  Close = float(df_new['Close'][-1])
+  Close2 = float(df_new['Close'][-2])
+  Open = float(df_new['Open'][-1])
+  Open2 = float(df_new['Open'][-2])
     
   print(symbol)
   print(histB[-1])
@@ -118,13 +121,13 @@ def indicator(symbol):
          
   #LONG FISHING
   
-  if (histB[-3] < histB[-2]):
+  if (histB[-3] < histB[-2]) and (Open >= Open2):
     if (cci3[-3] < 0) and (cci14[-2] > 0) and (rsi4[-3] > 70 > rsi4[-2]):      
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   
   #SHORT FISHING
-  if (histB[-3] > histB[-2]):
+  if (histB[-3] > histB[-2]) and (Close <= Close2):
     if (cci3[-3] > 0) and (cci14[-2] < 0) and (rsi4[-3] < 30 < rsi[-2]):  
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")

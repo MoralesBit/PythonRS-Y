@@ -80,7 +80,7 @@ def indicator(symbol):
   macdB, signalB, histB = ta.MACD(df_new['Close'], 
                                     fastperiod=12, 
                                     slowperiod=26, 
-                                    signalperiod=9)   
+                                    signalperiod=50)   
   rocB = ta.ROC(df_new['Close'], timeperiod=10)
   #adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   #mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
@@ -94,8 +94,8 @@ def indicator(symbol):
   #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])
   
   print(symbol)
-  print(df['EMA50'][-1])
-  print(df['Close'][-1])
+  print(histB[-1])
+  
        
   UNOSHORT = {
   "name": "SHORT-REV",
@@ -110,12 +110,12 @@ def indicator(symbol):
   "symbol": symbol
   }
    
-  if (cciB[-3] < cciB[-2]):      
+  if (histB[-3] < histB[-2]):      
     if (rsi4[-3] < 30 < rsi4[-2]) and (cci14[-3] < -100 < cci14[-2]):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📈  Fast Trend")
   
-  if (cciB[-3] > cciB[-2]):
+  if (histB[-3] > histB[-2]):
     if (rsi4[-3] > 70 > rsi4[-2]) and (cci14[-3] > 100 > cci14[-2]):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📉  Fast Trend")

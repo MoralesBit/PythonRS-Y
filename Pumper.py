@@ -110,13 +110,13 @@ def indicator(symbol):
   "symbol": symbol
   }
    
-  if (cciB[-2] < cciB[-1]):      
-    if (rsi4[-2] < 30 < rsi4[-1]) and (cci14[-2] < -100 < cci14[-1]):    
+  if (cciB[-3] < cciB[-2]):      
+    if (rsi4[-3] < 30 < rsi4[-2]) and (cci14[-3] < -100 < cci14[-2]):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📈  Fast Trend")
   
-  if (cciB[-2] > cciB[-1]):
-    if (rsi4[-2] > 70 > rsi4[-1]) and (cci14[-2] > 100 > cci14[-1]):   
+  if (cciB[-3] > cciB[-2]):
+    if (rsi4[-3] > 70 > rsi4[-2]) and (cci14[-3] > 100 > cci14[-2]):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📉  Fast Trend")
   

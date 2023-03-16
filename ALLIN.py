@@ -84,10 +84,10 @@ def indicator(symbol):
   
   df_new['EMA200'] = df_new['Close'].ewm(200).mean()
   
-  Close = float(df_new['Close'][-1])
-  High = float(df_new['High'][-1])
-  Low = float(df_new['Low'][-1])
-  Open = float(df_new['Open'][-1])
+  Close = float(df_new['Close'][-2])
+  High = float(df_new['High'][-2])
+  Low = float(df_new['Low'][-2])
+  Open = float(df_new['Open'][-2])
     
     
   print(symbol)

@@ -122,15 +122,14 @@ def indicator(symbol):
   }
          
   #LONG FISHING
-  
-  if (histB[-3] < histB[-2]) and (Close >= Open):
-    if (cci3[-3] < 0) and (cci14[-2] > 0) and (rsi4[-3] > 70 > rsi4[-2]):      
+  if (df['Positions'][-2] == 1.0) and (histB[-3] < 0) and (histB[-2] > 0):
+    if (cci28[-3] < 0) and (cci28[-2] > 0):      
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   
   #SHORT FISHING
-  if (histB[-3] > histB[-2]) and (Close <= Open):
-    if (cci3[-3] > 0) and (cci14[-2] < 0) and (rsi4[-3] < 30 < rsi[-2]):  
+  if (df['Positions'][-2] == -1.0) and (histB[-3] > 0) and (histB[-2] < 0):
+    if (cci28[-3] > 0) and (cci28[-2] < 0):  
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   

@@ -88,6 +88,8 @@ def indicator(symbol):
   Open = float(df_new['Open'][-1])
   Open2 = float(df_new['Open'][-2])
   Low2 = float(df_new['Low'][-2])
+  High2 = float(df_new['High'][-2])
+    
     
   print(symbol)
   print(histB[-1])
@@ -122,7 +124,7 @@ def indicator(symbol):
          
   #LONG FISHING
   
-  if (histB[-3] < histB[-2]) and (Close >= Open2):
+  if (histB[-3] < histB[-2]) and (Close >= High2):
     if (cci3[-3] < 0) and (cci14[-2] > 0) and (rsi4[-3] > 70 > rsi4[-2]):      
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")

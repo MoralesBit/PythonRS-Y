@@ -92,7 +92,7 @@ def indicator(symbol):
   High = float(df_new['High'][-2])
   Low2 = float(df_new['Low'][-2])
   
-  diff = round(abs((High / Low -1) * 100), 3)
+  diff = round(abs((High / Low2 -1) * 100), 3)
   slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
   #atr = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
   #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])

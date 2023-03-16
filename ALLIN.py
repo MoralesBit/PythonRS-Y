@@ -86,6 +86,7 @@ def indicator(symbol):
  
     
   print(symbol)
+  print(histB[-1])
   
              
   CCISHORT = {
@@ -117,13 +118,13 @@ def indicator(symbol):
          
   #LONG FISHING
   
-  if (cciB[-3] < cciB[-2]):
+  if (histB[-3] < histB[-2]):
     if (cci3[-3] < 0) and (cci14[-2] > 0) and (rsi4[-3] > 70 > rsi4[-2]):      
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   
   #SHORT FISHING
-  if (cciB[-3] > cciB[-2]):
+  if (histB[-3] > histB[-2]):
     if (cci3[-3] > 0) and (cci14[-2] < 0) and (rsi4[-3] < 30 < rsi[-2]):  
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")

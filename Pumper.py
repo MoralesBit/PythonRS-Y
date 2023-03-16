@@ -50,10 +50,10 @@ def indicator(symbol):
                                     slowperiod=26, 
                                     signalperiod=9)
    
-  cci14= ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=14)
+  cci28= ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
      
   rsi = round(ta.RSI(df["Close"], timeperiod=period), 2)
-  rsi4 = round(ta.RSI(df["Close"], timeperiod=4), 4)
+  rsi6 = round(ta.RSI(df["Close"], timeperiod=6), 4)
   
   df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA50'][-1]), 1, 0)
    
@@ -95,13 +95,11 @@ def indicator(symbol):
   "symbol": symbol
   }
    
-  if (histB[-3] < histB[-2]) and (Close > Open):      
-    if (rsi4[-3] < 30 < rsi4[-2]) and (cci14[-3] < -100 < cci14[-2]):    
+  if (rsi6[-3] < 30 < rsi6[-2]) and (cci28[-3] < -100 < cci28[-2]):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n📈  Fast Trend")
-  
-  if (histB[-3] > histB[-2]) and (Close < Open):
-    if (rsi4[-3] > 70 > rsi4[-2]) and (cci14[-3] > 100 > cci14[-2]):   
+
+  if (rsi6[-3] > 70 > rsi6[-2]) and (cci28[-3] > 100 > cci28[-2]):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n📉  Fast Trend")
   

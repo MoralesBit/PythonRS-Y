@@ -62,8 +62,8 @@ def indicator(symbol):
   
   df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA50'][-1]), 1, 0)
   
-  Close = float(df['Close'][-1])
-  
+ 
+   
   adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
  
   last_rsi = rsi 
@@ -85,9 +85,13 @@ def indicator(symbol):
   #adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   #mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
   
-  High = float(df['High'][-2])
-  Low = float(df['Low'][-2])
-  #Open = float(df['Open'][-1])
+  Close = float(df_new['Close'][-1])
+  Close2 = float(df_new['Close'][-2])
+  Open = float(df_new['Open'][-1])
+  Open2 = float(df_new['Open'][-2])
+  High = float(df_new['High'][-2])
+  Low = float(df_new['Low'][-2])
+  
   diff = round(abs((High / Low -1) * 100), 3)
   slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
   #atr = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
@@ -110,12 +114,12 @@ def indicator(symbol):
   "symbol": symbol
   }
    
-  if (histB[-3] < histB[-2]):      
+  if (histB[-3] < histB[-2]) and (Open >= Open2):      
     if (rsi4[-3] < 30 < rsi4[-2]) and (cci14[-3] < -100 < cci14[-2]):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📈  Fast Trend")
   
-  if (histB[-3] > histB[-2]):
+  if (histB[-3] > histB[-2])  and (Close <= Close2):
     if (rsi4[-3] > 70 > rsi4[-2]) and (cci14[-3] > 100 > cci14[-2]):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + str(diff) + " %" + "\n📉  Fast Trend")

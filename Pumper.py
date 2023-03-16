@@ -50,22 +50,13 @@ def indicator(symbol):
                                     slowperiod=26, 
                                     signalperiod=9)
    
-  cci3= ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=3)
   cci14= ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=14)
-  
-  adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
-  
-  roc = ta.ROC(df['Close'], timeperiod=10)
-  
+     
   rsi = round(ta.RSI(df["Close"], timeperiod=period), 2)
   rsi4 = round(ta.RSI(df["Close"], timeperiod=4), 4)
   
   df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA50'][-1]), 1, 0)
-  
- 
    
-  adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
- 
   last_rsi = rsi 
   
   info = client.futures_historical_klines("BTCUSDT", "15m", "24 hours ago UTC+1",limit=1000) 
@@ -81,20 +72,11 @@ def indicator(symbol):
                                     fastperiod=12, 
                                     slowperiod=26, 
                                     signalperiod=50)   
-  rocB = ta.ROC(df_new['Close'], timeperiod=10)
-  #adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
-  #mfi = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
-  
+   
   Close = float(df_new['Close'][-1])
-  Close2 = float(df_new['Close'][-2])
-  Open = float(df_new['Open'][-1])
-  Open2 = float(df_new['Open'][-2])
   High2 = float(df_new['High'][-2])
   Low2 = float(df_new['Low'][-2])
   
-  slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
-  #atr = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
-  #tra = ta.TRANGE(df['High'], df['Low'], df['Close'])
   
   print(symbol)
   print(histB[-1])
@@ -113,12 +95,12 @@ def indicator(symbol):
   "symbol": symbol
   }
    
-  if (histB[-3] < histB[-2]):      
+  if (histB[-3] < histB[-2]) and (Close >= High2):      
     if (rsi4[-3] < 30 < rsi4[-2]) and (cci14[-3] < -100 < cci14[-2]):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + " %" + "\n📈  Fast Trend")
   
-  if (histB[-3] > histB[-2]):
+  if (histB[-3] > histB[-2]) and (Close <= Low2):
     if (rsi4[-3] > 70 > rsi4[-2]) and (cci14[-3] > 100 > cci14[-2]):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + " %" + "\n📉  Fast Trend")
@@ -141,7 +123,7 @@ def server_time():
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(1).minutes.at(":01").do(server_time)
+schedule.every(3).minutes.at(":01").do(server_time)
   
 while True:
     schedule.run_pending()

@@ -98,12 +98,12 @@ def indicator(symbol):
   if (histB[-3] < histB[-2]) and (Close > Open):      
     if (rsi4[-3] < 30 < rsi4[-2]) and (cci14[-3] < -100 < cci14[-2]):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
-      Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + " %" + "\n📈  Fast Trend")
+      Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n📈  Fast Trend")
   
   if (histB[-3] > histB[-2]) and (Close < Open):
     if (rsi4[-3] > 70 > rsi4[-2]) and (cci14[-3] > 100 > cci14[-2]):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
-      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n🔝  Cambio: " + " %" + "\n📉  Fast Trend")
+      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n📉  Fast Trend")
   
   
   return round(last_rsi, 1), rsi_stat
@@ -127,4 +127,4 @@ schedule.every(3).minutes.at(":01").do(server_time)
   
 while True:
     schedule.run_pending()
-    ti.sleep(1)
+    ti.sleep(5)

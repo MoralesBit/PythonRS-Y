@@ -40,15 +40,10 @@ def indicator(symbol):
   df['macd_crossover'] = np.where(df['macd'] > df['macd_signal'], 1, -1)
   df['position_macd'] = df['macd_crossover'].diff().fillna(0) 
   
-  rsi = ta.RSI(df["Close"], timeperiod=2)
-  
-  df['rsi_crossover_up'] = np.where(rsi > 70, 1, -1)
-  df['rsi_crossover_down'] = np.where(rsi < 30, 1, -1)
-  df['position_rsi_up'] = df['rsi_crossover_up'].diff().fillna(0)
-  df['position_rsi_down'] = df['rsi_crossover_down'].diff().fillna(0) 
-    
+  rsi = ta.RSI(df["Close"], timeperiod=4)
+ 
   print(symbol)
-  print( df['position_macd'])
+ 
     
        
   UNOSHORT = {
@@ -64,11 +59,11 @@ def indicator(symbol):
   "symbol": symbol
   }
    
-  if (df['position_macd'][-1] == 1.0) and (df['position_rsi_up'][-1] == 2.0):    
+  if (df['position_macd'][-1] == 1.0) and (rsi[-2] > 70):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
   
-  if (df['position_macd'][-1] == -1.0) and (df['position_rsi_down'][-1] == 2.0):   
+  if (df['position_macd'][-1] == -1.0) and (rsi[-2] < 30):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n📉  Fast Trend")
   

@@ -93,6 +93,6 @@ def server_time():
 schedule.every(3).minutes.at(":01").do(server_time)
   
 while True:
-    server_time()
+    #server_time()
     schedule.run_pending()
     ti.sleep(1)

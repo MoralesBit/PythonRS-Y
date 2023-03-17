@@ -96,11 +96,11 @@ def indicator(symbol):
   "symbol": symbol
   }
    
-  if (cci28[-3] < 0 < cci28[-2]) and (adxr[-3] < adxr[-2]) and (adrx[-2] >= 25):    
+  if (cci28[-3] < 0 < cci28[-2]) and (adxr[-3] < adxr[-2]) and (adxr[-2] >= 25):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n📈  Fast Trend")
 
-  if (cci28[-3] > 0 > cci28[-2]) and (adxr[-3] < adxr[-2]) and (adrx[-2] >= 25):   
+  if (cci28[-3] > 0 > cci28[-2]) and (adxr[-3] < adxr[-2]) and (adxr[-2] >= 25):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n📉  Fast Trend")
   

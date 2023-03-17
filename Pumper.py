@@ -59,11 +59,11 @@ def indicator(symbol):
   "symbol": symbol
   }
    
-  if (df['position_macd'][-1] == 1.0) and (rsi[-2] > 70):    
+  if (df['position_macd'][-1] == 2.0) and (rsi[-2] > 70):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
   
-  if (df['position_macd'][-1] == -1.0) and (rsi[-2] < 30):   
+  if (df['position_macd'][-1] == -2.0) and (rsi[-2] < 30):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n📉  Fast Trend")
   

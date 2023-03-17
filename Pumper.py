@@ -12,14 +12,8 @@ Skey = ''
 
 client = Client(api_key=Pkey, api_secret=Skey)
 
-intervals = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57]
-connection = ""
-period = 14
-
-
 def indicator(symbol):
-  rsi_stat = ""
-   
+     
   kline = client.futures_historical_klines(symbol, "3m", "2 days ago UTC+1",limit=1000)
   df = pd.DataFrame(kline)
   
@@ -29,17 +23,7 @@ def indicator(symbol):
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
     
-  df['EMA13'] = df['Close'].ewm(13).mean()
-  df['EMA50'] = df['Close'].ewm(50).mean()
-  df['EMA100'] = df['Close'].ewm(100).mean()
-  df['EMA200'] = df['Close'].ewm(200).mean()
-  
-  df['signal'] = 0
-    
-  df['signal'] = np.where(df['EMA13'] > df['EMA100'], 1,0)
-  
-  df['Positions'] = df['signal'].diff()  
-  
+   
   upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                timeperiod=20,
                                                nbdevup=2,
@@ -49,38 +33,24 @@ def indicator(symbol):
                                     fastperiod=12, 
                                     slowperiod=26, 
                                     signalperiod=9)
-   
-  cci58= ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
-     
-  rsi = round(ta.RSI(df["Close"], timeperiod=period), 2)
-  rsi6 = round(ta.RSI(df["Close"], timeperiod=6), 4)
+  df['macd'] = macd
+  df['macd_signal'] = signal
+  df['macd_hist'] = hist
+  df['macd_crossover'] = np.where(df['macd'] > df['macd_signal'], 1, -1)
+  df['position_macd'] = df['macd_crossover'].diff().fillna(0) 
   
-  df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA50'][-1]), 1, 0)
-  adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
+  rsi = ta.RSI(df["Close"], timeperiod=2)
   
-  last_rsi = rsi 
-  
-  info = client.futures_historical_klines("BTCUSDT", "15m", "24 hours ago UTC+1",limit=1000) 
-  df_new = pd.DataFrame(info)
-       
-  if not df_new.empty:
-        df_new.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
-      'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
-  df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
-  df_new = df_new.set_index('Date')
-  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=14)
-  macdB, signalB, histB = ta.MACD(df_new['Close'], 
-                                    fastperiod=12, 
-                                    slowperiod=26, 
-                                    signalperiod=50)   
-   
-  Close = float(df_new['Close'][-2])
-  High = float(df_new['High'][-2])
-  Low = float(df_new['Low'][-2])
-  Open = float(df_new['Open'][-2])
-  
+  df['Rsi'] = rsi
+  df['Rsi_crossover_up'] = np.where(df['Rsi'] > 70, 1, -1)
+  df['Rsi_crossover_down'] = np.where(df['Rsi'] < 30, 1, -1)
+  df['position_rsi_up'] = df['Rsi_crossover_up'].diff().fillna(0)
+  df['position_rsi_down'] = df['Rsi_crossover_down'].diff().fillna(0) 
+    
   print(symbol)
-  print(histB[-1])
+  print(df['position_rsi_down'][-1])
+  print(df['position_rsi_up'][-1])
+  print(df['position_macd'][-1])
   
        
   UNOSHORT = {
@@ -96,17 +66,15 @@ def indicator(symbol):
   "symbol": symbol
   }
    
-  if (cci58[-3] < 0 < cci58[-2]):    
+  if (df['position_macd'][-1] == 1) and (df['position_rsi_up'][-1] == 1):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n📈  Fast Trend")
 
-  if (cci58[-3] > 0 > cci58[-2]):   
+  if (df['position_macd'][-1] == -1) and (df['position_rsi_down'][-1] == 1):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n📉  Fast Trend")
   
   
-  return round(last_rsi, 1), rsi_stat
-
 if __name__ == '__main__':
   monedas = client.futures_exchange_info()
   # 1. Obtener todas las monedas tradeables de futuros
@@ -125,5 +93,6 @@ def server_time():
 schedule.every(3).minutes.at(":01").do(server_time)
   
 while True:
+    server_time()
     schedule.run_pending()
-    ti.sleep(5)
+    ti.sleep(1)

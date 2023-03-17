@@ -44,6 +44,13 @@ def indicator(symbol):
                                     fastperiod=12, 
                                     slowperiod=26, 
                                     signalperiod=9)
+  
+  df['macd'] = macd
+  df['macd_signal'] = signal
+  df['macd_hist'] = hist
+  df['macd_crossover'] = np.where(df['macd'] > df['macd_signal'], 1, -1)
+  df['position_macd'] = df['macd_crossover'].diff().fillna(0)
+  
   cci3 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=3) 
   cci5 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=5)
   cci14 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=14)
@@ -91,7 +98,7 @@ def indicator(symbol):
     
     
   print(symbol)
-  print(histB[-1])
+  print(df['position_macd'][-1])
   
              
   CCISHORT = {
@@ -123,13 +130,13 @@ def indicator(symbol):
          
   #LONG FISHING
   
-  if (cci58[-3] < 0) and (cci58[-2] > 0) and (adxr[-3] < adxr[-2]) and (adrx[-2] >= 25):      
+  if (df['position_macd'][-1] == 1) and (cci58[-3] < 0) and (cci58[-2] > 0) and (adxr[-3] < adxr[-2]) and (adxr[-2] >= 25):      
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   
   #SHORT FISHING
   
-  if (cci58[-3] > 0) and (cci58[-2] < 0) and (adxr[-3] < adxr[-2]) and (adrx[-2] >= 25):  
+  if (df['position_macd'][-1] == -1) and (cci58[-3] > 0) and (cci58[-2] < 0) and (adxr[-3] < adxr[-2]) and (adxr[-2] >= 25):  
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   

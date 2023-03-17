@@ -6,6 +6,7 @@ import Telegram_bot as Tb
 import  schedule as schedule
 import time as ti
 import requests
+import json
 
 Pkey = ''
 Skey = ''
@@ -13,9 +14,9 @@ Skey = ''
 client = Client(api_key=Pkey, api_secret=Skey)
 
 def indicator(symbol):
-     
+  
   kline = client.futures_historical_klines(symbol, "3m", "2 days ago UTC+1",limit=1000)
-  df = pd.DataFrame(kline)
+  df = pd.read_json(json.dumps(kline))
   
   if not df.empty:
     df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
@@ -41,17 +42,14 @@ def indicator(symbol):
   
   rsi = ta.RSI(df["Close"], timeperiod=2)
   
-  df['Rsi'] = rsi
-  df['Rsi_crossover_up'] = np.where(df['Rsi'] > 70, 1, -1)
-  df['Rsi_crossover_down'] = np.where(df['Rsi'] < 30, 1, -1)
-  df['position_rsi_up'] = df['Rsi_crossover_up'].diff().fillna(0)
-  df['position_rsi_down'] = df['Rsi_crossover_down'].diff().fillna(0) 
+  df['rsi_crossover_up'] = np.where(rsi > 70, 1, -1)
+  df['rsi_crossover_down'] = np.where(rsi < 30, 1, -1)
+  df['position_rsi_up'] = df['rsi_crossover_up'].diff().fillna(0)
+  df['position_rsi_down'] = df['rsi_crossover_down'].diff().fillna(0) 
     
   print(symbol)
-  print(df['position_rsi_down'][-1])
-  print(df['position_rsi_up'][-1])
-  print(df['position_macd'][-1])
-  
+  print( df['position_macd'])
+    
        
   UNOSHORT = {
   "name": "SHORT-REV",
@@ -66,11 +64,11 @@ def indicator(symbol):
   "symbol": symbol
   }
    
-  if (df['position_macd'][-1] == 1) and (df['position_rsi_up'][-1] == 1):    
+  if (df['position_macd'][-1] == 1.0) and (df['position_rsi_up'][-1] == 2.0):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
-      Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n📈  Fast Trend")
-
-  if (df['position_macd'][-1] == -1) and (df['position_rsi_down'][-1] == 1):   
+      Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
+  
+  if (df['position_macd'][-1] == -1.0) and (df['position_rsi_down'][-1] == 2.0):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n📉  Fast Trend")
   

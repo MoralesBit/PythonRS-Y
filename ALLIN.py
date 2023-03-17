@@ -23,7 +23,8 @@ def indicator(symbol):
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
-    
+  
+  
   df['EMA13'] = df['Close'].ewm(13).mean()
   df['EMA50'] = df['Close'].ewm(50).mean()
   df['EMA100'] = df['Close'].ewm(100).mean()
@@ -130,13 +131,13 @@ def indicator(symbol):
          
   #LONG FISHING
   
-  if (df['position_macd'][-1] == 1) and (cci58[-3] < 0) and (cci58[-2] > 0):      
+  if (df['position_macd'][-1] == 1.0) and (rsi4[-2] > 70):      
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   
   #SHORT FISHING
   
-  if (df['position_macd'][-1] == -1) and (cci58[-3] > 0) and (cci58[-2] < 0):  
+  if (df['position_macd'][-1] == -1.0) and (rsi4[-2] < 30):  
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   

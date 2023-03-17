@@ -56,7 +56,8 @@ def indicator(symbol):
   rsi6 = round(ta.RSI(df["Close"], timeperiod=6), 4)
   
   df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA50'][-1]), 1, 0)
-   
+  adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
+  
   last_rsi = rsi 
   
   info = client.futures_historical_klines("BTCUSDT", "15m", "24 hours ago UTC+1",limit=1000) 
@@ -95,11 +96,11 @@ def indicator(symbol):
   "symbol": symbol
   }
    
-  if (cci28[-3] < 0 < cci28[-2]):    
+  if (cci28[-3] < 0 < cci28[-2]) and (adxr[-2] >= 25):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n📈  Fast Trend")
 
-  if (cci28[-3] > 0 > cci28[-2]):   
+  if (cci28[-3] > 0 > cci28[-2]) and (adxr[-2] >= 25):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n📉  Fast Trend")
   

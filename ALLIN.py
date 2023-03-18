@@ -131,13 +131,13 @@ def indicator(symbol):
          
   #LONG FISHING
   
-  if (df['position_macd'][-1] == 1.0) and (rsi4[-2] > 70):      
+  if (cciB58[-3] < 0) and (cciB58[-2] > 0):      
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   
   #SHORT FISHING
   
-  if (df['position_macd'][-1] == -1.0) and (rsi4[-2] < 30):  
+  if (cciB58[-3] > 0) and (cciB58[-2] < 0):  
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 15min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
   

@@ -37,13 +37,24 @@ def indicator(symbol):
   df['macd'] = macd
   df['macd_signal'] = signal
   df['macd_hist'] = hist
-  df['macd_crossover'] = np.where(df['macd'] > df['macd_signal'], 1, -1)
-  df['position_macd'] = df['macd_crossover'].diff().fillna(0) 
+  df['macd_crossover'] = np.where(df['macd'] > df['macd_signal'], 1, 0)
+  df['position_macd'] = df['macd_crossover'].diff()
   
   rsi = ta.RSI(df["Close"], timeperiod=4)
+    
+  info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
+  df_new = pd.DataFrame(info)
+       
+  if not df_new.empty:
+        df_new.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
+      'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
+  df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
+  df_new = df_new.set_index('Date')
+  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=28)
+  cciB58 = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=58)
  
   print(symbol)
- 
+  print(df['position_macd'][-2])
     
        
   UNOSHORT = {
@@ -58,14 +69,14 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol
   }
-   
-  if (df['position_macd'][-1] == 2.0) and (rsi[-2] > 70):    
+  if (cciB58[-2] > 0): 
+    if (df['position_macd'][-2] == 1.0) and (rsi[-2] > 70):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
-  
-  if (df['position_macd'][-1] == -2.0) and (rsi[-2] < 30):   
+  if (cciB58[-2] < 0): 
+    if (df['position_macd'][-2] == -1.0) and (rsi[-2] < 30):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
-      Tb.telegram_send_message( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3min \n💵 Precio: " + df['Close'][-1] + "\n📉  Fast Trend")
+      Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
   
   
 if __name__ == '__main__':
@@ -86,6 +97,6 @@ def server_time():
 schedule.every(3).minutes.at(":01").do(server_time)
   
 while True:
-    #server_time()
-    schedule.run_pending()
+    server_time()
+    ##schedule.run_pending()
     ti.sleep(1)

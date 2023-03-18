@@ -70,11 +70,11 @@ def indicator(symbol):
   "symbol": symbol
   }
   if (cciB58[-2] > 0): 
-    if (df['position_macd'][-2] == 1.0) and (rsi[-2] > 70):    
+    if (df['position_macd'][-2] == 1) and (rsi[-2] > 70):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
   if (cciB58[-2] < 0): 
-    if (df['position_macd'][-2] == -1.0) and (rsi[-2] < 30):   
+    if (df['position_macd'][-2] == -1) and (rsi[-2] < 30):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
   
@@ -94,9 +94,9 @@ def server_time():
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(3).minutes.at(":01").do(server_time)
+#schedule.every(3).minutes.at(":01").do(server_time)
   
 while True:
-    #server_time()
-    schedule.run_pending()
+    server_time()
+    #schedule.run_pending()
     ti.sleep(1)

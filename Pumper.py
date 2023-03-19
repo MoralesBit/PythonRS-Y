@@ -54,7 +54,11 @@ def indicator(symbol):
   
   cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=28)
   cciB58 = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=58)
- 
+  
+  macdB, signalB, histB = ta.MACD(df_new['Close'], 
+                                    fastperiod=12, 
+                                    slowperiod=26, 
+                                    signalperiod=9)
   print(symbol)
   print(df['position_macd'][-2])
     
@@ -72,11 +76,11 @@ def indicator(symbol):
   "symbol": symbol
   }
   
-  if (cciB58[-3] < cciB58[-2]): 
+  if (macdB[-3] < macdB[-2]): 
     if (cci20[-3] < 0) and (cci20[-2] > 0):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
-  if (cciB58[-3] > cciB58[-2]): 
+  if (macdB[-3] > macdB[-2]): 
     if (cci20[-3] > 0) and (cci20[-2] < 0):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")

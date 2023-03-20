@@ -42,7 +42,7 @@ def indicator(symbol):
   
   rsi = ta.RSI(df["Close"], timeperiod=4)
   cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
-  adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+  adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
     
   info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
   df_new = pd.DataFrame(info)
@@ -78,11 +78,11 @@ def indicator(symbol):
   }
   
   if (macdB[-2] > signalB[-2]) and (macdB[-3] < macdB[-2]): 
-    if (cci20[-3] < 0) and (cci20[-2] > 0) and (adx[-3] < adx[-2]) and (df['macd_hist'][-3] < df['macd_hist'][-2]):    
+    if (cci20[-3] < 0) and (cci20[-2] > 0) and (adxr[-3] < adxr[-2]) and (df['macd_hist'][-3] < df['macd_hist'][-2]):    
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
   if (macdB[-2] < signalB[-2]) and (macdB[-3] > macdB[-2]): 
-    if (cci20[-3] > 0) and (cci20[-2] < 0) and (adx[-3] < adx[-2]) and (df['macd_hist'][-3] > df['macd_hist'][-2]):   
+    if (cci20[-3] > 0) and (cci20[-2] < 0) and (adxr[-3] < adxr[-2]) and (df['macd_hist'][-3] > df['macd_hist'][-2]):   
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
   

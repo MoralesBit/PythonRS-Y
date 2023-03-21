@@ -42,6 +42,7 @@ def indicator(symbol):
   
   rsi = ta.RSI(df["Close"], timeperiod=4)
   cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
+  cci28 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
   cci3 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=3)
   adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
   adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)  
@@ -92,13 +93,13 @@ def indicator(symbol):
   #BACKTESTING EN FOREX:
   if (macdB[-2] > signalB[-2]) and (macdB[-3] < macdB[-2]): 
     if (df['tendencia'][-1] == 1):
-      if (cci3[-3] < 0) and (cci3[-2] > 0) and (adxr[-2] > 25):    
-        requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
+      if (cci3[-3] < 0) and (cci3[-2] > 0) and (adxr[-2] > 25) and (rsi[-2] < 60):    
+        #requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
   if (macdB[-2] < signalB[-2]) and (macdB[-3] > macdB[-2]): 
     if (df['tendencia'][-1] == -1):
-      if (cci3[-3] > 0) and (cci3[-2] < 0)and (adxr[-2] > 25):   
-        requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
+      if (cci3[-3] > 0) and (cci3[-2] < 0)and (adxr[-2] > 25) and (rsi[-2] > 40):   
+        #requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
         
    #FUNCIONA ESTABLE:
@@ -114,14 +115,14 @@ def indicator(symbol):
       
   #20/03/2023:
   
-  if (histB[-3] < histB[-2]): 
-    if (cci20[-3] < 0) and (cci20[-2] > 0) and (adxr[-3] < adxr[-2]) and (macd[-2] > signal[-2]) and (df['tendencia'][-1] == 1):    
-      requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
-      Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
-  if (histB[-3] > histB[-2]): 
-    if (cci20[-3] > 0) and (cci20[-2] < 0) and (adxr[-3] < adxr[-2]) and (macd[-2] < signal[-2]) and (df['tendencia'][-1] == -1):   
-      requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
-      Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
+  if (cci28[-3] < 0) and (cci28[-2] > 0) and (macd[-2] > signal[-2]):
+      if (adxr[-2] > 25):  
+        requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
+  if (cci28[-3] > 0) and (cci28[-2] < 0) and (macd[-2] < signal[-2]):
+      if (adxr[-2] > 25):  
+        requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
   
   
 if __name__ == '__main__':

@@ -93,12 +93,12 @@ def indicator(symbol):
   if (macdB[-2] > signalB[-2]) and (macdB[-3] < macdB[-2]): 
     if (df['tendencia'][-1] == 1):
       if (cci3[-3] < 0) and (cci3[-2] > 0) and (adxr[-2] > 25):    
-        #requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
+        requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
   if (macdB[-2] < signalB[-2]) and (macdB[-3] > macdB[-2]): 
     if (df['tendencia'][-1] == -1):
       if (cci3[-3] > 0) and (cci3[-2] < 0)and (adxr[-2] > 25):   
-        #requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
+        requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
         
    #FUNCIONA ESTABLE:

@@ -48,7 +48,7 @@ def indicator(symbol):
   adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)  
   
   
-  df['EMA100'] = df['Close'].ewm(100).mean()
+  df['EMA200'] = df['Close'].ewm(200).mean()
   
   df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA100'][-1]), 1,0)
   

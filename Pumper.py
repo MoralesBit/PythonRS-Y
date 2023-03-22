@@ -55,9 +55,9 @@ def indicator(symbol):
   df['BBW'] = (df['upperband'] - df['lowerband']) / df['middleband']    
   
   
-  df['EMA100'] = df['Close'].ewm(100).mean()
+  df['EMA200'] = df['Close'].ewm(200).mean()
   
-  df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA100'][-1]), 1,0)
+  df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA200'][-1]), 1,0)
   
   
   info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
@@ -110,11 +110,11 @@ def indicator(symbol):
       #Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
       
   #20/03/2023:
-  if (df['Positions'][-1] == 1.0):
+  if (df['tendencia'][-1] == 1.0):
    if (cci28[-3] < 0) and (cci28[-2] > 0) and (df['Will'][-2] > -20) and (df['BBW'][-2] > 0.02):
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
-  if (df['Positions'][-1] == -1.0):
+  if (df['tendencia'][-1] == -1.0):
    if (cci28[-3] > 0) and (cci28[-2] < 0) and (df['Will'][-2] < -80) and (df['BBW'][-2] > 0.02):
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")

@@ -110,12 +110,12 @@ def indicator(symbol):
       #Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
       
   #20/03/2023:
-  if (df['tendencia'][-2] == 1.0):
-   if (cci28[-3] < 0) and (cci28[-2] > 0) and (df['Will'][-2] > -20) and (df['BBW'][-2] > 0.02):
+  #if (df['tendencia'][-2] == 1.0):
+  if (df['Will'][-3] < -80) and (df['Will'][-2] > -80) and (df['BBW'][-2] > 0.05) and (cci28[-2] > -100):
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
-  if (df['tendencia'][-2] == -1.0):
-   if (cci28[-3] > 0) and (cci28[-2] < 0) and (df['Will'][-2] < -80) and (df['BBW'][-2] > 0.02):
+  #if (df['tendencia'][-2] == -1.0):
+  if (df['Will'][-3] > -20) and (df['Will'][-2] < -20) and (df['BBW'][-2] > 0.05) and (cci28[-2] < 100):
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
   

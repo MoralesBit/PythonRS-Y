@@ -117,7 +117,7 @@ def indicator(symbol):
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
   #if (df['tendencia'][-2] == -1.0):
   if (cciB[-2] < 0):
-    if (cci20[-2] < 0) and (df['macd_hist'][-3] < 0) and (df['macd_hist'][-2] > 0) and (df['BBW'][-2] > 0.03):
+    if (cci20[-2] < 0) and (df['macd_hist'][-3] > 0) and (df['macd_hist'][-2] < 0) and (df['BBW'][-2] > 0.03):
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
   

@@ -97,7 +97,20 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol
   }
-
+  #LONG FISHING en 3 min
+  
+  if (cci28[-3] < 0) and (cci28[-2] > 0) and (macd[-2] > signal[-2]):
+    if (adxr[-2] > 25):      
+      #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
+      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3 min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
+  
+  #SHORT FISHING en 3 min
+  
+  if (cci28[-3] > 0) and (cci28[-2] < 0) and (macd[-2] < signal[-2]):
+    if (adxr[-2] > 25):  
+      #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
+      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3 min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")  
+ 
   #FUNCIONA ESTABLE:
   
   #if (macdB[-2] > signalB[-2]) and (macdB[-3] < macdB[-2]): 

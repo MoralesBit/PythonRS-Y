@@ -102,14 +102,14 @@ def indicator(symbol):
   if (cci28[-3] < 0) and (cci28[-2] > 0) and (macd[-2] > signal[-2]):
     if (adxr[-2] > 25):      
       #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
-      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🟢 LONG \n⏳ 3 min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Mini FIshing")
   
   #SHORT FISHING en 3 min
   
   if (cci28[-3] > 0) and (cci28[-2] < 0) and (macd[-2] < signal[-2]):
     if (adxr[-2] > 25):  
       #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
-      Tb.telegram_canal_prueba( "⚡️ " + symbol + "\n🔴 SHORT \n⏳ 3 min \n💵 Precio: " + df['Close'][-1] + "\n🎣 Fishing Pisha")  
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Mini FIshing")  
  
   #FUNCIONA ESTABLE:
   
@@ -150,9 +150,9 @@ def server_time():
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(3).minutes.at(":01").do(server_time)
+#schedule.every(3).minutes.at(":01").do(server_time)
   
 while True:
-    #server_time()
-    schedule.run_pending()
+    server_time()
+    #schedule.run_pending()
     ti.sleep(1)

@@ -110,14 +110,14 @@ def indicator(symbol):
       #Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
       
   #20/03/2023:
-  #if (df['tendencia'][-2] == 1.0):
-  if (cciB[-2] > 0):
-    if (cci20[-2] > 0) and (df['macd_hist'][-3] < 0) and (df['macd_hist'][-2] > 0) and (df['BBW'][-2] < 0.01):
+  
+  if (cciB58[-2] > 0):
+    if (cci20[-3] < -100) and (cci20[-2] > -100) and (df['macd'][-3] < df['macd'][-2]) and (df['Will'][-2] < -50):
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
-  #if (df['tendencia'][-2] == -1.0):
-  if (cciB[-2] < 0):
-    if (cci20[-2] < 0) and (df['macd_hist'][-3] > 0) and (df['macd_hist'][-2] < 0) and (df['BBW'][-2] > 0.03):
+  
+  if (cciB58[-2] < 0):
+    if (cci20[-3] > 100) and (cci20[-2] < 100) and (df['macd'][-3] > df['macd'][-2]) and (df['Will'][-2] > -50):
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
   

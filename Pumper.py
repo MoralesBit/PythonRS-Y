@@ -47,7 +47,6 @@ def indicator(symbol):
   rsi = ta.RSI(df["Close"], timeperiod=4)
   cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
   cci28 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
-  cci58 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
   cci3 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=3)
   adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
   adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
@@ -60,7 +59,7 @@ def indicator(symbol):
   
   df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA200'][-1]), 1,0)
   
-    info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
+  info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
   df_new = pd.DataFrame(info)
        
   if not df_new.empty:
@@ -68,8 +67,10 @@ def indicator(symbol):
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
   df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
   df_new = df_new.set_index('Date')
-  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=28)
+  
+  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=20)
   cciB58 = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=58)
+  
   
     
   print(symbol)
@@ -91,29 +92,29 @@ def indicator(symbol):
   #LONG FISHING en 3 min
   
   if (cci20[-3] < 0) and (cci20[-2] > 0) and (macd[-2] > signal[-2]):
-    if (cciB58[-2] > 40) and (adxr[-2] > 25):      
+    if (adxr[-2] > 25) and (cciB[-2] > 50):      
       #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Mini FIshing")
   
   #SHORT FISHING en 3 min
   
-  if (cci20[-3] > 0) and (cci20[-2] < 0) and (macd[-2] < signal[-2]):
-    if (cciB58[-2] < -40) and (adxr[-2] > 25):  
+  if (cci28[-3] > 0) and (cci28[-2] < 0) and (macd[-2] < signal[-2]):
+    if (adxr[-2] > 25)  and (cciB[-2] < .50):  
       #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Mini FIshing")  
  
   #FUNCIONA ESTABLE:
   
   #if (macdB[-2] > signalB[-2]) and (macdB[-3] < macdB[-2]): 
-    #if (cci20[-3] < 0) and (cci20[-2] > 0) and (adxr[-3] < adxr[-2]) and (df['macd_hist'][-3] < df['macd_hist'][-2]) and (20 <= adx[-3] < adx[-2]):    
+    #if (cci20[-3] < 0) and (cci20[-2] > 0) and (adxr[-3] < adxr[-2]) and (df['macd_hist'][-3] < df['macd_hist'][-2]) and (adx[-2] >= 20):    
       #requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
       #Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
   #if (macdB[-2] < signalB[-2]) and (macdB[-3] > macdB[-2]): 
-    #if (cci20[-3] > 0) and (cci20[-2] < 0) and (adxr[-3] < adxr[-2]) and (df['macd_hist'][-3] > df['macd_hist'][-2]) and (20 <= adx[-3] < adx[-2]):   
+    #if (cci20[-3] > 0) and (cci20[-2] < 0) and (adxr[-3] < adxr[-2]) and (df['macd_hist'][-3] > df['macd_hist'][-2]) and (adx[-2] >= 20):   
       #requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       #Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
-      
-  #24/03/2023: 
+  
+  #25/03/2023: 
   if cciB58[-2] > 40:
    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (adx[-2] > 20) and (chain[-2] > 100000):      
       #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
@@ -122,7 +123,6 @@ def indicator(symbol):
    if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (adx[-2] > 20) and (chain[-2] > -100000):
       #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT) 
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
-  
   
 if __name__ == '__main__':
   monedas = client.futures_exchange_info()

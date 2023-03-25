@@ -47,6 +47,7 @@ def indicator(symbol):
   rsi = ta.RSI(df["Close"], timeperiod=4)
   cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
   cci28 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
+  cci58 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
   cci3 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=3)
   adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
   adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
@@ -104,11 +105,11 @@ def indicator(symbol):
       
   #24/03/2023: 
   
-  if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (cci20[-1] > 0) and (adx[-2] > 20) and (chain[-2] > 100000):      
+  if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (cci58[-1] > 0) and (adx[-2] > 20) and (chain[-2] > 100000):      
       #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
   
-  if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (cci20[-1] < 0) and (adx[-2] > 20) and (chain[-2] > -100000):
+  if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (cci58[-1] < 0) and (adx[-2] > 20) and (chain[-2] > -100000):
       #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT) 
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
   

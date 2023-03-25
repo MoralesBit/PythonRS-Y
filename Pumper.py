@@ -60,6 +60,16 @@ def indicator(symbol):
   
   df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA200'][-1]), 1,0)
   
+    info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
+  df_new = pd.DataFrame(info)
+       
+  if not df_new.empty:
+        df_new.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
+      'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
+  df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
+  df_new = df_new.set_index('Date')
+  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=28)
+  cciB58 = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=58)
   
     
   print(symbol)
@@ -104,12 +114,12 @@ def indicator(symbol):
       #Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
       
   #24/03/2023: 
-  
-  if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (cci58[-1] > 0) and (adx[-2] > 20) and (chain[-2] > 100000):      
+  if cciB58[-2] > 40:
+   if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (adx[-2] > 20) and (chain[-2] > 100000):      
       #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
-  
-  if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (cci58[-1] < 0) and (adx[-2] > 20) and (chain[-2] > -100000):
+  if  cciB58[-2] > -40:
+   if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (adx[-2] > 20) and (chain[-2] > -100000):
       #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT) 
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
   

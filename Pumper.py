@@ -52,37 +52,17 @@ def indicator(symbol):
   adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
   df['Will'] = ta.WILLR(df['High'], df['Low'], df['Close'], timeperiod=14)
-  df['BBW'] = (df['upperband'] - df['lowerband']) / df['middleband']    
-  
-  
+  df['BBW'] = (df['upperband'] - df['lowerband']) / df['middleband']  
+  chain = ta.ADOSC(df['High'], df['Low'], df['Close'], df['Volume'], fastperiod=3, slowperiod=10)
+ 
   df['EMA200'] = df['Close'].ewm(200).mean()
   
   df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA200'][-1]), 1,0)
   
   
-  info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
-  df_new = pd.DataFrame(info)
-       
-  if not df_new.empty:
-        df_new.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
-      'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
-  df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
-  df_new = df_new.set_index('Date')
-  
-  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=20)
-  cciB58 = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=58)
-  
-  macdB, signalB, histB = ta.MACD(df_new['Close'], 
-                                    fastperiod=12, 
-                                    slowperiod=26, 
-                                    signalperiod=9)
-  df_new['EMA100'] = df_new['Close'].ewm(100).mean()
-  df_new['tendenciaB'] = np.where((float(df_new['Close'][-1])) > (df_new['EMA100'][-1]), 1,0)
-  
-  
+    
   print(symbol)
-  print(df['Will'][-2])
-  print(df['BBW'][-2])
+  print(chain[-2])
     
        
   UNOSHORT = {
@@ -124,11 +104,11 @@ def indicator(symbol):
       
   #24/03/2023: 
   
-  if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (cci20[-1] > 0) and (adx[-2] > 20):      
+  if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (cci20[-1] > 0) and (adx[-2] > 20) and (chain[-2] > 100000):      
       #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
   
-  if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (cci20[-1] < 0) and (adx[-2] > 20):
+  if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (cci20[-1] < 0) and (adx[-2] > 20) and (chain[-2] > -100000):
       #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT) 
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
   

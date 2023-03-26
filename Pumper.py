@@ -99,7 +99,7 @@ def indicator(symbol):
   #SHORT FISHING en 3 min
   
   if (cci28[-3] > 0) and (cci28[-2] < 0) and (macd[-2] < signal[-2]):
-    if (adxr[-2] > 25)  and (cciB[-2] < .50):  
+    if (adxr[-2] > 25)  and (cciB[-2] < -50):  
       #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Mini FIshing")  
  

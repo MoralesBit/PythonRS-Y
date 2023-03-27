@@ -44,7 +44,7 @@ def indicator(symbol):
   df['macd_crossover'] = np.where(df['macd'] > df['macd_signal'], 1, 0)
   df['position_macd'] = df['macd_crossover'].diff()
   
-  rsi = ta.RSI(df["Close"], timeperiod=4)
+  rsi3 = ta.RSI(df["Close"], timeperiod=14)
   cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
   cci28 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
   cci3 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=3)
@@ -59,19 +59,31 @@ def indicator(symbol):
   
   df['tendencia'] = np.where((float(df['Close'][-1])) > (df['EMA200'][-1]), 1,0)
   
-  info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
-  df_new = pd.DataFrame(info)
+  kline15 = client.futures_historical_klines(symbol, "15m", "2 days ago UTC+1",limit=1000) 
+  df_15 = pd.DataFrame(kline15)
        
-  if not df_new.empty:
-        df_new.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
+  if not df_15.empty:
+        df_15.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
-  df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
-  df_new = df_new.set_index('Date')
+  df_15['Date'] = pd.to_datetime(df_15['Date'], unit='ms')
+  df_15 = df_15.set_index('Date')
   
-  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=20)
-  cciB58 = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=58)
+  cciB = ta.CCI(df_15['High'], df_15['Low'], df_15['Close'], timeperiod=20)
+  cciB58 = ta.CCI(df_15['High'], df_15['Low'], df_15['Close'], timeperiod=58)
+  rsi15 = ta.RSI(df_15["Close"], timeperiod=14)
   
+  kline30 = client.futures_historical_klines(symbol, "30m", "2 days ago UTC+1",limit=1000) 
+  df_30 = pd.DataFrame(kline30)
+       
+  if not df_30.empty:
+        df_30.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
+      'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
+  df_30['Date'] = pd.to_datetime(df_30['Date'], unit='ms')
+  df_30 = df_30.set_index('Date')
   
+  cciB = ta.CCI(df_30['High'], df_30['Low'], df_30['Close'], timeperiod=20)
+  cciB58 = ta.CCI(df_30['High'], df_30['Low'], df_30['Close'], timeperiod=58)  
+  rsi30 = ta.RSI(df_30["Close"], timeperiod=14) 
     
   print(symbol)
   print(df['tendencia'][-1])
@@ -90,19 +102,13 @@ def indicator(symbol):
   "symbol": symbol
   }
   #LONG Y SHORT > 50 - MINI FISHING 
-  if (cciB[-2] > 50): 
+  if (rsi3[-2] < 50) and (rsi15[-2] < 40) and (rsi30[-2] < 30): 
     if (cci20[-3] < 0) and (cci20[-2] > 0) and (macd[-2] > signal[-2]) and (adxr[-2] > 25):     
       #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Mini FIshing")
-    if (cci28[-3] > 0) and (cci28[-2] < 0) and (macd[-2] < signal[-2]) and (adxr[-2] > 25):  
-      #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
-      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Mini FIshing")
- 
+    
   #LONG Y SHORT > 50 - MINI FISHING 
-  if (cciB[-2] < -50): 
-    if (cci20[-3] < 0) and (cci20[-2] > 0) and (macd[-2] > signal[-2]) and (adxr[-2] > 25):     
-      #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
-      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Mini FIshing")
+  if (rsi3[-2] > 50) and (rsi15[-2] > 60) and (rsi30[-2] > 70): 
     if (cci28[-3] > 0) and (cci28[-2] < 0) and (macd[-2] < signal[-2]) and (adxr[-2] > 25):  
       #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Mini FIshing")
@@ -120,16 +126,25 @@ def indicator(symbol):
       #requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       #Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
   
-  #25/03/2023: 
+  # 3 RSI 
   if cci28[-2] > 50:
-    if (df['tendencia'][-1] == 1):     
+    if (rsi3[-2] < 50) and (rsi15[-2] < 40) and (rsi30[-2] < 30):    
       if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (adx[-2] > 20):      
         #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
         Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
     
-      
+    if (rsi3[-2] > 50) and (rsi15[-2] > 60) and (rsi30[-2] > 70):   
+      if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (adx[-2] > 20):
+        #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT) 
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
+  
   if  cci28[-2] < -50:
-    if (df['tendencia'][-1] == 0): 
+    if (rsi3[-2] < 50) and (rsi15[-2] < 40) and (rsi30[-2] < 30):       
+      if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (adx[-2] > 20):      
+        #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
+    
+    if (rsi3[-2] > 50) and (rsi15[-2] > 60) and (rsi30[-2] > 70):
       if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (adx[-2] > 20):
         #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT) 
         Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")    

@@ -99,12 +99,12 @@ def indicator(symbol):
   }
   
   # Santo Grial
-  if (rsi[-3] < 50) and (rsi[-2] > 50) and (df['macd'][-2] < 0):   
+  if (rsi[-3] < 50) and (rsi[-2] > 50) and (df['macd_hist'][-2] < 0):   
         #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
         Tb.telegram_canal_prueba(f"💎 {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 Diamond")
     
   # SHORT
-  if (rsi[-3] > 50) and (rsi[-2] < 50) and (df['macd'][-2] > 0) : 
+  if (rsi[-3] > 50) and (rsi[-2] < 50) and (df['macd_hist'][-2] > 0) : 
        #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
        Tb.telegram_canal_prueba(f"💎 {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 Diamond")
  

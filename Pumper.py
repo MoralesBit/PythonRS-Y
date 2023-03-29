@@ -44,7 +44,7 @@ def indicator(symbol):
   df['macd_crossover'] = np.where(df['macd'] > df['macd_signal'], 1, 0)
   df['position_macd'] = df['macd_crossover'].diff()
   
-  rsi = ta.RSI(df["Close"], timeperiod=4)
+  rsi = ta.RSI(df["Close"], timeperiod=14)
   cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
   cci28 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
   cci3 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=3)
@@ -99,16 +99,12 @@ def indicator(symbol):
   }
   
   # Santo Grial
-  if (df['tendencia'][-2] == 1) and (df['tendenciaemas'][-2] == 1):
-    if (float(round(df['BBW'][-2],2)) == 0.00):
-      if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]):   
+  if (rsi[-3] < 50) and (rsi[-2] > 50) and (df['macd'][-2] < 0):   
         #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
         Tb.telegram_canal_prueba(f"💎 {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 Diamond")
     
   # SHORT
-  if (df['tendencia'][-2] == 0) and (df['tendenciaemas'][-2] == 0):
-    if (float(round(df['BBW'][-2],2)) == 0.00):
-      if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]): 
+  if (rsi[-3] > 50) and (rsi[-2] < 50) and (df['macd'][-2] > 0) : 
        #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
        Tb.telegram_canal_prueba(f"💎 {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 Diamond")
  

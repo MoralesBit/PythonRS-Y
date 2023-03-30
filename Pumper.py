@@ -82,32 +82,45 @@ def indicator(symbol):
   print(symbol)
   print(df['EMA100'][-2])
   print(df['EMA200'][-2])
-  print(round(df['BBW'][-2],3))
+  
     
-       
-  UNOSHORT = {
-  "name": "SHORT-REV",
+  MINIFSHORT = {
+  "name": "SHORT-MINIFISH",
+  "secret": "w48ulz23f6",
+  "side": "sell",
+  "symbol": symbol
+  }
+  MINIFLONG = {
+  "name": "LONG-MINIFISH",
+  "secret": "xxuxkqf0gpj",
+  "side": "buy",
+  "symbol": symbol
+  }
+     
+  TRENDSHORT = {
+  "name": "SHORT-TREND",
   "secret": "hgw3399vhh",
   "side": "sell",
   "symbol": symbol
   }
-  UNOLONG = {
-  "name": "LONG- REV",
+  TRENDLONG = {
+  "name": "LONG-TREND",
   "secret": "xjth0i3qgb",
   "side": "buy",
   "symbol": symbol
   }
   
+  
   # Santo Grial
   if (df['tendencia'][-2] == 1) and (df['tendenciaemas'][-2] == 1):
-    if (rsi[-3] < 50) and (rsi[-2] > 50) and (df['macd_hist'][-2] < 0) and (adxr[-2] > 20):   
-        #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
+    if (rsi[-3] < 40) and (rsi[-2] > 40) and (df['macd_hist'][-2] < 0) and (adxr[-2] > 20):   
+        #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=DIAMONDLONG)
         Tb.telegram_canal_prueba(f"💎 {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 Diamond")
     
   # SHORT
   if (df['tendencia'][-2] == 0) and (df['tendenciaemas'][-2] == 0):
-    if (rsi[-3] > 50) and (rsi[-2] < 50) and (df['macd_hist'][-2] > 0) and (adxr[-2] > 20): 
-       #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
+    if (rsi[-3] > 60) and (rsi[-2] < 60) and (df['macd_hist'][-2] > 0) and (adxr[-2] > 20): 
+       #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=DIAMONDSHORT)  
        Tb.telegram_canal_prueba(f"💎 {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 Diamond")
  
   
@@ -115,14 +128,14 @@ def indicator(symbol):
   #LONG Y SHORT > 50 - MINI FISHING 
   if (df_new['tendenciaB'][-2] == 1) and (df['tendencia'][-2] == 1) and (df['tendenciaemas'][-2] == 1): 
     if (cci20[-3] < 0) and (cci20[-2] > 0) and (macd[-2] > signal[-2]) and (adxr[-3] > adxr[-2] > 20):     
-      #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
+      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=MINIFLONG)
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Mini FIshing")
     
   #LONG Y SHORT > 50 - MINI FISHING 
   if (df_new['tendenciaB'][-2] == 0) and (df['tendencia'][-2] == 0) and (df['tendenciaemas'][-2] == 0): 
    
     if (cci28[-3] > 0) and (cci28[-2] < 0) and (macd[-2] < signal[-2]) and (adxr[-3] > adxr[-2] > 20):  
-      #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
+      requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=MINIFSHORT)  
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Mini FIshing")
  
    
@@ -141,13 +154,13 @@ def indicator(symbol):
   # Tendencia 100 y 200(LONG)
   if (df['tendencia'][-2] == 1) and (df['tendenciaemas'][-2] == 1):
     if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (adx[-3] < adx[-2] > 20) and (df['BBW'][-2] > 0.02):   
-      #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
+      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=TRENDLONG)
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 Trend")
     
   # SHORT
   if (df['tendencia'][-2] == 0) and (df['tendenciaemas'][-2] == 0):
     if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (adx[-3] < adx[-2] > 20) and (df['BBW'][-2] > 0.02): 
-      #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
+      requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=TRENDSHORT )  
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 Trend")
  
 if __name__ == '__main__':

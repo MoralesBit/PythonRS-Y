@@ -100,13 +100,13 @@ def indicator(symbol):
   
   # Santo Grial
   if (df['tendencia'][-2] == 1) and (df['tendenciaemas'][-2] == 1):
-    if (rsi[-3] < 50) and (rsi[-2] > 50) and (df['macd_hist'][-2] < 0):   
+    if (rsi[-3] < 50) and (rsi[-2] > 50) and (df['macd_hist'][-2] < 0) and (adxr[-2] > 20):   
         #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
         Tb.telegram_canal_prueba(f"💎 {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 Diamond")
     
   # SHORT
   if (df['tendencia'][-2] == 0) and (df['tendenciaemas'][-2] == 0):
-    if (rsi[-3] > 50) and (rsi[-2] < 50) and (df['macd_hist'][-2] > 0) : 
+    if (rsi[-3] > 50) and (rsi[-2] < 50) and (df['macd_hist'][-2] > 0) and (adxr[-2] > 20): 
        #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
        Tb.telegram_canal_prueba(f"💎 {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 Diamond")
  
@@ -114,14 +114,14 @@ def indicator(symbol):
   
   #LONG Y SHORT > 50 - MINI FISHING 
   if (df['tendenciaB'][-2] == 1) and (df['tendencia'][-2] == 1) and (df['tendenciaemas'][-2] == 1): 
-    if (cci20[-3] < 0) and (cci20[-2] > 0) and (macd[-2] > signal[-2]) and (adxr[-3] > adxr[-2]):     
+    if (cci20[-3] < 0) and (cci20[-2] > 0) and (macd[-2] > signal[-2]) and (adxr[-3] > adxr[-2] > 20):     
       #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Mini FIshing")
     
   #LONG Y SHORT > 50 - MINI FISHING 
   if (df['tendenciaB'][-2] == 0) and (df['tendencia'][-2] == 0) and (df['tendenciaemas'][-2] == 0): 
    
-    if (cci28[-3] > 0) and (cci28[-2] < 0) and (macd[-2] < signal[-2]) and (adxr[-3] > adxr[-2]):  
+    if (cci28[-3] > 0) and (cci28[-2] < 0) and (macd[-2] < signal[-2]) and (adxr[-3] > adxr[-2] > 20):  
       #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Mini FIshing")
  
@@ -138,15 +138,15 @@ def indicator(symbol):
       #requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
       #Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
   
-  # Tendencia 13 y 200(LONG)
+  # Tendencia 100 y 200(LONG)
   if (df['tendencia'][-2] == 1) and (df['tendenciaemas'][-2] == 1):
-    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (adx[-3] < adx[-2]) and (df['BBW'][-2] > 0.02):   
+    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (adx[-3] < adx[-2] > 20) and (df['BBW'][-2] > 0.02):   
       #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=PLONG)
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 Trend")
     
   # SHORT
   if (df['tendencia'][-2] == 0) and (df['tendenciaemas'][-2] == 0):
-    if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (adx[-3] < adx[-2]) and (df['BBW'][-2] > 0.02): 
+    if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (adx[-3] < adx[-2] > 20) and (df['BBW'][-2] > 0.02): 
       #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=PSHORT)  
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 Trend")
  

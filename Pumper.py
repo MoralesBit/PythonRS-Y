@@ -167,9 +167,9 @@ def indicator(symbol):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI")
     if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (df['Secound_cross'][-2] == 0):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI")
-    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['third_cross'][-2] == 0):
+    if (df['macd'][-3] > df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (df['third_cross'][-2] == 0):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI") 
-    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['Fourth_cross'][-2] == 0):
+    if (df['macd'][-3] > df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (df['Fourth_cross'][-2] == 0):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI") 
   
   #FUNCIONA ESTABLE:

@@ -78,7 +78,7 @@ def indicator(symbol):
   df['First_cross'] = np.where((float(df['Close'][-2])) > (df['first_level']),1,0)
   df['Secound_cross'] = np.where((float(df['Close'][-2])) > (df['secound_level']),1,0)
   df['third_cross'] = np.where((float(df['Close'][-2])) > (df['third_level']),1,0)
-  df['Fout_cross'] = np.where((float(df['Close'][-2])) > (df['fourth_level']),1,0)
+  df['Fourth_cross'] = np.where((float(df['Close'][-2])) > (df['fourth_level']),1,0)
   
   info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
   df_new = pd.DataFrame(info)
@@ -129,15 +129,35 @@ def indicator(symbol):
   "symbol": symbol
   }
     
+   # FIBO + RSI - contratendica
+   
+  if (df['First_cross'][-2] == 1) and (rsi[-3] < 30) and (rsi[-2] > 30):
+          Tb.telegram_canal_prueba(f"💎 {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI + RSI")
+  if (df['Secound_cross'][-2] == 1) and (rsi[-3] < 30) and (rsi[-2] > 30):
+          Tb.telegram_canal_prueba(f"💎 {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI + RSI")  
+  if (df['third_cross'][-2] == 1) and (rsi[-3] < 30) and (rsi[-2] > 30):
+          Tb.telegram_canal_prueba(f"💎 {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI + RSI")  
+  if (df['Fourth_cross'][-2] == 1) and (rsi[-3] < 30) and (rsi[-2] > 30):
+          Tb.telegram_canal_prueba(f"💎 {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI + RSI")  
+  
+  if (df['First_cross'][-2] == 0) and (rsi[-3] > 70) and (rsi[-2] < 70):
+          Tb.telegram_canal_prueba(f"💎 {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI + RSI")
+  if (df['Secound_cross'][-2] == 0) and (rsi[-3] > 70) and (rsi[-2] < 70):
+          Tb.telegram_canal_prueba(f"💎 {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI + RSI")
+  if (df['third_cross'][-2] == 0) and (rsi[-3] > 70) and (rsi[-2] < 70):
+          Tb.telegram_canal_prueba(f"💎 {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI + RSI")
+  if (df['Fourth_cross'][-2] == 0) and (rsi[-3] > 70) and (rsi[-2] < 70):
+          Tb.telegram_canal_prueba(f"💎 {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI + RSI")
+     
    # FIBO + MACD
   if (df['tendencia'][-2] == 1) and (df['tendenciaemas'][-2] == 1):
     if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['First_cross'][-2] == 1):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI")
     if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['Secound_cross'][-2] == 1):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI") 
-    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['third_level'][-2] == 1):
+    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['third_cross'][-2] == 1):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI") 
-    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['fourth_level'][-2] == 1):
+    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['Fourth_cross'][-2] == 1):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI")
   
   if (df['tendencia'][-2] == 0) and (df['tendenciaemas'][-2] == 0):
@@ -145,9 +165,9 @@ def indicator(symbol):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI")
     if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (df['Secound_cross'][-2] == 0):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI")
-    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['third_level'][-2] == 0):
+    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['third_cross'][-2] == 0):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI") 
-    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['fourth_level'][-2] == 0):
+    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['Fourth_cross'][-2] == 0):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI") 
   
   #FUNCIONA ESTABLE:
@@ -188,9 +208,9 @@ def server_time():
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(3).minutes.at(":01").do(server_time)
+#schedule.every(3).minutes.at(":01").do(server_time)
   
 while True:
-    #server_time()
-    schedule.run_pending()
+    server_time()
+    #schedule.run_pending()
     ti.sleep(1)

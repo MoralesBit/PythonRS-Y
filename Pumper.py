@@ -64,6 +64,22 @@ def indicator(symbol):
   df['tendencia'] = np.where((float(df['Close'][-2])) > (df['EMA100'][-2]),1,0)
   df['tendenciaemas'] = np.where(df['EMA100'][-2] > (df['EMA200'][-2]),1,0)
   
+  df['max_price'] = (df['Close']).max()
+  df['min_price'] = (df['Close']).min()
+    
+    
+  df['diference'] = df['max_price'] - df['min_price']
+    
+  df['first_level'] = df['max_price'] -  df['diference']*0.236
+  df['secound_level'] = df['max_price'] -  df['diference']* 0.382
+  df['third_level'] = df['max_price'] -  df['diference']*0.5
+  df['fourth_level'] = df['max_price'] -  df['diference']*0.618
+   
+  df['First_cross'] = np.where((float(df['Close'][-2])) > (df['first_level']),1,0)
+  df['Secound_cross'] = np.where((float(df['Close'][-2])) > (df['secound_level']),1,0)
+  df['third_cross'] = np.where((float(df['Close'][-2])) > (df['third_level']),1,0)
+  df['Fout_cross'] = np.where((float(df['Close'][-2])) > (df['fourth_level']),1,0)
+  
   info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
   df_new = pd.DataFrame(info)
        
@@ -112,37 +128,28 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol
   }
-  
-  
-  # DIAMOND
+    
+   # FIBO + MACD
   if (df['tendencia'][-2] == 1) and (df['tendenciaemas'][-2] == 1):
-    if (rsi[-3] < 40) and (rsi[-2] > 40) and (df['macd_hist'][-2] < 0) and (adxr[-2] > 20) and (cci58[-2] > 0):   
-        #requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=DIAMONDLONG)
-        Tb.telegram_canal_prueba(f"💎 {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 Diamond")
-    
-  # SHORT
+    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['First_cross'][-2] == 1):
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI")
+    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['Secound_cross'][-2] == 1):
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI") 
+    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['third_level'][-2] == 1):
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI") 
+    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['fourth_level'][-2] == 1):
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI")
+  
   if (df['tendencia'][-2] == 0) and (df['tendenciaemas'][-2] == 0):
-    if (rsi[-3] > 60) and (rsi[-2] < 60) and (df['macd_hist'][-2] > 0) and (adxr[-2] > 20) and (cci58[-2] < 0): 
-       #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=DIAMONDSHORT)  
-       Tb.telegram_canal_prueba(f"💎 {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 Diamond")
- 
+    if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (df['First_cross'][-2] == 0):
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI")
+    if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (df['Secound_cross'][-2] == 0):
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI")
+    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['third_level'][-2] == 0):
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI") 
+    if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (df['fourth_level'][-2] == 0):
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI") 
   
-  
-  #LONG Y SHORT > 50 - MINI FISHING 
-  if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]): 
-    if (cci58[-2] > 0) and (rsi[-3] < 60) and (rsi[-2] > 60):     
-      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=MINIFLONG)
-      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Mini FIshing")
-    
-  #LONG Y SHORT > 50 - MINI FISHING 
-  if  (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]): 
-   
-    if (cci58[-2] < 0) and (rsi[-3] > 40) and (rsi[-2] < 40):  
-      requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=MINIFSHORT)  
-      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Mini FIshing")
- 
-   
- 
   #FUNCIONA ESTABLE:
   
   #if (macdB[-2] > signalB[-2]) and (macdB[-3] < macdB[-2]): 

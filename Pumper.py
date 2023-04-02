@@ -99,8 +99,10 @@ def indicator(symbol):
   
     
   print(symbol)
-  print(df['EMA100'][-2])
-  print(df['EMA200'][-2])
+  print(df['first_level'][-2])
+  print(df['secound_level'][-2])
+  print(df['third_level'][-2])
+  print(df['fourth_level'][-2])
   
     
   MINIFSHORT = {

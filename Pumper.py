@@ -45,13 +45,6 @@ def indicator(symbol):
   df['position_macd'] = df['macd_crossover'].diff()
   
   rsi = ta.RSI(df["Close"], timeperiod=14)
-  
-  cci3 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=3)
-  cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
-  cci28 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
-  cci58 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
-  
-  adxr = ta.ADXR(df['High'], df['Low'], df['Close'], timeperiod=14)
   adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
   slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
   df['Will'] = ta.WILLR(df['High'], df['Low'], df['Close'], timeperiod=14)
@@ -80,30 +73,8 @@ def indicator(symbol):
   df['third_cross'] = np.where((float(df['Close'][-2])) > (df['third_level']),1,0)
   df['Fourth_cross'] = np.where((float(df['Close'][-2])) > (df['fourth_level']),1,0)
   
-  info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
-  df_new = pd.DataFrame(info)
-       
-  if not df_new.empty:
-        df_new.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
-      'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
-  df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
-  df_new = df_new.set_index('Date')
-  
-  cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=20)
-  cciB58 = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=58)
-  
-  df_new['EMA200B'] = df_new['Close'].ewm(200).mean()
-  
-  df_new['tendenciaB'] = np.where((float(df_new['Close'][-2])) > (df_new['EMA200B'][-2]), 1,0)
-  
-  
     
-  print(symbol)
-  print(df['first_level'][-2])
-  print(df['secound_level'][-2])
-  print(df['third_level'][-2])
-  print(df['fourth_level'][-2])
-  
+
     
   MINIFSHORT = {
   "name": "SHORT-MINIFISH",
@@ -195,6 +166,13 @@ def indicator(symbol):
     if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (adx[-3] < adx[-2] > 20) and (df['BBW'][-2] > 0.02): 
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=TRENDSHORT)  
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 Trend")
+
+  print(symbol)
+  print(df['first_level'][-2])
+  print(df['secound_level'][-2])
+  print(df['third_level'][-2])
+  print(df['fourth_level'][-2])
+  
  
 if __name__ == '__main__':
   monedas = client.futures_exchange_info()
@@ -211,9 +189,9 @@ def server_time():
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(3).minutes.at(":01").do(server_time)
+#schedule.every(3).minutes.at(":01").do(server_time)
   
 while True:
-    #server_time()
-    schedule.run_pending()
+    server_time()
+    #schedule.run_pending()
     ti.sleep(1)

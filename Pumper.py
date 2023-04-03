@@ -15,7 +15,7 @@ client = Client(api_key=Pkey, api_secret=Skey)
 
 def indicator(symbol):
   
-  kline = client.futures_historical_klines(symbol, "3m", "12 hours ago UTC+1",limit=500)
+  kline = client.futures_historical_klines(symbol, "5m", "12 hours ago UTC+1",limit=500)
   df = pd.read_json(json.dumps(kline))
   
   if not df.empty:
@@ -211,7 +211,7 @@ def server_time():
     indicator(symbol)
     ti.sleep(1)
             
-schedule.every(3).minutes.at(":01").do(server_time)
+schedule.every(5).minutes.at(":01").do(server_time)
   
 while True:
     #server_time()

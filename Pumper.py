@@ -79,8 +79,7 @@ def indicator(symbol):
     Low = float(df['Low'][-2])
     diff = abs((High / Low -1) * 100)  
 
-    df['OB'] = client.futures_order_book(symbol, "3m", "12 hours ago UTC+1",limit=500)
-      
+        
     MINIFSHORT = {
     "name": "SHORT-MINIFISH",
     "secret": "w48ulz23f6",

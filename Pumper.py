@@ -15,14 +15,14 @@ client = Client(api_key=Pkey, api_secret=Skey)
 
 def indicator(symbol):
     
-    kline = client.futures_historical_klines(symbol, "3m", "12 hours ago UTC+1",limit=500)
-    df = pd.read_json(json.dumps(kline))
+  kline = client.futures_historical_klines(symbol, "3m", "12 hours ago UTC+1",limit=500)
+  df = pd.read_json(json.dumps(kline))
     
-    if not df.empty:
-      df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
-        'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
-      df['Date'] = pd.to_datetime(df['Date'], unit='ms')
-      df = df.set_index('Date')
+  if not df.empty:
+    df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
+       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
+    df['Date'] = pd.to_datetime(df['Date'], unit='ms')
+    df = df.set_index('Date')
       
     
     upperband, middleband, lowerband = ta.BBANDS(df['Close'],
@@ -115,9 +115,12 @@ def indicator(symbol):
       
       elif (df['fourth_cross'][-2] == 1) and (df['third_level'][-2]) > (float(df['Close'][-2])) > (df['fourth_level'][-2]):
         Tb.telegram_canal_prueba(f"💎 {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI + RSI")  
+      
       else:   
         print("No hay alertas")
-    
+    else:   
+        print("No hay alertas")
+        
     if (rsi[-3] > 70) and (rsi[-2] < 70): 
       if (df['first_cross'][-2] == 0) and (df['first_level'][-2]) > float(df['Close'][-2]) > (df['secound_level'][-2]):
         Tb.telegram_canal_prueba(f"💎 {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI + RSI")
@@ -130,9 +133,12 @@ def indicator(symbol):
       
       elif (df['fourth_cross'][-2] == 0) and (float(df['Close'][-2]) < df['fourth_level'][-2]):
         Tb.telegram_canal_prueba(f"💎 {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI + RSI")
+      
       else:   
         print("No hay alertas")
-        
+    else:   
+        print("No hay alertas")
+            
     # FIBO + MACD
     if (df['tendencia'][-2] == 1) and (df['tendenciaemas'][-2] == 1) and (df['macd'][-3] < df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]):
       if (df['first_cross'][-2] == 1) and (float(df['Close'][-2]) > df['first_level'][-2]):
@@ -146,9 +152,12 @@ def indicator(symbol):
         
       elif (df['fourth_cross'][-2] == 1) and (df['third_level'][-2]) > (float(df['Close'][-2])) > (df['fourth_level'][-2]):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI")
+      
       else:   
         print("No hay alertas")
-    
+    else:   
+        print("No hay alertas")
+        
     if (df['tendencia'][-2] == 0) and (df['tendenciaemas'][-2] == 0) and  (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]):
       if (df['first_cross'][-2] == 0) and (df['first_level'][-2]) > float(df['Close'][-2]) > (df['secound_level'][-2]):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI")
@@ -161,9 +170,11 @@ def indicator(symbol):
         
       elif (df['fourth_cross'][-2] == 0) and (float(df['Close'][-2]) < df['fourth_level'][-2]):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI") 
+      
       else:   
         print("No hay alertas")
-    
+    else:   
+        print("No hay alertas")
     
     #FUNCIONA ESTABLE:
     

@@ -16,6 +16,9 @@ symbols = [symbol['symbol'] for symbol in futures_info['symbols']]
 
 # Crea una función para generar los canales de Fibonacci:
 def fibonacci_channel(high, low):
+      
+    if high == low:
+        return None  
     # Calcula los niveles de Fibonacci
     fib_levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1]
     fib_values = [(high - low) * level + low for level in fib_levels]
@@ -60,9 +63,7 @@ while True:
     
       # Genera los canales de Fibonacci
       fib_df = fibonacci_channel(high, low)
-      if fib_df is None:
-            continue
-    
+          
       # Calcula el MACD y Signal
       macd, signal, hist = calculate_macd_signal(prices)
     

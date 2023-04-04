@@ -1,218 +1,87 @@
 from binance.client import Client
-import pandas as pd
 import numpy as np
-import talib as ta
+import pandas as pd
+import talib
 import Telegram_bot as Tb
-import  schedule as schedule
-import time as ti
-import requests
-import json
+import time
 
-Pkey = ''
-Skey = ''
+api_key = 'TU_API_KEY'
+api_secret = 'TU_API_SECRET'
 
-client = Client(api_key=Pkey, api_secret=Skey)
+client = Client(api_key, api_secret)
 
-def indicator(symbol):
-    
-  kline = client.futures_historical_klines(symbol, "3m", "12 hours ago UTC+1",limit=500)
-  df = pd.read_json(json.dumps(kline))
-    
-  if not df.empty:
-    df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
-       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
-    df['Date'] = pd.to_datetime(df['Date'], unit='ms')
-    df = df.set_index('Date')
-      
-    
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'],
-                                                timeperiod=20,
-                                                nbdevup=2,
-                                                nbdevdn=2,
-                                                matype=0)
-    df['upperband'] = upperband
-    df['middleband'] = middleband
-    df['lowerband'] = lowerband
-    
-    macd, signal, hist = ta.MACD(df['Close'], 
-                                      fastperiod=12, 
-                                      slowperiod=26, 
-                                      signalperiod=9)
-    df['macd'] = macd
-    df['macd_signal'] = signal
-    df['macd_hist'] = hist
-    df['macd_crossover'] = np.where(df['macd'] > df['macd_signal'], 1, 0)
-    df['position_macd'] = df['macd_crossover'].diff()
-    
-    rsi = ta.RSI(df["Close"], timeperiod=14)
-    adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
-    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
-    df['Will'] = ta.WILLR(df['High'], df['Low'], df['Close'], timeperiod=14)
-    df['BBW'] = (df['upperband'] - df['lowerband']) / df['middleband']  
-    chain = ta.ADOSC(df['High'], df['Low'], df['Close'], df['Volume'], fastperiod=3, slowperiod=10)
-  
-    df['EMA200'] = df['Close'].ewm(200).mean()
-    df['EMA100'] = df['Close'].ewm(100).mean()
-    
-    df['tendencia'] = np.where((float(df['Close'][-2])) > (df['EMA100'][-2]),1,0)
-    df['tendenciaemas'] = np.where(df['EMA100'][-2] > (df['EMA200'][-2]),1,0)
-    
-    df['max_price'] = (df['Close']).max()
-    df['min_price'] = (df['Close']).min()
-      
-      
-    df['diference'] = df['max_price'] - df['min_price']
-      
-    df['first_level'] = df['max_price'] -  df['diference']*0.236
-    df['secound_level'] = df['max_price'] -  df['diference']* 0.382
-    df['third_level'] = df['max_price'] -  df['diference']*0.5
-    df['fourth_level'] = df['max_price'] -  df['diference']*0.618
-    
-    df['first_cross'] = np.where((float(df['Close'][-2])) > (df['first_level']),1,0)
-    df['secound_cross'] = np.where((float(df['Close'][-2])) > (df['secound_level']),1,0)
-    df['third_cross'] = np.where((float(df['Close'][-2])) > (df['third_level']),1,0)
-    df['fourth_cross'] = np.where((float(df['Close'][-2])) > (df['fourth_level']),1,0)
-    
-    Close = float(df['Close'][-2])
-    Open = float(df['Open'][-2])
-    High = float(df['High'][-2])
-    Low = float(df['Low'][-2])
-    diff = abs((High / Low -1) * 100)  
+futures_info = client.futures_exchange_info()
+symbols = [symbol['symbol'] for symbol in futures_info['symbols']]
 
-        
-    MINIFSHORT = {
-    "name": "SHORT-MINIFISH",
-    "secret": "w48ulz23f6",
-    "side": "sell",
-    "symbol": symbol
-    }
-    MINIFLONG = {
-    "name": "LONG-MINIFISH",
-    "secret": "xxuxkqf0gpj",
-    "side": "buy",
-    "symbol": symbol
-    }
-      
-    TRENDSHORT = {
-    "name": "SHORT-TREND",
-    "secret": "hgw3399vhh",
-    "side": "sell",
-    "symbol": symbol
-    }
-    TRENDLONG = {
-    "name": "LONG-TREND",
-    "secret": "xjth0i3qgb",
-    "side": "buy",
-    "symbol": symbol
-    }
-     
-        # FIBO + RSI - contratendica.
-    if (rsi[-3] < 30) and (rsi[-2] > 30):
-      #if (df['first_cross'][-2] == 1) and (float(df['Close'][-2]) > df['first_level'][-2]):
-        #Tb.telegram_canal_prueba(f"💎 {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI + RSI")
-        
-      #elif (df['secound_cross'][-2] == 1) and (df['first_level'][-2]) > (float(df['Close'][-2])) > (df['secound_level'][-2]):
-        #Tb.telegram_canal_prueba(f"💎 {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI + RSI")  
-      
-      #elif (df['third_cross'][-2] == 1) and (df['secound_level'][-2]) > (float(df['Close'][-2])) > (df['third_level'][-2]):
-        #Tb.telegram_canal_prueba(f"💎 {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI + RSI")  
-      
-      if (df['fourth_cross'][-2] == 1) and (df['third_level'][-2]) > (float(df['Close'][-2])) > (df['fourth_level'][-2]):
-        Tb.telegram_canal_prueba(f"💎 {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI + RSI")  
-           
-    if (rsi[-3] > 70) and (rsi[-2] < 70): 
-      if (df['first_cross'][-2] == 0) and (df['first_level'][-2]) > float(df['Close'][-2]) > (df['secound_level'][-2]):
-        Tb.telegram_canal_prueba(f"💎 {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI + RSI")
-        
-      #elif (df['secound_cross'][-2] == 0) and (df['secound_level'][-2]) > float(df['Close'][-2]) > (df['third_level'][-2]):
-        #Tb.telegram_canal_prueba(f"💎 {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI + RSI")
-      
-      #elif (df['third_cross'][-2] == 0) and (df['third_level'][-2]) > float(df['Close'][-2]) > (df['fourth_level'][-2]):
-        #Tb.telegram_canal_prueba(f"💎 {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI + RSI")
-      
-      #elif (df['fourth_cross'][-2] == 0) and (float(df['Close'][-2]) < df['fourth_level'][-2]):
-        #Tb.telegram_canal_prueba(f"💎 {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI + RSI")
-      
-    # FIBO + MACD
-    if (df['tendencia'][-2] == 1) and (df['tendenciaemas'][-2] == 1) and (df['macd'][-3] < df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]):
-      #if (df['first_cross'][-2] == 1) and (float(df['Close'][-2]) > df['first_level'][-2]):
-        #Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI")
-        
-      #elif (df['secound_cross'][-2] == 1) and (df['first_level'][-2]) > (float(df['Close'][-2])) > (df['secound_level'][-2]):
-        #Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI") 
-        
-      #elif (df['third_cross'][-2] == 1) and (df['secound_level'][-2]) > (float(df['Close'][-2])) > (df['third_level'][-2]):
-        #Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI") 
-        
-      if (df['fourth_cross'][-2] == 1) and (df['third_level'][-2]) > (float(df['Close'][-2])) > (df['fourth_level'][-2]):
-        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 TREND_FI")
-      
-        
-    if (df['tendencia'][-2] == 0) and (df['tendenciaemas'][-2] == 0) and  (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]):
-      if (df['first_cross'][-2] == 0) and (df['first_level'][-2]) > float(df['Close'][-2]) > (df['secound_level'][-2]):
-        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI")
-        
-      #elif (df['secound_cross'][-2] == 0) and (df['secound_level'][-2]) > float(df['Close'][-2]) > (df['third_level'][-2]):
-        #Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI")
-        
-      #elif (df['third_cross'][-2] == 0) and (df['third_level'][-2]) > float(df['Close'][-2]) > (df['fourth_level'][-2]):
-        #Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI")
-        
-      #elif (df['fourth_cross'][-2] == 0) and (float(df['Close'][-2]) < df['fourth_level'][-2]):
-        #Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 TREND_FI") 
-      
-    #FUNCIONA ESTABLE:
+# Crea una función para generar los canales de Fibonacci:
+def fibonacci_channel(high, low):
+    # Calcula los niveles de Fibonacci
+    fib_levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1]
+    fib_values = [(high - low) * level + low for level in fib_levels]
     
-    #if (macdB[-2] > signalB[-2]) and (macdB[-3] < macdB[-2]): 
-      #if (cci20[-3] < 0) and (cci20[-2] > 0) and (adxr[-3] < adxr[-2]) and (df['macd_hist'][-3] < df['macd_hist'][-2]) and (adx[-2] >= 20):    
-        #requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=UNOLONG)
-        #Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈  Fast Trend")
-    #if (macdB[-2] < signalB[-2]) and (macdB[-3] > macdB[-2]): 
-      #if (cci20[-3] > 0) and (cci20[-2] < 0) and (adxr[-3] < adxr[-2]) and (df['macd_hist'][-3] > df['macd_hist'][-2]) and (adx[-2] >= 20):   
-        #requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=UNOSHORT)  
-        #Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉  Fast Trend")
+    # Crea un DataFrame con los niveles de Fibonacci
+    fib_df = pd.DataFrame(fib_values, columns=['price'])
+    fib_df['level'] = fib_levels
     
-    # Tendencia 100 y 200(LONG)
-    #if (df['tendencia'][-2] == 1) and (df['tendenciaemas'][-2] == 1):
-      #if (df['macd'][-3] <  df['macd_signal'][-3]) and (df['macd'][-2] > df['macd_signal'][-2]) and (adx[-3] < adx[-2] > 20) and (df['BBW'][-2] > 0.02):   
-        #requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=TRENDLONG)
-        #Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📈 Trend")
-      
-    # SHORT
-    #if (df['tendencia'][-2] == 0) and (df['tendenciaemas'][-2] == 0):
-      #if (df['macd'][-3] >  df['macd_signal'][-3]) and (df['macd'][-2] < df['macd_signal'][-2]) and (adx[-3] < adx[-2] > 20) and (df['BBW'][-2] > 0.02): 
-        #requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=TRENDSHORT)  
-        #Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3min\n💵 Precio: {df['Close'][-1]}\n📉 Trend")
+    # Calcula los puntos de inicio y fin del canal
+    start_price = fib_values[2]
+    end_price = fib_values[5]
+    
+    # Calcula la pendiente y la intersección de la línea del canal
+    slope = (end_price - start_price) / (high - low)
+    intercept = end_price - slope * high
+    
+    # Agrega las líneas del canal al DataFrame
+    fib_df['upper'] = slope * fib_df['price'] + intercept
+    fib_df['lower'] = -slope * fib_df['price'] + 2 * end_price - intercept
+    
+    return fib_df
+       
+def calculate_macd_signal(prices):
+    macd, signal, hist = talib.MACD(prices, fastperiod=12, slowperiod=26, signalperiod=9)
+    return macd, signal, hist
 
-    print(symbol)
-    print(df['first_level'][-2])
-    print(df['first_cross'][-2])
-    print(df['secound_level'][-2])
-    print(df['secound_cross'][-2])
-    print(df['third_level'][-2])
-    print(df['third_cross'][-2])
-    print(df['fourth_level'][-2])
-    print(df['fourth_cross'][-2])
-    
-  
-if __name__ == '__main__':
-    monedas = client.futures_exchange_info()
-    # 1. Obtener todas las monedas tradeables de futuros
-    symbols = [
-      symbol['symbol'] for symbol in monedas['symbols']
-      if symbol['status'] == "TRADING"
-    ]
-  #symbols = ["BLZUSDT", "ARUSDT", "INJUSDT", "STORJUSDT","HNTUSDT", "ARPAUSDT"]
-
-def server_time():
-            
-    for symbol in symbols:
-      indicator(symbol)
-      ti.sleep(1)
-              
-schedule.every(3).minutes.at(":01").do(server_time)
-    
 while True:
-      #server_time()
-      schedule.run_pending()
-      ti.sleep(1)
+    # Espera hasta que sea el comienzo de una nueva hora
+    current_time = time.time()
+    seconds_to_wait = 300 - current_time % 300
+    time.sleep(seconds_to_wait)   
+  
+    for symbol in symbols:
+    # Obtén los datos de precios históricos para el símbolo
+      klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
+      
+      prices = np.array([float(kline[2]) for kline in klines])
+    
+      # Calcula el precio máximo y mínimo
+      high = np.max(prices)
+      low = np.min(prices)
+    
+      # Genera los canales de Fibonacci
+      fib_df = fibonacci_channel(high, low)
+    
+      # Calcula el MACD y Signal
+      macd, signal, hist = calculate_macd_signal(prices)
+    
+      # Calcula el indicador RSI
+      rsi = talib.RSI(prices, timeperiod=14)
+    
+      # Chequea si el precio es mayor al canal más alto de Fibonacci y si hay un cruce bajista de MACD y Signal o un cruce bajista del RSI y el nivel 70
+      
+      # Contra-Tendencia (Cierre de la tendencia)
+      if prices[-1] > fib_df['upper'].iloc[-1] and (rsi[-2] > 70 and rsi[-1] < 70):
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(fib_df['upper'].iloc[-1],4)} \n Contratendencia ")   
+      if prices[-1] < fib_df['lower'].iloc[-1] and (rsi[-2] < 30 and rsi[-1] > 30):
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fib_df['lower'].iloc[-1],4)}\n Contratendencia")
+      
+      #Tendencia 
+      if prices[-1] < fib_df['lower'].iloc[-1] and (macd[-1] < signal[-1] and macd[-2] > signal[-2]):
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(fib_df['upper'].iloc[-1],4)}\n🎣 Fishing Pisha") 
+      if prices[-1] > fib_df['upper'].iloc[-1] and (macd[-1] > signal[-1] and macd[-2] < signal[-2]):
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fib_df['lower'].iloc[-1],4)}\n🎣 Fishing Pisha") 
+        
+      # Imprime los resultados
+      print(symbol)
+      
+
+   

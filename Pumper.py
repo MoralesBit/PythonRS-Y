@@ -47,7 +47,14 @@ def fibonacci_channel(high, low):
 def calculate_macd_signal(prices):
     macd, signal, hist = talib.MACD(prices, fastperiod=12, slowperiod=26, signalperiod=9)
     return macd, signal, hist
-  
+
+def calculate_adx(high, low, close):
+    adx = talib.ADX(high, low, close, timeperiod=14)
+    return adx 
+
+def calculate_cci(high, low, close):
+    cci = talib.CCI(high, low, close, timeperiod=58)
+    return cci   
 
 while True:
     # Espera hasta que sea el comienzo de una nueva hora
@@ -61,6 +68,9 @@ while True:
       klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
           
       prices = np.array([float(kline[2]) for kline in klines])
+      prices_high = np.array([float(kline[3]) for kline in klines])
+      prices_low = np.array([float(kline[4]) for kline in klines])
+      prices_close = np.array([float(kline[5]) for kline in klines])
     
       # Calcula el precio máximo y mínimo
       high = np.max(prices)
@@ -77,7 +87,12 @@ while True:
              
       # Calcula el valor de la EMA de 200 períodos
       ema = talib.EMA(prices, timeperiod=200)[-1]
-    
+      
+      # Calcula el indicador ADX
+      adx = calculate_adx(prices_high, prices_low, prices_close)[-1]
+      
+      # Calcula el indicador ADX
+      cci = calculate_cci(prices_high, prices_low, prices_close)[-1]   
     
       # DATOS FNDY
       FISHINGSHORT = {
@@ -116,16 +131,15 @@ while True:
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING
-      if (ema > prices[-1] < fib_df['lower'].iloc[-1]) and (macd[-1] < signal[-1] and macd[-2] > signal[-2]):
+      if (ema > prices[-1] < fib_df['lower'].iloc[-1]) and (macd[-1] < signal[-1] and macd[-2] > signal[-2]) and (cci > -30):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fib_df['lower'].iloc[-1],4)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-      if (ema < prices[-1] > fib_df['upper'].iloc[-1]) and (macd[-1] > signal[-1] and macd[-2] < signal[-2]):
+      if (ema < prices[-1] > fib_df['upper'].iloc[-1]) and (macd[-1] > signal[-1] and macd[-2] < signal[-2]) and (cci > 30):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(fib_df['upper'].iloc[-1],4)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
       # Imprime los resultados
       print(symbol)
-      print(high)
-      print(low)
+      
 
    

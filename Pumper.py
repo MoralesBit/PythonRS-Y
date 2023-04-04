@@ -4,6 +4,7 @@ import pandas as pd
 import talib
 import Telegram_bot as Tb
 import time
+import requests
 
 api_key = 'TU_API_KEY'
 api_secret = 'TU_API_SECRET'
@@ -66,19 +67,50 @@ while True:
       # Calcula el indicador RSI
       rsi = talib.RSI(prices, timeperiod=14)
     
+    
+      # DATOS FNDY
+      FISHINGSHORT = {
+    "name": "SHORT-MINIFISH",
+    "secret": "azsdb9x719",
+    "side": "sell",
+    "symbol": symbol
+    }
+      FISHINGLONG = {
+    "name": "LONG-MINIFISH",
+    "secret": "0kivpja7tz89",
+    "side": "buy",
+    "symbol": symbol
+    }
+    
+      CONTRASHORT = {
+    "name": "SHORT-MINIFISH",
+    "secret": "hgw3399vhh",
+    "side": "sell",
+    "symbol": symbol
+    }
+      CONTRALONG = {
+    "name": "LONG-MINIFISH",
+    "secret": "xjth0i3qgb",
+    "side": "buy",
+    "symbol": symbol
+    }  
       # Chequea si el precio es mayor al canal más alto de Fibonacci y si hay un cruce bajista de MACD y Signal o un cruce bajista del RSI y el nivel 70
       
       # Contra-Tendencia (Cierre de la tendencia)
       if prices[-1] > fib_df['upper'].iloc[-1] and (rsi[-2] > 70 and rsi[-1] < 70):
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(fib_df['upper'].iloc[-1],4)} \n Contratendencia ")   
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(fib_df['upper'].iloc[-1],4)} \n Contratendencia ")
+        requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CONTRASHORT)   
       if prices[-1] < fib_df['lower'].iloc[-1] and (rsi[-2] < 30 and rsi[-1] > 30):
         Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fib_df['lower'].iloc[-1],4)}\n Contratendencia")
-      
-      #Tendencia 
+        requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
+        
+      #Tendencia FISHING
       if prices[-1] < fib_df['lower'].iloc[-1] and (macd[-1] < signal[-1] and macd[-2] > signal[-2]):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(fib_df['upper'].iloc[-1],4)}\n🎣 Fishing Pisha") 
+        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
       if prices[-1] > fib_df['upper'].iloc[-1] and (macd[-1] > signal[-1] and macd[-2] < signal[-2]):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fib_df['lower'].iloc[-1],4)}\n🎣 Fishing Pisha") 
+        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
       # Imprime los resultados
       print(symbol)

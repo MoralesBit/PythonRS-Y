@@ -74,13 +74,8 @@ while True:
     
       # Calcula el indicador RSI
       rsi = talib.RSI(prices, timeperiod=14)
-      
-      # Obtener el order book del symbolo
-      order_book = client.futures_order_book(symbol=symbol)
-      # Obtener el precio de la apuesta mayor
-      best_bid_price = float(order_book['bids'][0][0])
-      
-       # Calcula el valor de la EMA de 200 períodos
+             
+      # Calcula el valor de la EMA de 200 períodos
       ema = talib.EMA(prices, timeperiod=200)[-1]
     
     
@@ -114,10 +109,10 @@ while True:
       
       # Contra-Tendencia (Cierre de la tendencia)
       if (prices[-1] > fib_df['upper'].iloc[-1]) and (rsi[-2] > 70 and rsi[-1] < 70):
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(fib_df['upper'].iloc[-1],4)} \n best_bid: {best_bid_price}\n Contratendencia ")
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(fib_df['upper'].iloc[-1],4)}\n Contratendencia ")
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CONTRASHORT)   
       if (prices[-1] < fib_df['lower'].iloc[-1]) and (rsi[-2] < 30 and rsi[-1] > 30):
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fib_df['lower'].iloc[-1],4)}\n best_bid: {best_bid_price}\n Contratendencia")
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fib_df['lower'].iloc[-1],4)}\n Contratendencia")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING

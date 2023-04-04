@@ -5,6 +5,7 @@ import talib
 import Telegram_bot as Tb
 import time
 import requests
+from binance.exceptions import BinanceAPIException
 
 api_key = 'TU_API_KEY'
 api_secret = 'TU_API_SECRET'
@@ -17,8 +18,6 @@ symbols = [symbol['symbol'] for symbol in futures_info['symbols']]
 # Crea una función para generar los canales de Fibonacci:
 def fibonacci_channel(high, low):
       
-    if high == low:
-        return None  
     # Calcula los niveles de Fibonacci
     fib_levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1]
     fib_values = [(high - low) * level + low for level in fib_levels]
@@ -32,7 +31,11 @@ def fibonacci_channel(high, low):
     end_price = fib_values[5]
     
     # Calcula la pendiente y la intersección de la línea del canal
-    slope = (end_price - start_price) / (high - low)
+    try:
+        slope = (end_price - start_price) / (high - low)
+    except ZeroDivisionError:
+       print("No se ha podido realizar la división")
+       
     intercept = end_price - slope * high
     
     # Agrega las líneas del canal al DataFrame
@@ -44,6 +47,7 @@ def fibonacci_channel(high, low):
 def calculate_macd_signal(prices):
     macd, signal, hist = talib.MACD(prices, fastperiod=12, slowperiod=26, signalperiod=9)
     return macd, signal, hist
+  
 
 while True:
     # Espera hasta que sea el comienzo de una nueva hora
@@ -52,9 +56,10 @@ while True:
     time.sleep(seconds_to_wait)   
   
     for symbol in symbols:
+         
     # Obtén los datos de precios históricos para el símbolo
       klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
-      
+          
       prices = np.array([float(kline[2]) for kline in klines])
     
       # Calcula el precio máximo y mínimo
@@ -125,6 +130,7 @@ while True:
         
       # Imprime los resultados
       print(symbol)
-      print(ema)
+      print(high)
+      print(low)
 
    

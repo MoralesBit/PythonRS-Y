@@ -57,7 +57,7 @@ def calculate_cci(high, low, close):
     return cci
 
 def calculate_des(prices):
-    des = talib.STDDEV(prices, 5,1)   
+    des = (3)*(talib.STDDEV(prices,200))   
     return des 
 
 while True:
@@ -99,7 +99,11 @@ while True:
       cci = calculate_cci(prices_high, prices_low, prices_close)  
       
       # Calcula el indicador Desviacion Estandar
-      des = calculate_des(prices) 
+      dev = calculate_des(prices)
+      
+      basis = talib.WMA(prices_close, timeperiod=200)
+      fu1 = basis + (1*dev)
+      fd1 = basis -(1*dev) 
     
       # DATOS FNDY
       FISHINGSHORT = {
@@ -127,6 +131,20 @@ while True:
     "side": "buy",
     "symbol": symbol
     }  
+    
+      VIEWSHORT = {
+    "name": "VIEW SHOR",
+    "secret": "w48ulz23f6",
+    "side": "sell",
+    "symbol": symbol
+    }
+      VIEWLONG = {
+    "name": "VIEW LONG",
+    "secret": "xxuxkqf0gpj",
+    "side": "buy",
+    "symbol": symbol
+    }
+     
       # Chequea si el precio es mayor al canal más alto de Fibonacci y si hay un cruce bajista de MACD y Signal o un cruce bajista del RSI y el nivel 70
       
       # Contra-Tendencia (Cierre de la tendencia)
@@ -145,9 +163,17 @@ while True:
         Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(fib_df['upper'].iloc[-1],4)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
+      #Tradingview FIBO + RSI
+      if (prices_high[-2] > fu1[-2]) and (rsi[-2] > 70):
+        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fib_df['lower'].iloc[-1],4)}\n Tradingview") 
+        requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=VIEWSHORT) 
+      if (prices_low[-2] < fd1[-2]) and (rsi[-2] < 30):
+        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(fib_df['upper'].iloc[-1],4)}\n Tradingview") 
+        requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=VIEWLONG)   
+        
       # Imprime los resultados
       print(symbol)
-      print(des[-1])
+      
       
 
    

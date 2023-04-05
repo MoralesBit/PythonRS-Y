@@ -123,10 +123,10 @@ while True:
       # Chequea si el precio es mayor al canal más alto de Fibonacci y si hay un cruce bajista de MACD y Signal o un cruce bajista del RSI y el nivel 70
       
       # Contra-Tendencia (Cierre de la tendencia)
-      if (prices[-1] > fib_df['upper'].iloc[-1]) and (rsi[-2] > 70 and rsi[-1] < 70):
+      if (prices[-1] > fib_df['upper'].iloc[-1]) and (rsi[-2] > 70 and rsi[-1] < 70) and (adx > 20):
         Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(fib_df['upper'].iloc[-1],4)}\n Contratendencia ")
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CONTRASHORT)   
-      if (prices[-1] < fib_df['lower'].iloc[-1]) and (rsi[-2] < 30 and rsi[-1] > 30):
+      if (prices[-1] < fib_df['lower'].iloc[-1]) and (rsi[-2] < 30 and rsi[-1] > 30) (adx > 20):
         Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fib_df['lower'].iloc[-1],4)}\n Contratendencia")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         

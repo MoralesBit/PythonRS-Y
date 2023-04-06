@@ -32,7 +32,7 @@ def calculate_cci(high, low, close):
 def calculate_des(prices):
     des = (3)*(talib.STDDEV(prices,200))   
     return des 
-
+  
 while True:
     # Espera hasta que sea el comienzo de una nueva hora
     current_time = time.time()
@@ -126,11 +126,11 @@ while True:
       # Chequea si el precio es mayor al canal más alto de Fibonacci y si hay un cruce bajista de MACD y Signal o un cruce bajista del RSI y el nivel 70
       
       # Contra-Tendencia (Cierre de la tendencia)
-      if (prices[-1] > fourth_level) and (rsi[-2] > 70 and rsi[-1] < 70):
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(fourth_level,4)}\n Contratendencia ")
+      if (prices[-1] > first_level) and (rsi[-2] > 70 and rsi[-1] < 70):
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(first_level,4)}\n Contratendencia ")
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CONTRASHORT)   
-      if (prices[-1] < first_level) and (rsi[-2] < 30 and rsi[-1] > 30):
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(first_level,4)}\n Contratendencia")
+      if (prices[-1] < fourth_level) and (rsi[-2] < 30 and rsi[-1] > 30):
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fourth_level,4)}\n Contratendencia")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING
@@ -145,5 +145,4 @@ while True:
       
       # Imprime los resultados
 
-      print(symbol)    
-   
+      print(symbol)  

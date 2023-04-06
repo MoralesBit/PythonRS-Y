@@ -32,6 +32,10 @@ def calculate_cci(high, low, close):
 def calculate_des(prices):
     des = (3)*(talib.STDDEV(prices,200))   
     return des 
+
+def calculate_bbands(prices):
+    upper, middle, lower = talib.BBANDS(prices, timeperiod=20, nbdevup=2, nbdevdn=2, matype=talib.MA_Type.SMA)
+    return upper, middle, lower  
   
 while True:
     # Espera hasta que sea el comienzo de una nueva hora
@@ -68,7 +72,7 @@ while True:
       macd, signal, hist = calculate_macd_signal(prices)
     
       # Calcula el indicador RSI
-      rsi = talib.RSI(prices, timeperiod=14)
+      rsi = talib.RSI(prices_close, timeperiod=14)
              
       # Calcula el valor de la EMA de 200 períodos
       ema = talib.EMA(prices, timeperiod=200)[-1]
@@ -81,7 +85,9 @@ while True:
       
       # Calcula el indicador Desviacion Estandar
       dev = calculate_des(prices)
-     
+      
+      # Calcula Bandas de Bollinger
+      upper, middle, lower = calculate_bbands(prices)     
     
       # DATOS FNDY
       FISHINGSHORT = {
@@ -134,15 +140,22 @@ while True:
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING
-      if (ema > prices[-2] > fourth_level) and (macd[-1] < signal[-1] and macd[-2] > signal[-2]):
+      if (prices[-1] < fourth_level) and (macd[-1] < signal[-1] and macd[-2] > signal[-2]):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fourth_level,4)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-      if (ema < prices[-2] < first_level) and (macd[-1] > signal[-1] and macd[-2] < signal[-2]):
+      if (prices[-1] > first_level) and (macd[-1] > signal[-1] and macd[-2] < signal[-2]):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(first_level,4)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
-      #Tradingview FIBO + RSI
+      #3% con Libro de Ordenes
+      #if ():
+        #Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fourth_level,4)}\n🎣 Fishing Pisha") 
+        #requests.post('', json=VIEWSHORT) 
+      #if ():
+        #Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(first_level,4)}\n🎣 Fishing Pisha") 
+        #requests.post('', json=VIEWLONG) 
+        
       
       # Imprime los resultados
 
-      print(symbol)  
+      print(symbol) 

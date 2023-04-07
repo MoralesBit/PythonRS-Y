@@ -130,18 +130,18 @@ while True:
       # Chequea si el precio es mayor al canal más alto de Fibonacci y si hay un cruce bajista de MACD y Signal o un cruce bajista del RSI y el nivel 70
       
       # Contra-Tendencia (Cierre de la tendencia)
-      if (prices[-2] > first_level) and (rsi[-3] > 80 and rsi[-2] < 80):
+      if (prices[-2] > first_level) and (rsi[-3] > 80) and (rsi[-2] < 80):
         Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(first_level,4)}\n Contratendencia ")
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CONTRASHORT)   
-      if (prices[-2] < fourth_level) and (rsi[-3] < 20 and rsi[-2] > 20):
+      if (prices[-2] < fourth_level) and (rsi[-3] < 20) and (rsi[-2] > 20):
         Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fourth_level,4)}\n Contratendencia")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING
-      if (ema[-2] > prices[-2] > first_level) and (macd[-3] > signal[-3] and macd[-2] < signal[-2]) and (rsi[-2] > 50):
+      if (ema[-2] > prices[-2] > first_level) and (macd[-3] > signal[-3]) and (macd[-2] < signal[-2]) and (rsi[-2] > 50):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fourth_level,4)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-      if (ema[-2] < prices[-2] < fourth_level) and (macd[-3] < signal[-3] and macd[-2] > signal[-2]) and (rsi[-2] < 50):
+      if (ema[-2] < prices[-2] < fourth_level) and (macd[-3] < signal[-3]) and (macd[-2] > signal[-2]) and (rsi[-2] < 50):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(first_level,4)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
@@ -157,3 +157,4 @@ while True:
       # Imprime los resultados
 
       print(symbol)
+   

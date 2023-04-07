@@ -166,4 +166,4 @@ while True:
       
       # Imprime los resultados
 
-      print(symbol)
+      print(symbol)   

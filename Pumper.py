@@ -17,8 +17,8 @@ symbols = [symbol['symbol'] for symbol in futures_info['symbols']]
 
 # Crea una función para generar los canales de Fibonacci:
        
-def calculate_macd_signal(prices):
-    macd, signal, hist = talib.MACD(prices, fastperiod=12, slowperiod=26, signalperiod=9)
+def calculate_macd_signal(prices_close):
+    macd, signal, hist = talib.MACD(prices_close, fastperiod=12, slowperiod=26, signalperiod=9)
     return macd, signal, hist
 
 def calculate_adx(prices_high, prices_low, prices_close):
@@ -29,12 +29,12 @@ def calculate_cci(prices_high, prices_low, prices_close):
     cci = talib.CCI(prices_high, prices_low, prices_close, timeperiod=58)
     return cci
 
-def calculate_des(prices):
-    des = (3)*(talib.STDDEV(prices,200))   
+def calculate_des(prices_close):
+    des = (3)*(talib.STDDEV(prices_close,200))   
     return des 
 
-def calculate_bbands(prices):
-    upper, middle, lower = talib.BBANDS(prices, timeperiod=20, nbdevup=2, nbdevdn=2, matype=talib.MA_Type.SMA)
+def calculate_bbands(prices_close):
+    upper, middle, lower = talib.BBANDS(prices_close, timeperiod=20, nbdevup=2, nbdevdn=2, matype=talib.MA_Type.SMA)
     return upper, middle, lower  
 
 def calculate_est(prices_high, prices_low, prices_close):
@@ -73,13 +73,13 @@ while True:
       fourth_level = high -  diference*0.618
           
       # Calcula el MACD y Signal
-      macd, signal, hist = calculate_macd_signal(prices)
+      macd, signal, hist = calculate_macd_signal(prices_close)
     
       # Calcula el indicador RSI
       rsi = talib.RSI(prices_close, timeperiod=14)
              
       # Calcula el valor de la EMA de 200 períodos
-      ema = talib.EMA(prices, timeperiod=200)[-1]
+      ema = talib.EMA(prices_close, timeperiod=200)[-1]
       
       # Calcula el indicador ADX
       adx = calculate_adx(prices_high, prices_low, prices_close)
@@ -88,10 +88,10 @@ while True:
       cci = calculate_cci(prices_high, prices_low, prices_close)  
       
       # Calcula el indicador Desviacion Estandar
-      dev = calculate_des(prices)
+      dev = calculate_des(prices_close)
       
       # Calcula Bandas de Bollinger
-      upper, middle, lower = calculate_bbands(prices)     
+      upper, middle, lower = calculate_bbands(prices_close)     
       
       #Calcula Slok SloD
     

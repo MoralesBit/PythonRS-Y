@@ -39,7 +39,7 @@ def calculate_bbands(prices):
 
 def calculate_est(prices_high, prices_low, prices_close):
     slowk, slowd = talib.STOCH(prices_high, prices_low, prices_close, fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
-    return upper, middle, lower
+    return slowk, slowd
   
 while True:
     # Espera hasta que sea el comienzo de una nueva hora

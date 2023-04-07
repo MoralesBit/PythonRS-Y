@@ -72,7 +72,7 @@ while True:
       rsi = talib.RSI(prices, timeperiod=14)
              
       # Calcula el valor de la EMA de 200 períodos
-      ema = talib.EMA(prices, timeperiod=200)[-1]
+      ema = talib.EMA(prices, timeperiod=200)
       
       # Calcula el indicador ADX
       adx = calculate_adx(prices_high, prices_low, prices_close)
@@ -138,18 +138,18 @@ while True:
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING
-      if (ema > secound_level > prices[-2] < first_level) and (macd[-3] > signal[-3] and macd[-2] < signal[-2]):
+      if (ema[-2] > prices[-2] > first_level) and (macd[-3] > signal[-3] and macd[-2] < signal[-2]) and (rsi[-2] > 50):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fourth_level,4)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-      if (ema < third_level < prices[-2] > fourth_level) and (macd[-3] < signal[-3] and macd[-2] > signal[-2]):
+      if (ema[-2] < prices[-2] < fourth_level) and (macd[-3] < signal[-3] and macd[-2] > signal[-2]) and (rsi[-2] < 50):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(first_level,4)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
-      #3% con Libro de Ordenes
-      if (prices[-2] > first_level) and (rsi[-3] > 70) and (slowk[-2] > slowk[-1]):
+      #Tendencia view
+      if (ema[-2] > prices_close[-2] > first_level) and (rsi[-3] > 50) and (rsi[-2] < 50):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fourth_level,4)}\n") 
         requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=VIEWSHORT) 
-      if (prices[-2] < fourth_level) and (rsi[-3] < 30) and  (slowk[-2] < slowk[-1]):
+      if (ema[-2] < prices_close[-2] < fourth_level) and (rsi[-3] < 50) and (rsi[-2] > 50):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(first_level,4)}\n") 
         requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=VIEWLONG) 
         

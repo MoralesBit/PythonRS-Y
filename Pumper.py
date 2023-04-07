@@ -17,27 +17,23 @@ symbols = [symbol['symbol'] for symbol in futures_info['symbols']]
 
 # Crea una función para generar los canales de Fibonacci:
        
-def calculate_macd_signal(prices_close):
-    macd, signal, hist = talib.MACD(prices_close, fastperiod=12, slowperiod=26, signalperiod=9)
+def calculate_macd_signal(prices):
+    macd, signal, hist = talib.MACD(prices, fastperiod=12, slowperiod=26, signalperiod=9)
     return macd, signal, hist
 
 def calculate_adx(prices_high, prices_low, prices_close):
     adx = talib.ADX(prices_high, prices_low, prices_close, timeperiod=14)
     return adx 
 
-def calculate_cci(prices_high, prices_low, prices_close):
-    cci = talib.CCI(prices_high, prices_low, prices_close, timeperiod=58)
-    return cci
-
-def calculate_des(prices_close):
-    des = (3)*(talib.STDDEV(prices_close,200))   
+def calculate_des(prices):
+    des = (talib.STDDEV(prices,20))   
     return des 
 
-def calculate_bbands(prices_close):
-    upper, middle, lower = talib.BBANDS(prices_close, timeperiod=20, nbdevup=2, nbdevdn=2, matype=talib.MA_Type.SMA)
+def calculate_bbands(prices):
+    upper, middle, lower = talib.BBANDS(prices, timeperiod=20, nbdevup=2, nbdevdn=2, matype=talib.MA_Type.SMA)
     return upper, middle, lower  
 
-def calculate_est(prices_high, prices_low, prices_close):
+def calculate_est( prices_high, prices_low, prices_close ):
     slowk, slowd = talib.STOCH(prices_high, prices_low, prices_close, fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
     return slowk, slowd
   
@@ -56,15 +52,12 @@ while True:
       prices_high = np.array([float(kline[3]) for kline in klines])
       prices_low = np.array([float(kline[4]) for kline in klines])
       prices_close = np.array([float(kline[5]) for kline in klines])
-    
+      
       # Calcula el precio máximo y mínimo
       high = np.max(prices)
       low = np.min(prices)
-     
-    
-      # Genera los canales de Fibonacci
          
-      
+      # Genera los canales de Fibonacci
       diference = high - low
       
       first_level = high -  diference*0.236
@@ -73,19 +66,16 @@ while True:
       fourth_level = high -  diference*0.618
           
       # Calcula el MACD y Signal
-      macd, signal, hist = calculate_macd_signal(prices_close)
+      macd, signal, hist = calculate_macd_signal(prices)
     
       # Calcula el indicador RSI
-      rsi = talib.RSI(prices_close, timeperiod=14)
+      rsi = talib.RSI(prices, timeperiod=14)
              
       # Calcula el valor de la EMA de 200 períodos
-      ema = talib.EMA(prices_close, timeperiod=200)[-1]
+      ema = talib.EMA(prices, timeperiod=200)[-1]
       
       # Calcula el indicador ADX
       adx = calculate_adx(prices_high, prices_low, prices_close)
-      
-      # Calcula el indicador cci
-      cci = calculate_cci(prices_high, prices_low, prices_close)  
       
       # Calcula el indicador Desviacion Estandar
       dev = calculate_des(prices_close)
@@ -148,22 +138,22 @@ while True:
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING
-      if (secound_level > prices[-2] < first_level) and (macd[-2] > signal[-2] and macd[-3] < signal[-3]):
+      if (ema > secound_level > prices[-2] < first_level) and (macd[-3] > signal[-3] and macd[-2] < signal[-2]):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fourth_level,4)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-      if (third_level < prices[-2] > fourth_level) and (macd[-2] < signal[-2] and macd[-3] > signal[-3]):
+      if (ema < third_level < prices[-2] > fourth_level) and (macd[-3] < signal[-3] and macd[-2] > signal[-2]):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(first_level,4)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
       #3% con Libro de Ordenes
-      if (prices[-2] > first_level) and (rsi[-3] > 70) and (slowk[-3] > slowk[-2]):
-        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fourth_level,4)}\n🎣 Fishing Pisha") 
+      if (prices[-2] > first_level) and (rsi[-3] > 70) and (slowk[-2] > slowk[-1]):
+        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fourth_level,4)}\n") 
         requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=VIEWSHORT) 
-      if (prices[-2] < fourth_level) and (rsi[-3] < 30) and  (slowk[-3] < slowk[-2]):
-        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(first_level,4)}\n🎣 Fishing Pisha") 
+      if (prices[-2] < fourth_level) and (rsi[-3] < 30) and  (slowk[-2] < slowk[-1]):
+        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(first_level,4)}\n") 
         requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=VIEWLONG) 
         
       
       # Imprime los resultados
 
-      print(symbol)   
+      print(symbol)

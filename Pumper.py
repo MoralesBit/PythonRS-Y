@@ -21,12 +21,12 @@ def calculate_macd_signal(prices):
     macd, signal, hist = talib.MACD(prices, fastperiod=12, slowperiod=26, signalperiod=9)
     return macd, signal, hist
 
-def calculate_adx(high, low, close):
-    adx = talib.ADX(high, low, close, timeperiod=14)
+def calculate_adx(prices_high, prices_low, prices_close):
+    adx = talib.ADX(prices_high, prices_low, prices_close, timeperiod=14)
     return adx 
 
-def calculate_cci(high, low, close):
-    cci = talib.CCI(high, low, close, timeperiod=58)
+def calculate_cci(prices_high, prices_low, prices_close):
+    cci = talib.CCI(prices_high, prices_low, prices_close, timeperiod=58)
     return cci
 
 def calculate_des(prices):
@@ -36,6 +36,10 @@ def calculate_des(prices):
 def calculate_bbands(prices):
     upper, middle, lower = talib.BBANDS(prices, timeperiod=20, nbdevup=2, nbdevdn=2, matype=talib.MA_Type.SMA)
     return upper, middle, lower  
+
+def calculate_est(prices_high, prices_low, prices_close):
+    slowk, slowd = talib.STOCH(prices_high, prices_low, prices_close, fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+    return upper, middle, lower
   
 while True:
     # Espera hasta que sea el comienzo de una nueva hora
@@ -88,6 +92,10 @@ while True:
       
       # Calcula Bandas de Bollinger
       upper, middle, lower = calculate_bbands(prices)     
+      
+      #Calcula Slok SloD
+    
+      slowk, slowd = calculate_est(prices_high, prices_low, prices_close)
     
       # DATOS FNDY
       FISHINGSHORT = {
@@ -140,10 +148,10 @@ while True:
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING
-      if (secound_level > prices[-2] < first_level) and (macd[-2] < signal[-2] and macd[-3] > signal[-3]):
+      if (secound_level > prices[-2] < first_level) and (macd[-2] > signal[-2] and macd[-3] < signal[-3]):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fourth_level,4)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-      if (third_level < prices[-2] > fourth_level) and (macd[-2] > signal[-2] and macd[-3] < signal[-3]):
+      if (third_level < prices[-2] > fourth_level) and (macd[-2] < signal[-2] and macd[-3] > signal[-3]):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(first_level,4)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         

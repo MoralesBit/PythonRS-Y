@@ -153,10 +153,10 @@ def indicator(symbol):
         
       #Tendencia FISHING
     if (df['tendencia'][-2] == 0 > Close) and ( df['third_cross'][-2] == 0):
-        Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n fd5 : {fd5[-2]}\n🎣 Fishing Pisha") 
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n fd5 : {round(df['third_level'][-2],2)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
     if (df['tendencia'][-2] == 1) and ( df['third_cross'][-2] == 1):
-        Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n fu5 : {fu5[-2]}\n🎣 Fishing Pisha") 
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n fu5 : {round(df['third_level'][-2],2)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
       #Tendencia view

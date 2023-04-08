@@ -143,11 +143,11 @@ while True:
       # Chequea si el precio es mayor al canal más alto de Fibonacci y si hay un cruce bajista de MACD y Signal o un cruce bajista del RSI y el nivel 70
       
       # Contra-Tendencia (Cierre de la tendencia)
-      if (prices_close[-2] > sixth_level) and (rsi[-3] > 70) and (rsi[-2] <= 70) :
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰F-1 : {sixth_level} \n Contratendencia")
+      if (prices_close[-2] > sixth_level[-2]) and (rsi[-3] > 70) and (rsi[-2] <= 70) :
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰F-1 : {sixth_level}\nRSI : {rsi[-2]}\n Contratendencia")
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CONTRASHORT)   
-      if (prices_close[-2] < fifth_level) and (rsi[-3] < 30) and (rsi[-2] >= 30) : 
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰F-0 : {fifth_level}\n Contratendencia")
+      if (prices_close[-2] < fifth_level[-2]) and (rsi[-3] < 30) and (rsi[-2] >= 30) : 
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰F-0 : {fifth_level}\nRSI : {rsi[-2]}\n Contratendencia")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING
@@ -170,7 +170,3 @@ while True:
       # Imprime los resultados
 
       print(symbol)
-     
-      
-
-   

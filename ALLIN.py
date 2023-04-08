@@ -79,7 +79,7 @@ def indicator(symbol):
     Low = float(df['Low'][-2])
     diff = abs((High / Low -1) * 100)  
 
-    depth = client.futures_order_book(symbol=symbol, limit=35)
+    depth = client.futures_order_book(symbol=symbol, limit=50)
     bids = depth['bids']
     asks = depth['asks']
     max_bid = max([float(bid[0]) for bid in bids[-10:]])

@@ -161,10 +161,10 @@ def indicator(symbol):
         
       #Tendencia view
     if (df['max_price'][-2] > fd1[-2]) and (rsi[-2] > 70):
-        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n💰 fd764: {fd764[-2]} \n fd1 : {fd1[-2]} TW") 
+        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n💰 fd764: {round(fd764[-2],2)} \n fd1 : {round(fd1[-2],2)} TW") 
         requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=VIEWSHORT) 
     if (df['min_price'][-2] > fu1[-2]) and (rsi[-2] < 30):
-        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n💰 fu764: {fu764[-2]} \n fu1 : {fu1[-2]} TW") 
+        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n💰 fu764: {round(fu764[-2],2)} \n fu1 : {round(fu1[-2],2)} TW") 
         requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=VIEWLONG) 
         
 futures_info = client.futures_exchange_info()

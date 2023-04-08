@@ -56,6 +56,16 @@ while True:
       # Calcula el precio máximo y mínimo
       high = np.max(prices)
       low = np.min(prices)
+      
+      # Calculate Fibonacci
+      basis = talib.WMA(prices_close, timeperiod=20)
+      dev = (3) * talib.STDDEV(prices_close, timeperiod=20)
+      fu764 = basis + (0.001 * 764 * dev)
+      fu5 = basis + (0.001 * 500 * dev)
+      fu1 = basis + (1 * dev)      
+      fd764 = basis - (0.001 * 764 * dev)
+      fd5 = basis - (0.001 * 500 * dev)
+      fd1 = basis - (1 * dev)
          
       # Genera los canales de Fibonacci
       diference = high - low
@@ -64,6 +74,9 @@ while True:
       secound_level = high -  diference* 0.382
       third_level =high -  diference*0.5
       fourth_level = high -  diference*0.618
+      fifth_level = high - diference * 1
+      sixth_level = high - diference * 0
+      seven_level = high - diference * 0.886
           
       # Calcula el MACD y Signal
       macd, signal, hist = calculate_macd_signal(prices)
@@ -130,31 +143,34 @@ while True:
       # Chequea si el precio es mayor al canal más alto de Fibonacci y si hay un cruce bajista de MACD y Signal o un cruce bajista del RSI y el nivel 70
       
       # Contra-Tendencia (Cierre de la tendencia)
-      if (prices[-2] > first_level) and (rsi[-3] > 80) and (rsi[-2] < 80):
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(first_level,4)}\n Contratendencia ")
+      if (prices_close[-2] > sixth_level) and (rsi[-3] > 70) and (rsi[-2] <= 70) :
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰F-1 : {sixth_level} \n Contratendencia")
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CONTRASHORT)   
-      if (prices[-2] < fourth_level) and (rsi[-3] < 20) and (rsi[-2] > 20):
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fourth_level,4)}\n Contratendencia")
+      if (prices_close[-2] < fifth_level) and (rsi[-3] < 30) and (rsi[-2] >= 30) : 
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰F-0 : {fifth_level}\n Contratendencia")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING
-      if (ema[-2] > prices[-2] > first_level) and (macd[-3] > signal[-3]) and (macd[-2] < signal[-2]) and (rsi[-2] > 50):
-        Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fourth_level,4)}\n🎣 Fishing Pisha") 
+      if (ema[-2] > prices_close[-2]) and (prices_close[-2] < fd5[-2]):
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n fd5 : {fd5}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-      if (ema[-2] < prices[-2] < fourth_level) and (macd[-3] < signal[-3]) and (macd[-2] > signal[-2]) and (rsi[-2] < 50):
-        Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(first_level,4)}\n🎣 Fishing Pisha") 
+      if (ema[-2] < prices_close[-2]) and (prices_close[-2] > fu5[-2]):
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n fu5 : {fu5}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
       #Tendencia view
-      if (ema[-2] > prices_close[-2] > first_level) and (rsi[-3] > 50) and (rsi[-2] < 50):
-        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Min: {round(fourth_level,4)}\n") 
+      if (prices_high[-2] > fd1[-2]) and (rsi[-2] > 70):
+        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 fd764: {fd764} \n fd1 : {fd1} TW") 
         requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=VIEWSHORT) 
-      if (ema[-2] < prices_close[-2] < fourth_level) and (rsi[-3] < 50) and (rsi[-2] > 50):
-        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 P-Max: {round(first_level,4)}\n") 
+      if (prices_low[-2] > fu1[-2]) and (rsi[-2] < 30):
+        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-1]}\n💰 fu764: {fu764} \n fu1 : {fu1} TW") 
         requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=VIEWLONG) 
         
       
       # Imprime los resultados
 
       print(symbol)
+     
+      
+
    

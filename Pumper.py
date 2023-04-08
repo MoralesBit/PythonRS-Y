@@ -167,14 +167,8 @@ def indicator(symbol):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n💰 fu764: {fu764[-2]} \n fu1 : {fu1[-2]} TW") 
         requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=VIEWLONG) 
         
-if __name__ == '__main__':
-    monedas = client.futures_exchange_info()
-    # 1. Obtener todas las monedas tradeables de futuros
-    symbols = [
-      symbol['symbol'] for symbol in monedas['symbols']
-      if symbol['status'] == "TRADING"
-    ]
-  #symbols = ["BLZUSDT", "ARUSDT", "INJUSDT", "STORJUSDT","HNTUSDT", "ARPAUSDT"]
+futures_info = client.futures_exchange_info()
+symbols = [symbol['symbol'] for symbol in futures_info['symbols']]
 
 while True:
     # Espera hasta que sea el comienzo de una nueva hora
@@ -183,6 +177,4 @@ while True:
     ti.sleep(seconds_to_wait)   
   
     for symbol in symbols:
-      indicator(symbol)
-    
-  
+      indicator(symbol) 

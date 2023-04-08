@@ -144,10 +144,10 @@ def indicator(symbol):
     print(max_ask)
 
   # Contra-Tendencia (Cierre de la tendencia)
-    if (df['cero_cross'][-2] == 1) and (rsi[-3] > 70) and (rsi[-2] <= 70) :
+    if (df['uno_cross'][-2] == 1) and (rsi[-3] > 70) and (rsi[-2] <= 70) :
         Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n💰F-1 : {df['cero_level'][-2]}\nRSI : {round(rsi[-2],3)}\n Contratendencia")
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CONTRASHORT)   
-    if (df['uno_cross'][-2]) and (rsi[-3] < 30) and (rsi[-2] >= 30) : 
+    if (df['cero_cross'][-2] == 0) and (rsi[-3] < 30) and (rsi[-2] >= 30): 
         Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n💰F-0 : {df['uno_level'][-2]}\nRSI : {round(rsi[-2],3)}\n Contratendencia")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         

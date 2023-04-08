@@ -86,43 +86,36 @@ def indicator(symbol):
     max_ask = max([float(ask[0]) for ask in asks[-10:]])
     
       
-    MINIFSHORT = {
-    "name": "SHORT-MINIFISH",
-    "secret": "w48ulz23f6",
-    "side": "sell",
-    "symbol": symbol
-    }
-    MINIFLONG = {
-    "name": "LONG-MINIFISH",
-    "secret": "xxuxkqf0gpj",
-    "side": "buy",
-    "symbol": symbol
-    }
-      
-    TRENDSHORT = {
-    "name": "SHORT-TREND",
-    "secret": "hgw3399vhh",
-    "side": "sell",
-    "symbol": symbol
-    }
-    TRENDLONG = {
-    "name": "LONG-TREND",
-    "secret": "xjth0i3qgb",
-    "side": "buy",
-    "symbol": symbol
-    }
+    PORSHORT = {
+  "name": "CORTO 3POR",
+  "secret": "ao2cgree8fp",
+  "side": "sell",
+  "symbol": symbol,
+  "open": {
+    "price": max_ask
+  }
+}
+    PORLONG = {
+  "name": "LARGO 3POR",
+  "secret": "nwh2tbpay1r",
+  "side": "buy",
+  "symbol": symbol,
+  "open": {
+    "price": max_bid
+  }
+}
      
-       
     print(symbol)
     print(max_bid)
     print(max_ask)
 
   if (diff > 3) and (rsi[-2] > 80) and (Close > df['upperband'][-2]):
-    Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close} \n Bid{max_bid}") 
-    #requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=OBSHORT)    
+    Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close} \n ask {max_ask} ") 
+    requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
   if (diff > 3) and (rsi[-2] < 20) and (Close < df['lowerband'][-2]):
-    Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close} \n ask {max_ask}")
-  
+    Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close} \n Bid{max_bid}")
+    requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
+    
 if __name__ == '__main__':
     monedas = client.futures_exchange_info()
     # 1. Obtener todas las monedas tradeables de futuros
@@ -139,6 +132,5 @@ while True:
     ti.sleep(seconds_to_wait)   
   
     for symbol in symbols:
-      indicator(symbol)
-    
+      indicator(symbol)   
   

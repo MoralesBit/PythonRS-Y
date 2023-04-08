@@ -82,7 +82,7 @@ while True:
       macd, signal, hist = calculate_macd_signal(prices)
     
       # Calcula el indicador RSI
-      rsi = talib.RSI(prices, timeperiod=14)
+      rsi = talib.RSI(prices_close, timeperiod=14)
              
       # Calcula el valor de la EMA de 200 períodos
       ema = talib.EMA(prices, timeperiod=200)

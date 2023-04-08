@@ -152,10 +152,10 @@ def indicator(symbol):
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING
-    if (df['tendencia'][-2] == 1 > Close) and (float(df['Close'][-2]) < df['third_level'][-2]) and (df['third_level'][-3]) < (float(df['Close'][-3])):
+    if (df['EMA200'][-2] < Close) and (float(df['Close'][-2]) < df['third_level'][-2]) and (df['third_level'][-3]) < (float(df['Close'][-3])):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n Fb 0.5 : {round(df['third_level'][-2],2)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-    if (df['tendencia'][-2] == 0) and (float(df['Close'][-2]) > df['third_level'][-2]) and (df['third_level'][-3]) > (float(df['Close'][-3])):
+    if (df['EMA200'][-2] > Close ) and (float(df['Close'][-2]) > df['third_level'][-2]) and (df['third_level'][-3]) > (float(df['Close'][-3])):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n Fb 0.5 : {round(df['third_level'][-2],2)}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         

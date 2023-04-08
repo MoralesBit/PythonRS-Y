@@ -84,11 +84,11 @@ def indicator(symbol):
     Low = float(df['Low'][-2])
     diff = abs((High / Low -1) * 100)  
 
-    depth = client.futures_order_book(symbol=symbol, limit=50)
-    bids = depth['bids']
-    asks = depth['asks']
-    max_bid = max([float(bid[0]) for bid in bids[-30:]])
-    max_ask = max([float(ask[0]) for ask in asks[-30:]])
+    #depth = client.futures_order_book(symbol=symbol, limit=50)
+    #bids = depth['bids']
+    #asks = depth['asks']
+    #max_bid = max([float(bid[0]) for bid in bids[-30:]])
+    #max_ask = max([float(ask[0]) for ask in asks[-30:]])
     
     # Calculate Fibonacci
     basis = ta.WMA(df['Close'], timeperiod=20)
@@ -141,8 +141,7 @@ def indicator(symbol):
     }
      
     print(symbol)
-    print(max_bid)
-    print(max_ask)
+    
 
   # Contra-Tendencia (Cierre de la tendencia)
     if (df['cero_level'][-2] > Close) and (rsi[-3] > 70) and (rsi[-2] <= 70) :

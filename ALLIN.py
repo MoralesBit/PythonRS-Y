@@ -82,8 +82,8 @@ def indicator(symbol):
     depth = client.futures_order_book(symbol=symbol, limit=50)
     bids = depth['bids']
     asks = depth['asks']
-    max_bid = max([float(bid[0]) for bid in bids[-10:]])
-    max_ask = max([float(ask[0]) for ask in asks[-10:]])
+    max_bid = max([float(bid[0]) for bid in bids[-30:]])
+    max_ask = max([float(ask[0]) for ask in asks[-30:]])
     
       
     PORSHORT = {
@@ -110,20 +110,15 @@ def indicator(symbol):
     print(max_ask)
 
   if (diff > 3) and (rsi[-2] > 80) and (Close > df['upperband'][-2]):
-    Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close} \n ask {max_ask} ") 
+    Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close} \n Precio obj : {max_ask} ") 
     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
   if (diff > 3) and (rsi[-2] < 20) and (Close < df['lowerband'][-2]):
-    Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close} \n Bid{max_bid}")
+    Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n Precio obj :{max_bid}")
     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
     
-if __name__ == '__main__':
-    monedas = client.futures_exchange_info()
-    # 1. Obtener todas las monedas tradeables de futuros
-    symbols = [
-      symbol['symbol'] for symbol in monedas['symbols']
-      if symbol['status'] == "TRADING"
-    ]
-  #symbols = ["BLZUSDT", "ARUSDT", "INJUSDT", "STORJUSDT","HNTUSDT", "ARPAUSDT"]
+        
+futures_info = client.futures_exchange_info()
+symbols = [symbol['symbol'] for symbol in futures_info['symbols']]
 
 while True:
     # Espera hasta que sea el comienzo de una nueva hora
@@ -132,5 +127,6 @@ while True:
     ti.sleep(seconds_to_wait)   
   
     for symbol in symbols:
-      indicator(symbol)   
+      indicator(symbol)
+    
   

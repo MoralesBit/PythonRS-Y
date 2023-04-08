@@ -153,18 +153,18 @@ def indicator(symbol):
         
       #Tendencia FISHING
     if (df['tendencia'][-2] == 0 > Close) and (Close < fd5[-2]):
-        Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n fd5 : {fd5}\n🎣 Fishing Pisha") 
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n fd5 : {fd5[-2]}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
     if (df['tendencia'][-2] == 1) and (Close > fu5[-2]):
-        Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n fu5 : {fu5}\n🎣 Fishing Pisha") 
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n fu5 : {fu5[-2]}\n🎣 Fishing Pisha") 
         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
       #Tendencia view
     if (df['max_price'][-2] > fd1[-2]) and (rsi[-2] > 70):
-        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n💰 fd764: {fd764} \n fd1 : {fd1} TW") 
+        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n💰 fd764: {fd764[-2]} \n fd1 : {fd1[-2]} TW") 
         requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=VIEWSHORT) 
     if (df['min_price'][-2] > fu1[-2]) and (rsi[-2] < 30):
-        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n💰 fu764: {fu764} \n fu1 : {fu1} TW") 
+        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n💰 fu764: {fu764[-2]} \n fu1 : {fu1[-2]} TW") 
         requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=VIEWLONG) 
         
 if __name__ == '__main__':

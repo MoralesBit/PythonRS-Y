@@ -114,10 +114,10 @@ while True:
         }
         }
      
-        if (diff > 3) and (rsi[-2] > 80) and (Close > df['upperband'][-2]):
+        if (diff > 1) and (rsi[-2] > 80) and (Close > df['upperband'][-2]):
           Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close} \n Snipper : {max_ask} ") 
           requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
-        if (diff > 3) and (rsi[-2] < 20) and (Close < df['lowerband'][-2]):
+        if (diff > 1) and (rsi[-2] < 20) and (Close < df['lowerband'][-2]):
           Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n Snipper :{max_bid}")
           requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
 

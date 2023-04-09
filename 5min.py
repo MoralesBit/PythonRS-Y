@@ -55,7 +55,8 @@ def indicator(symbol):
         df['Will'] = ta.WILLR(df['High'], df['Low'], df['Close'], timeperiod=14)
         df['BBW'] = (df['upperband'] - df['lowerband']) / df['middleband']  
         chain = ta.ADOSC(df['High'], df['Low'], df['Close'], df['Volume'], fastperiod=3, slowperiod=10)
-  
+        cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
+        
         df['EMA200'] = df['Close'].ewm(200).mean()
         df['EMA100'] = df['Close'].ewm(100).mean()
     
@@ -163,10 +164,10 @@ def indicator(symbol):
           requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING
-        if (df['EMA200'][-2] < Close) and (float(df['Close'][-2]) < df['third_level'][-2]) and (df['third_level'][-3]) < (float(df['Close'][-3])) and (adx[-2] > 25):
+        if (df['EMA200'][-2] < Close) and (float(df['Close'][-2]) < df['third_level'][-2]) and (df['third_level'][-3]) < (float(df['Close'][-3])) and (cci20[-2] < 0):
           Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n Fb 0.5 : {round(df['third_level'][-2],2)}\n🎣 Fishing Pisha") 
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-        if (df['EMA200'][-2] > Close ) and (float(df['Close'][-2]) > df['third_level'][-2]) and (df['third_level'][-3]) > (float(df['Close'][-3])) and (adx[-2] > 25):
+        if (df['EMA200'][-2] > Close ) and (float(df['Close'][-2]) > df['third_level'][-2]) and (df['third_level'][-3]) > (float(df['Close'][-3])) and (cci20[-2] > 0):
           Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n Fb 0.5 : {round(df['third_level'][-2],2)}\n🎣 Fishing Pisha") 
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         

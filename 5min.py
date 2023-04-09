@@ -90,11 +90,11 @@ def indicator(symbol):
         Low = float(df['Low'][-2])
         diff = abs((High / Low -1) * 100)  
 
-        #depth = client.futures_order_book(symbol=symbol, limit=50)
-        #bids = depth['bids']
-        #asks = depth['asks']
-        #max_bid = max([float(bid[0]) for bid in bids[-30:]])
-        #max_ask = max([float(ask[0]) for ask in asks[-30:]])
+        depth = client.futures_order_book(symbol=symbol, limit=50)
+        bids = depth['bids']
+        asks = depth['asks']
+        max_bid = max([float(bid[0]) for bid in bids[-30:]])
+        max_ask = max([float(ask[0]) for ask in asks[-30:]])
     
         # Calculate Fibonacci
         #basis = ta.WMA(df['Close'], timeperiod=20)
@@ -113,7 +113,7 @@ def indicator(symbol):
         "side": "sell",
         "symbol": symbol,
         "open": {
-        "price": Close
+        "price": max_ask
         }
         }
         
@@ -123,7 +123,7 @@ def indicator(symbol):
         "side": "buy",
         "symbol": symbol,
         "open": {
-        "price": Close
+        "price": max_bid
         }
         }
     
@@ -172,10 +172,10 @@ def indicator(symbol):
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
         #Tendencia view
-        if (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < df['fourth_level'][-2]) and (df['fourth_level'][-3]) < (float(df['Close'][-3])) and (cci20[-2] < 0):
+        if (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < df['fourth_level'][-2]) and (df['fourth_level'][-3]) < (float(df['Close'][-3])) and (adx[-2] > 40):
          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n TW") 
          requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=VIEWSHORT) 
-        if (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > df['fourth_level'][-2]) and (df['fourth_level'][-3]) > (float(df['Close'][-3])) and (cci20[-2] > 0):
+        if (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > df['fourth_level'][-2]) and (df['fourth_level'][-3]) > (float(df['Close'][-3])) and (adx[-2] < 20):
           Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n TW") 
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=VIEWLONG)
           

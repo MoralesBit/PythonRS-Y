@@ -8,10 +8,13 @@ import time as ti
 import requests
 import json
 
-Pkey = ''
-Skey = ''
+api_key = 'TU_API_KEY'
+api_secret = 'TU_API_SECRET'
 
-client = Client(api_key=Pkey, api_secret=Skey)
+client = Client(api_key, api_secret)
+
+futures_info = client.futures_exchange_info()
+symbols = [symbol['symbol'] for symbol in futures_info['symbols']]
 
 def indicator(symbol):   
         kline = client.futures_historical_klines(symbol, "5m", "12 hours ago UTC+1",limit=500)
@@ -167,13 +170,10 @@ def indicator(symbol):
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=VIEWLONG)
           
            
-futures_info = client.futures_exchange_info()
-symbols = [symbol['symbol'] for symbol in futures_info['symbols']]
-
 while True:
   # Espera hasta que sea el comienzo de una nueva hora
   current_time = ti.time()
-  seconds_to_wait = 180 - current_time % 180
+  seconds_to_wait = 300 - current_time % 300
   ti.sleep(seconds_to_wait)   
   
   for symbol in symbols:

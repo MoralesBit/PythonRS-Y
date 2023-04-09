@@ -8,10 +8,13 @@ import time as ti
 import requests
 import json
 
-Pkey = ''
-Skey = ''
+api_key = 'TU_API_KEY'
+api_secret = 'TU_API_SECRET'
 
-client = Client(api_key=Pkey, api_secret=Skey)
+client = Client(api_key, api_secret)
+
+futures_info = client.futures_exchange_info()
+symbols = [symbol['symbol'] for symbol in futures_info['symbols']]
 
 def indicator(symbol):
     
@@ -113,10 +116,6 @@ def indicator(symbol):
     Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n Snipper :{max_bid}")
     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
     
-        
-futures_info = client.futures_exchange_info()
-symbols = [symbol['symbol'] for symbol in futures_info['symbols']]
-
 while True:
     # Espera hasta que sea el comienzo de una nueva hora
     current_time = ti.time()

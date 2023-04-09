@@ -26,7 +26,7 @@ def indicator(symbol):
     
   if not df.empty:
     df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
-       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
+    'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
       
@@ -93,23 +93,23 @@ def indicator(symbol):
     
       
     PORSHORT = {
-  "name": "CORTO 3POR",
-  "secret": "ao2cgree8fp",
-  "side": "sell",
-  "symbol": symbol,
-  "open": {
+    "name": "CORTO 3POR",
+    "secret": "ao2cgree8fp",
+    "side": "sell",
+    "symbol": symbol,
+    "open": {
     "price": max_ask
-  }
-}
+    }
+    }
     PORLONG = {
-  "name": "LARGO 3POR",
-  "secret": "nwh2tbpay1r",
-  "side": "buy",
-  "symbol": symbol,
-  "open": {
+    "name": "LARGO 3POR",
+    "secret": "nwh2tbpay1r",
+    "side": "buy",
+    "symbol": symbol,
+    "open": {
     "price": max_bid
-  }
-}
+    }
+    }
      
    
   if (diff > 1) and (rsi[-2] > 80) and (Close > df['upperband'][-2]):

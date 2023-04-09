@@ -14,7 +14,10 @@ api_secret = 'TU_API_SECRET'
 client = Client(api_key, api_secret)
 
 futures_info = client.futures_exchange_info()
-symbols = [symbol['symbol'] for symbol in futures_info['symbols']]
+symbols = [
+    symbol['symbol'] for symbol in futures_info['symbols']
+    if symbol['status'] == "TRADING"
+  ]
 
 def indicator(symbol):
     

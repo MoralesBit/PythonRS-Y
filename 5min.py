@@ -172,10 +172,10 @@ def indicator(symbol):
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
         #Tendencia view
-        if (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < df['uno_level'][-2]) and (df['uno_level'][-3]) < (float(df['Close'][-3])) and (cci20[-2] < 0):
+        if (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < df['fourth_level'][-2]) and (df['fourth_level'][-3]) < (float(df['Close'][-3])) and (cci20[-2] < 0):
          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n TW") 
          requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=VIEWSHORT) 
-        if (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > df['uno_level'][-2]) and (df['uno_level'][-3]) > (float(df['Close'][-3])) and (cci20[-2] > 0):
+        if (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > df['fourth_level'][-2]) and (df['fourth_level'][-3]) > (float(df['Close'][-3])) and (cci20[-2] > 0):
           Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n TW") 
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=VIEWLONG)
           

@@ -107,17 +107,24 @@ def indicator(symbol):
     
         # DATOS FNDY
         FISHINGSHORT = {
-        "name": "SHORT-MINIFISH",
+        "name": "FISHING SHORT",
         "secret": "azsdb9x719",
         "side": "sell",
-        "symbol": symbol
-          }
+        "symbol": symbol,
+        "open": {
+        "price": Close
+        }
+        }
+        
         FISHINGLONG = {
-        "name": "LONG-MINIFISH",
+        "name": "FISHING LONG",
         "secret": "0kivpja7tz89",
         "side": "buy",
-        "symbol": symbol
-          }
+        "symbol": symbol,
+        "open": {
+        "price": Close
+        }
+        }
     
         CONTRASHORT = {
         "name": "SHORT-MINIFISH",

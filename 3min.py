@@ -88,8 +88,8 @@ def indicator(symbol):
     depth = client.futures_order_book(symbol=symbol, limit=50)
     bids = depth['bids']
     asks = depth['asks']
-    max_bid = max([float(bid[0]) for bid in bids[-30:]])
-    max_ask = max([float(ask[0]) for ask in asks[-30:]])
+    max_bid = max([float(bid[0]) for bid in bids[-10:]])
+    max_ask = max([float(ask[0]) for ask in asks[-10:]])
     
       
     PORSHORT = {
@@ -112,10 +112,10 @@ def indicator(symbol):
     }
      
    
-  if (diff > 1) and (rsi[-2] > 70) and (Close > df['upperband'][-2]):
+  if (diff > 1) and (rsi[-2] > 80) and (Close > df['upperband'][-2]):
     Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {max_ask} ") 
     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
-  if (diff > 1) and (rsi[-2] < 70) and (Close < df['lowerband'][-2]):
+  if (diff > 1) and (rsi[-2] < 80) and (Close < df['lowerband'][-2]):
     Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {max_bid} ")
     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
     

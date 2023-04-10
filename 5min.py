@@ -105,7 +105,15 @@ def indicator(symbol):
         #fd764 = basis - (0.001 * 764 * dev)
          #fd5 = basis - (0.001 * 500 * dev)
         #fd1 = basis - (1 * dev)
-    
+        klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
+        prices = np.array([float(kline[2]) for kline in klines])
+        prices_high = np.array([float(kline[3]) for kline in klines])
+        prices_low = np.array([float(kline[4]) for kline in klines])
+        prices_close = np.array([float(kline[5]) for kline in klines])
+        cciBTC = ta.CCI(prices_high, prices_low, prices, timeperiod=20)
+        
+       
+        
         # DATOS FNDY
         FISHINGSHORT = {
         "name": "FISHING SHORT",
@@ -156,18 +164,18 @@ def indicator(symbol):
        
 
         # Contra-Tendencia (Cierre de la tendencia)
-        if (rsi[-3] > 70) and (Close > max_ask) :
+        if (rsi[-3] > 70) and (Close >= max_ask) :
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n📈 RSI : {round(rsi[-2],3)}\n")
           requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CONTRASHORT)   
-        if (rsi[-3] < 30) and (Close < max_bid) : 
+        if (rsi[-3] < 30) and (Close <= max_bid) : 
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n📉 RSI : {round(rsi[-2],3)}\n")
           requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING
-        if (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < float(df['fourth_level'][-2])) and (float(df['fourth_level'][-3])) < (float(df['Close'][-3])) and (adx[-2] > 40):
+        if (cciBTC[-2] > 0) and (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < float(df['fourth_level'][-2])) and (float(df['fourth_level'][-3])) < (float(df['Close'][-3])) and (adx[-2] >= 40):
           Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_ask} \n🎣 Fishing Pisha") 
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-        if (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > float(df['fourth_level'][-2])) and (float(df['fourth_level'][-3])) > (float(df['Close'][-3])) and (adx[-2] < 20):
+        if (cciBTC[-2] < 0) and (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > float(df['fourth_level'][-2])) and (float(df['fourth_level'][-3])) > (float(df['Close'][-3])) and (adx[-2] <= 20):
           Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_bid} \n🎣 Fishing Pisha") 
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
@@ -188,4 +196,5 @@ while True:
   
   for symbol in symbols:
     indicator(symbol)
-    print(symbol) 
+    print(symbol)
+     

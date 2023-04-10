@@ -121,7 +121,7 @@ def indicator(symbol):
         "side": "sell",
         "symbol": symbol,
         "open": {
-        "price": max_ask
+        "price": Close
         }
         }
         
@@ -131,7 +131,7 @@ def indicator(symbol):
         "side": "buy",
         "symbol": symbol,
         "open": {
-        "price": max_bid
+        "price": Close
         }
         }
     

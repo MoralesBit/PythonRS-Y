@@ -93,8 +93,8 @@ def indicator(symbol):
         depth = client.futures_order_book(symbol=symbol, limit=50)
         bids = depth['bids']
         asks = depth['asks']
-        max_bid = max([float(bid[0]) for bid in bids[-30:]])
-        max_ask = max([float(ask[0]) for ask in asks[-30:]])
+        max_bid = max([float(bid[0]) for bid in bids[-10:]])
+        max_ask = max([float(ask[0]) for ask in asks[-10:]])
     
         # Calculate Fibonacci
         #basis = ta.WMA(df['Close'], timeperiod=20)
@@ -156,26 +156,26 @@ def indicator(symbol):
        
 
         # Contra-Tendencia (Cierre de la tendencia)
-        if (rsi[-3] > 80) and (slowk[-3] > slowk[-2]) and (adx[-2] > 25) :
-          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n💰F-1 : {df['cero_level'][-2]}\nRSI : {round(rsi[-2],3)}\n Contratendencia")
+        if (rsi[-3] > 70) and (slowk[-3] > slowk[-2]) and (Close > max_ask) :
+          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n📈 RSI : {round(rsi[-2],3)}\n")
           requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CONTRASHORT)   
-        if (rsi[-3] < 20) and (slowk[-3] < slowk[-2]) and (adx[-2] > 25) : 
-          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n💰F-0 : {df['uno_level'][-2]}\nRSI : {round(rsi[-2],3)}\n Contratendencia")
+        if (rsi[-3] < 30) and (slowk[-3] < slowk[-2]) and (Close < max_bid) : 
+          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n📉 RSI : {round(rsi[-2],3)}\n")
           requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING
-        if (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < df['fourth_level'][-2]) and (df['fourth_level'][-3]) < (float(df['Close'][-3])) and (adx[-2] > 40):
-          Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n Fb 0.5 : {round(df['third_level'][-2],2)}\n🎣 Fishing Pisha") 
+        if (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < float(df['fourth_level'][-2])) and (float(df['fourth_level'][-3])) < (float(df['Close'][-3])) and (adx[-2] > 40):
+          Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_ask} \n🎣 Fishing Pisha") 
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-        if (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > df['fourth_level'][-2]) and (df['fourth_level'][-3]) > (float(df['Close'][-3])) and (adx[-2] < 20):
-          Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n Fb 0.5 : {round(df['third_level'][-2],2)}\n🎣 Fishing Pisha") 
+        if (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > float(df['fourth_level'][-2])) and (float(df['fourth_level'][-3])) > (float(df['Close'][-3])) and (adx[-2] < 20):
+          Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_bid} \n🎣 Fishing Pisha") 
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
         #Tendencia view
-        if (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < df['fourth_level'][-2]) and (df['fourth_level'][-3]) < (float(df['Close'][-3])) and (adx[-2] > 40):
+        if (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < max_ask) and (max_ask) < (float(df['Close'][-3])) and (adx[-2] > 40):
          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n TW") 
          requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=VIEWSHORT) 
-        if (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > df['fourth_level'][-2]) and (df['fourth_level'][-3]) > (float(df['Close'][-3])) and (adx[-2] < 20):
+        if (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > max_bid) and max_bid > (float(df['Close'][-3])) and (adx[-2] < 20):
           Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n TW") 
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=VIEWLONG)
           

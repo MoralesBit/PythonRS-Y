@@ -172,10 +172,10 @@ def indicator(symbol):
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
         #Tendencia view
-        if (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < max_ask) and (max_ask) < (float(df['Close'][-3])) and (adx[-2] > 40):
+        if (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < max_bid) and (max_bid < (float(df['Close'][-3]))) and (adx[-2] > 40):
          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n TW") 
          requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=VIEWSHORT) 
-        if (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > max_bid) and max_bid > (float(df['Close'][-3])) and (adx[-2] < 20):
+        if (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > max_ask) and max_ask > (float(df['Close'][-3])) and (adx[-2] < 20):
           Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n TW") 
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=VIEWLONG)
           

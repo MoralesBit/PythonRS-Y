@@ -88,8 +88,8 @@ def indicator(symbol):
     depth = client.futures_order_book(symbol=symbol, limit=50)
     bids = depth['bids']
     asks = depth['asks']
-    max_bid = max([float(bid[0]) for bid in bids[-10:]])
-    max_ask = max([float(ask[0]) for ask in asks[-10:]])
+    max_bid = max([float(bid[0]) for bid in bids[-5:]])
+    max_ask = max([float(ask[0]) for ask in asks[-5:]])
     
       
     PORSHORT = {

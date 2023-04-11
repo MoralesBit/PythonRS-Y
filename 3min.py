@@ -121,10 +121,10 @@ def indicator(symbol):
     #requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
     
   #Pruebas   
-  if (diff > 1) and (rsi[-2] > 70) and (diff_short < 0.5) and (adx[-2] > 40):
+  if (diff > 1) and (rsi[-2] > 70) and (diff_short < 0.5) and (slowk[-2] >= 80):
     Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {max_ask} ") 
     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
-  if (diff > 1) and (rsi[-2] < 30) and (diff_long < 0.5) and (adx[-2] < 20): 
+  if (diff > 1) and (rsi[-2] < 30) and (diff_long < 0.5) and (slowk[-2] <= 20): 
     Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {max_bid} ")
     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
     

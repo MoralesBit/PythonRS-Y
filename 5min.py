@@ -93,8 +93,8 @@ def indicator(symbol):
         depth = client.futures_order_book(symbol=symbol, limit=50)
         bids = depth['bids']
         asks = depth['asks']
-        max_bid = max([float(bid[0]) for bid in bids[-10:]])
-        max_ask = max([float(ask[0]) for ask in asks[-10:]])
+        max_bid = max([float(bid[0]) for bid in bids[-5:]])
+        max_ask = max([float(ask[0]) for ask in asks[-5:]])
     
         # Calculate Fibonacci
         #basis = ta.WMA(df['Close'], timeperiod=20)
@@ -180,10 +180,10 @@ def indicator(symbol):
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
         #Tendencia view
-        if (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < max_bid) and (max_bid < (float(df['Close'][-3]))) and (adx[-2] > 40):
+        if (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < max_bid) and (max_bid < (float(df['Close'][-3]))) and (adx[-2] >= 40):
          Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n📕 Trend Call") 
          requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=VIEWSHORT) 
-        if (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > max_ask) and max_ask > (float(df['Close'][-3])) and (adx[-2] < 20):
+        if (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > max_ask) and max_ask > (float(df['Close'][-3])) and (adx[-2] <= 20):
           Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n📗 Trend Call") 
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=VIEWLONG)
           
@@ -196,4 +196,5 @@ while True:
   
   for symbol in symbols:
     indicator(symbol)
-    print(symbol)    
+    print(symbol)
+     

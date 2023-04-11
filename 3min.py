@@ -90,7 +90,8 @@ def indicator(symbol):
     asks = depth['asks']
     max_bid = max([float(bid[0]) for bid in bids[-5:]])
     max_ask = max([float(ask[0]) for ask in asks[-5:]])
-    
+    diff_short = abs((max_ask - Close)/Close)*100
+    diff_long = abs((max_bid - Close)/Close)*100
       
     PORSHORT = {
     "name": "CORTO 3POR",
@@ -111,12 +112,20 @@ def indicator(symbol):
     }
     }
      
-   
+  #Actual   
   if (diff > 1) and (rsi[-2] > 70) and (Close > df['upperband'][-2]) and (slowk[-2] >= 80):
     Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {max_ask} ") 
     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
   if (diff > 1) and (rsi[-2] < 30) and (Close < df['lowerband'][-2]) and (slowk[-2] <= 20):
     Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {max_bid} ")
+    requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
+    
+  #Pruebas   
+  if (diff > 1) and (rsi[-2] > 70) and (Close > df['upperband'][-2]) and (diff_short < 0.5):
+    Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {max_ask} ") 
+    requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
+  if (diff > 1) and (rsi[-2] < 30) and (Close < df['lowerband'][-2]) and (diff_long < 0.5):
+    Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {max_bid} ")
     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
     
 while True:

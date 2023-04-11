@@ -197,4 +197,5 @@ while True:
   for symbol in symbols:
     indicator(symbol)
     print(symbol)
+    ti.sleep(0.1)
      

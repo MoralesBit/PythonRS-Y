@@ -20,7 +20,7 @@ symbols = [
   ] 
 
 def indicator(symbol):   
-        kline = client.futures_historical_klines(symbol, "5m", "24 hours ago UTC+1",limit=500)
+        kline = client.futures_historical_klines(symbol, "5m", "2 days ago UTC+1",limit=500)
         df = pd.read_json(json.dumps(kline))
     
         if not df.empty:
@@ -179,12 +179,12 @@ def indicator(symbol):
        
 
         # Contra-Tendencia (Cierre de la tendencia)
-        if (cci58[-2] < 0) and (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < float(df['fourth_level'][-2])) and (float(df['fourth_level'][-3])) < (float(df['Close'][-3])) and (adx[-2] >= 20):
-          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n📈 RSI : {round(rsi[-2],3)}\n")
-          requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CONTRASHORT)   
-        if (cci58[-2] > 0) and (df['EMA200'][-2] < Close) and (float(df['Close'][-2]) > float(df['secound_level'][-2])) and (float(df['secound_level'][-3])) > (float(df['Close'][-3])) and (adx[-2] <= 40): 
-          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n📉 RSI : {round(rsi[-2],3)}\n")
-          requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
+        #if (cciBTC[-2] < 0) and (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < float(df['fourth_level'][-2])) and (float(df['fourth_level'][-3])) < (float(df['Close'][-3])) and (adx[-2] >= 20):
+          #Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_ask} \n📕 Trend Call")
+          #requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CONTRASHORT)   
+        #if (cciBTC[-2] > 0) and (df['EMA200'][-2] < Close) and (float(df['Close'][-2]) > float(df['secound_level'][-2])) and (float(df['secound_level'][-3])) > (float(df['Close'][-3])) and (adx[-2] <= 40): 
+          #Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_bid} \n📗 Trend Call")
+          #requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING
         if (cciBTC[-2] < 0) and (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < float(df['secound_level'][-2]))  and (float(df['secound_level'][-3] < float(df['Close'][-3]))) and (adx[-2] >= 40):
@@ -195,11 +195,11 @@ def indicator(symbol):
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
         #Tendencia view
-        if (float(df['Close'][-2]) < float(df['first_level'][-2]))  and (float(df['Close'][-3]) > float(df['first_level'][-3])) and (adx[-2] >= 40):
-         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n📕 Trend Call") 
+        if (cciBTC[-2] < 0) and (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < float(df['fourth_level'][-2])) and (float(df['fourth_level'][-3])) < (float(df['Close'][-3])) and (adx[-2] >= 20):
+         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_ask} \n📕 Trend Call") 
          requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=VIEWSHORT) 
-        if (float(df['Close'][-2]) > float(df['five_level'][-2])) and (float(df['five_level'][-3])) > (float(df['Close'][-3])) and (adx[-2] <= 20):
-          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n📗 Trend Call") 
+        if (cciBTC[-2] > 0) and (df['EMA200'][-2] < Close) and (float(df['Close'][-2]) > float(df['secound_level'][-2])) and (float(df['secound_level'][-3])) > (float(df['Close'][-3])) and (adx[-2] <= 40):
+          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_bid} \n📗 Trend Call") 
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=VIEWLONG)
           
            

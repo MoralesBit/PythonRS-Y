@@ -194,7 +194,7 @@ def indicator(symbol):
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         
         #Tendencia view
-        if (cciBTC[-2] > 0) and (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < float(df['first_level'][-3])) < (float(df['Close'][-3])) and (adx[-2] >= 40):
+        if (cciBTC[-2] > 0) and (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < float(df['first_level'][-2]))  and (float(df['Close'][-3]) > float(df['first_level'][-3])) and (adx[-2] >= 40):
          Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n📕 Trend Call") 
          requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=VIEWSHORT) 
         if (cciBTC[-2] < 0) and (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > float(df['five_level'][-2])) and (float(df['five_level'][-3])) > (float(df['Close'][-3])) and (adx[-2] <= 20):

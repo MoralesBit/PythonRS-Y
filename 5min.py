@@ -140,40 +140,53 @@ def indicator(symbol):
         "name": "SHORT-MINIFISH",
         "secret": "hgw3399vhh",
         "side": "sell",
-        "symbol": symbol
+        "symbol": symbol,
+         "open": {
+        "price": Close
         }
+        }
+        
         CONTRALONG = {
         "name": "LONG-MINIFISH",
         "secret": "xjth0i3qgb",
         "side": "buy",
-        "symbol": symbol
+        "symbol": symbol,
+         "open": {
+        "price": Close
+        }
         }  
     
         VIEWSHORT = {
         "name": "VIEW SHOR",
         "secret": "w48ulz23f6",
         "side": "sell",
-        "symbol": symbol
+        "symbol": symbol,
+        "open": {
+        "price": Close
+        }
         }
         VIEWLONG = {
         "name": "VIEW LONG",
         "secret": "xxuxkqf0gpj",
         "side": "buy",
-        "symbol": symbol
+        "symbol": symbol,
+        "open": {
+        "price": Close
+        }
         }
      
        
 
         # Contra-Tendencia (Cierre de la tendencia)
-        if (rsi[-3] > 70) and (Close >= float(max_ask)) and (slowk[-2] > slowk[-1]):
-          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n📈 RSI : {round(rsi[-2],3)}\n")
-          requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CONTRASHORT)   
-        if (rsi[-3] < 30) and (Close <= float(max_bid)) and (slowk[-2] < slowk[-1]): 
-          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n📉 RSI : {round(rsi[-2],3)}\n")
-          requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
+        #if (rsi[-3] > 70) and (Close >= float(max_ask)) and (slowk[-2] > slowk[-1]):
+          #Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n📈 RSI : {round(rsi[-2],3)}\n")
+          #requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CONTRASHORT)   
+        #if (rsi[-3] < 30) and (Close <= float(max_bid)) and (slowk[-2] < slowk[-1]): 
+          #Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n📉 RSI : {round(rsi[-2],3)}\n")
+          #requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING
-        if (cciBTC[-2] > 0) and (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < float(df['secound_level'][-3])) < (float(df['Close'][-3])) and (adx[-2] >= 40):
+        if (cciBTC[-2] > 0) and (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < float(df['secound_level'][-2]))  and (float(df['secound_level'][-3] < float(df['Close'][-3]))) and (adx[-2] >= 40):
           Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_ask} \n🎣 Fishing Pisha") 
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
         if (cciBTC[-2] < 0) and (df['EMA200'][-2] < Close ) and (float(df['Close'][-2]) > float(df['fourth_level'][-2])) and (float(df['fourth_level'][-3])) > (float(df['Close'][-3])) and (adx[-2] <= 20):
@@ -198,4 +211,3 @@ while True:
   for symbol in symbols:
     indicator(symbol)
     print(symbol)
-    ti.sleep(1)  

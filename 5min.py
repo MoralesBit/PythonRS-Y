@@ -58,6 +58,7 @@ def indicator(symbol):
         cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
         cci58 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
         
+        df['EMA13'] = df['Close'].ewm(13).mean()
         df['EMA200'] = df['Close'].ewm(200).mean()
         df['EMA100'] = df['Close'].ewm(100).mean()
     
@@ -176,14 +177,12 @@ def indicator(symbol):
         }
         }
      
-       
-
-        # Contra-Tendencia (Cierre de la tendencia)
-        #if (cciBTC[-2] < 0) and (df['EMA200'][-2] > Close) and (float(df['Close'][-2]) < float(df['fourth_level'][-2])) and (float(df['fourth_level'][-3])) < (float(df['Close'][-3])) and (adx[-2] >= 20):
-          #Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_ask} \n📕 Trend Call")
+        # Tendencia:
+        if (df['EMA200'][-2] > float(df['Close'][-2])) and (df['EMA13'][-3] < float(df['Close'][-3])) and (df['EMA13'][-2] > float(df['Close'][-2])) and (40 > rsi[-2] >= 30):
+          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_ask} \n Rebote Tendencia nueva")
           #requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=CONTRASHORT)   
-        #if (cciBTC[-2] > 0) and (df['EMA200'][-2] < Close) and (float(df['Close'][-2]) > float(df['secound_level'][-2])) and (float(df['secound_level'][-3])) > (float(df['Close'][-3])) and (adx[-2] <= 40): 
-          #Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_bid} \n📗 Trend Call")
+        if (df['EMA200'][-2] < float(df['Close'][-2])) and (df['EMA13'][-3] > float(df['Close'][-3])) and (df['EMA13'][-2] < float(df['Close'][-2])) and (70 > rsi[-2] >= 60): 
+          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_bid} \n Rebote Tendencia nueva")
           #requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=CONTRALONG) 
         
       #Tendencia FISHING

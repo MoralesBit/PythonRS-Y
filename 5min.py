@@ -20,7 +20,7 @@ symbols = [
   ] 
 
 def indicator(symbol):   
-        kline = client.futures_historical_klines(symbol, "5m", "12 hours ago UTC+1",limit=500)
+        kline = client.futures_historical_klines(symbol, "5m", "24 hours ago UTC+1",limit=500)
         df = pd.read_json(json.dumps(kline))
     
         if not df.empty:

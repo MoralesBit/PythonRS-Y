@@ -178,7 +178,9 @@ def indicator(symbol):
         }
         }
         
-        print()
+        print(df['Volume'][-2])
+        print(df['Volume_prom'][-2])
+        
         # TENDENCIA ALCISTA:
         if (diff > 0.5) and (Close > upperband[-3]) and (rsi[-3] > 70) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])):
           Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_bid} \n🎣 Fishing Pisha")

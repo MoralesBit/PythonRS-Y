@@ -51,8 +51,8 @@ def indicator(symbol):
         depth = client.futures_order_book(symbol=symbol, limit=50)
         bids = depth['bids']
         asks = depth['asks']
-        max_bid = max([float(bid[0]) for bid in bids[-5:]])
-        max_ask = max([float(ask[0]) for ask in asks[-5:]])
+        max_bid = max([float(bid[0]) for bid in bids[-1:]])
+        max_ask = max([float(ask[0]) for ask in asks[-1A:]])
     
         klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
         prices = np.array([float(kline[2]) for kline in klines])

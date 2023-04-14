@@ -66,9 +66,9 @@ def indicator(symbol):
           nearest_bid = get_nearest_price(max_bids, current_price)
           nearest_ask = get_nearest_price(max_asks, current_price)
           if float(df['Close'][-2]) < nearest_ask:
-              return nearest_bid
-          else:
               return nearest_ask
+          else:
+              return  nearest_bid
 
         def get_nearest_price(prices, current_price):
           nearest_price = None

@@ -65,9 +65,9 @@ def indicator(symbol):
           current_price = float(client.futures_symbol_ticker(symbol=symbol)['price'])
           nearest_bid = get_nearest_price(max_bids, current_price)
           nearest_ask = get_nearest_price(max_asks, current_price)
-          if float(df['Close'][-2]) < nearest_ask:
+          if (rsi[-2] > 70):
               return nearest_ask
-          else:
+          elif (rsi[-2] < 30):
               return  nearest_bid
 
         def get_nearest_price(prices, current_price):

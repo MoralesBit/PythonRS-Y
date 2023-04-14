@@ -41,12 +41,8 @@ def indicator(symbol):
           
         rsi = ta.RSI(df["Close"], timeperiod=14)
         adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
-                         
-        df['EMA13'] = df['Close'].ewm(13).mean()
         df['EMA200'] = df['Close'].ewm(200).mean()
-        df['EMA100'] = df['Close'].ewm(100).mean()
         df['Volume_prom'] = df['Close'].mean()
-
         df['diff'] = abs((df['High'] / df['Low'] -1) * 100) 
             
         klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
@@ -66,9 +62,9 @@ def indicator(symbol):
           nearest_bid = get_nearest_price(max_bids, current_price)
           nearest_ask = get_nearest_price(max_asks, current_price)
           if (rsi[-2] > 70):
-              return nearest_ask
+              return nearest_bid
           elif (rsi[-2] < 30):
-              return  nearest_bid
+              return  nearest_ask
 
         def get_nearest_price(prices, current_price):
           nearest_price = None

@@ -217,10 +217,10 @@ def indicator(symbol):
             requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=BOUNCYLONG) 
         
         # CCI FOREX::
-        if cciBTC[-2] > 0 :
-          if (cci20[-3] < 0) and (cci20[-2] > 0) and (adx[-2] > 25):
-            Tb.telegram_canal_prueba(f"🐬 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_bid} \n🐬 Delfin")  
-            requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
+        #if cciBTC[-2] > 0 :
+          #if (cci20[-3] < 0) and (cci20[-2] > 0) and (adx[-2] > 25):
+            #Tb.telegram_canal_prueba(f"🐬 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_bid} \n🐬 Delfin")  
+            #requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
       
           
            

@@ -38,87 +38,29 @@ def indicator(symbol):
         df['upperband'] = upperband
         df['middleband'] = middleband
         df['lowerband'] = lowerband
-    
-        macd, signal, hist = ta.MACD(df['Close'], 
-                                      fastperiod=12, 
-                                      slowperiod=26, 
-                                      signalperiod=9)
-        df['macd'] = macd
-        df['macd_signal'] = signal
-        df['macd_hist'] = hist
-        df['macd_crossover'] = np.where(df['macd'] > df['macd_signal'], 1, 0)
-        df['position_macd'] = df['macd_crossover'].diff()
-    
+          
         rsi = ta.RSI(df["Close"], timeperiod=14)
         adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
-        slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
-        df['Will'] = ta.WILLR(df['High'], df['Low'], df['Close'], timeperiod=14)
-        df['BBW'] = (df['upperband'] - df['lowerband']) / df['middleband']  
-        chain = ta.ADOSC(df['High'], df['Low'], df['Close'], df['Volume'], fastperiod=3, slowperiod=10)
-        cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
-        cci58 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
-        
-        
+                         
         df['EMA13'] = df['Close'].ewm(13).mean()
         df['EMA200'] = df['Close'].ewm(200).mean()
         df['EMA100'] = df['Close'].ewm(100).mean()
         df['Volume_prom'] = df['Close'].mean()
     
-        df['tendencia'] = np.where((float(df['Close'][-2])) > (df['EMA100'][-2]),1,0)
-        df['tendenciaemas'] = np.where(df['EMA100'][-2] > (df['EMA200'][-2]),1,0)
-    
-        df['max_price'] = (df['Close']).max()
-        df['min_price'] = (df['Close']).min()
-      
-      
-        df['diference'] = df['max_price'] - df['min_price']
-      
-        df['cero_level'] = df['max_price'] -  df['diference']*0
-        df['first_level'] = df['max_price'] -  df['diference']*0.236
-        df['secound_level'] = df['max_price'] -  df['diference']* 0.382
-        df['third_level'] = df['max_price'] -  df['diference']*0.5
-        df['fourth_level'] = df['max_price'] -  df['diference']*0.618
-        df['five_level'] = df['max_price'] -  df['diference']*0.768
-        df['uno_level'] = df['max_price'] -  df['diference']*1
-    
-        df['cero_cross'] = np.where((float(df['Close'][-2])) > (df['cero_level']),1,0)
-        df['first_cross'] = np.where((float(df['Close'][-2])) > (df['first_level']),1,0)
-        df['secound_cross'] = np.where((float(df['Close'][-2])) > (df['secound_level']),1,0)
-        df['third_cross'] = np.where((float(df['Close'][-2])) > (df['third_level']),1,0)
-        df['fourth_cross'] = np.where((float(df['Close'][-2])) > (df['fourth_level']),1,0)
-        df['uno_cross'] = np.where((float(df['Close'][-2])) > (df['uno_level']),1,0)
-    
-        Close = float(df['Close'][-3])
-        Open = float(df['Open'][-3])
-        High = float(df['High'][-3])
-        Low = float(df['Low'][-3])
-        diff = abs((High / Low -1) * 100)  
-        Close_actual = float(df['Close'][-2])
-
+        df['diff'] = abs((df['High'] / df['Low'] -1) * 100) 
         depth = client.futures_order_book(symbol=symbol, limit=50)
         bids = depth['bids']
         asks = depth['asks']
         max_bid = max([float(bid[0]) for bid in bids[-5:]])
         max_ask = max([float(ask[0]) for ask in asks[-5:]])
     
-        # Calculate Fibonacci
-        #basis = ta.WMA(df['Close'], timeperiod=20)
-        #dev = (3) * ta.STDDEV(df['Close'], timeperiod=20)
-        #fu764 = basis + (0.001 * 764 * dev)
-        #fu5 = basis + (0.001 * 500 * dev)
-        #fu1 = basis + (1 * dev)      
-        #fd764 = basis - (0.001 * 764 * dev)
-         #fd5 = basis - (0.001 * 500 * dev)
-        #fd1 = basis - (1 * dev)
         klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
         prices = np.array([float(kline[2]) for kline in klines])
         prices_high = np.array([float(kline[3]) for kline in klines])
         prices_low = np.array([float(kline[4]) for kline in klines])
-        prices_close = np.array([float(kline[5]) for kline in klines])
+        
         cciBTC = ta.CCI(prices_high, prices_low, prices, timeperiod=20)
-        
-       
-        
+                
         # DATOS FNDY
         FISHINGSHORT = {
         "name": "FISHING SHORT",
@@ -126,7 +68,7 @@ def indicator(symbol):
         "side": "sell",
         "symbol": symbol,
         "open": {
-        "price": Close_actual
+        "price": float(df['Close'][-2])
         }
         }
         
@@ -136,7 +78,7 @@ def indicator(symbol):
         "side": "buy",
         "symbol": symbol,
         "open": {
-        "price": Close_actual
+        "price": float(df['Close'][-2])
         }
         }
     
@@ -146,7 +88,7 @@ def indicator(symbol):
         "side": "sell",
         "symbol": symbol,
          "open": {
-        "price": Close_actual
+        "price": float(df['Close'][-2])
         }
         }
         
@@ -156,7 +98,7 @@ def indicator(symbol):
         "side": "buy",
         "symbol": symbol,
          "open": {
-        "price": Close_actual
+        "price": float(df['Close'][-2])
         }
         }  
     
@@ -166,7 +108,7 @@ def indicator(symbol):
         "side": "sell",
         "symbol": symbol,
         "open": {
-        "price": Close_actual
+        "price": float(df['Close'][-2])
         }
         }
         CONTRALONG = {
@@ -175,7 +117,7 @@ def indicator(symbol):
         "side": "buy",
         "symbol": symbol,
         "open": {
-        "price": Close_actual
+        "price": float(df['Close'][-2])
         }
         }
         
@@ -185,35 +127,35 @@ def indicator(symbol):
         "side": "buy",
         "symbol": symbol,
         "open": {
-        "price": Close_actual
+        "price": float(df['Close'][-2])
         }
         }
         
              
         # TENDENCIA ALCISTA:
-        if (diff > 1) and (Close > upperband[-3]) and (rsi[-3] > 70) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])) and (adx[-2] < 30):
-          Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_bid} \n🎣 Fishing Pisha")
+        if (df['diff'][-3] > 1) and (float(df['Close'][-3]) > upperband[-3]) and (rsi[-3] > 70) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])) and (adx[-2] < 30):
+          Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {max_bid} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
-        elif (diff > 1) and (Close > upperband[-3]) and (rsi[-3] > 70) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) < float(df['Open'][-2])) and (adx[-2] > 30): 
-          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {max_ask} ")
+        elif (df['diff'][-3] > 1) and (float(df['Close'][-3]) > upperband[-3]) and (rsi[-3] > 70) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) < float(df['Open'][-2])) and (adx[-2] > 30): 
+          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {float(df['Close'][-2])} \n⛳️ Snipper : {max_ask} ")
           requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
         
         # TENDENCIA BAJISTA:
-        if (diff > 1) and (Close < lowerband[-3]) and (rsi[-3] < 30) and (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) < float(df['Open'][-2])) and (adx[-2] < 30):
-          Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_ask} \n🎣 Fishing Pisha")
+        if (df['diff'][-3] > 1) and (float(df['Close'][-3]) < lowerband[-3]) and (rsi[-3] < 30) and (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) < float(df['Open'][-2])) and (adx[-2] < 30):
+          Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {max_ask} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
-        elif (diff > 1) and (Close < lowerband[-3]) and (rsi[-3] < 30) and (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])) and (adx[-2] > 30): 
-          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {max_bid} ")
+        elif (df['diff'][-3] > 1) and (float(df['Close'][-3]) < lowerband[-3]) and (rsi[-3] < 30) and (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])) and (adx[-2] > 30): 
+          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {float(df['Close'][-2])} \n⛳️ Snipper : {max_bid} ")
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CONTRALONG)   
         
         # Tendencia:
         if cciBTC[-2] > 50 :
           if (df['EMA200'][-2] > float(df['Close'][-2])) and (df['EMA13'][-3] < float(df['Close'][-3])) and (df['EMA13'][-2] > float(df['Close'][-2])) and (40 > rsi[-2] >= 30):
-            Tb.telegram_send_message(f"🦘 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_ask} \n🦘 Bouncy")
+            Tb.telegram_send_message(f"🦘 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {max_ask} \n🦘 Bouncy")
             requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=BOUNCYSHORT)   
         if cciBTC[-2] < -50 :
           if (df['EMA200'][-2] < float(df['Close'][-2])) and (df['EMA13'][-3] > float(df['Close'][-3])) and (df['EMA13'][-2] < float(df['Close'][-2])) and (70 > rsi[-2] >= 60): 
-            Tb.telegram_send_message(f"🦘 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_bid} \n🦘 Bouncy")
+            Tb.telegram_send_message(f"🦘 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {max_bid} \n🦘 Bouncy")
             requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=BOUNCYLONG) 
         
         # CCI FOREX::
@@ -221,9 +163,7 @@ def indicator(symbol):
           #if (cci20[-3] < 0) and (cci20[-2] > 0) and (adx[-2] > 25):
             #Tb.telegram_canal_prueba(f"🐬 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_bid} \n🐬 Delfin")  
             #requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
-      
-          
-           
+                  
 while True:
   # Espera hasta que sea el comienzo de una nueva hora
   current_time = ti.time()
@@ -233,4 +173,3 @@ while True:
   for symbol in symbols:
     indicator(symbol)
     print(symbol)
-    

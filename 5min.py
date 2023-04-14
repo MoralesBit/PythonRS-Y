@@ -41,8 +41,12 @@ def indicator(symbol):
           
         rsi = ta.RSI(df["Close"], timeperiod=14)
         adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+                         
+        df['EMA13'] = df['Close'].ewm(13).mean()
         df['EMA200'] = df['Close'].ewm(200).mean()
+        df['EMA100'] = df['Close'].ewm(100).mean()
         df['Volume_prom'] = df['Close'].mean()
+
         df['diff'] = abs((df['High'] / df['Low'] -1) * 100) 
             
         klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE)

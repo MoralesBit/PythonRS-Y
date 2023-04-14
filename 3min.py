@@ -120,10 +120,10 @@ def indicator(symbol):
     }
      
   #Actual   
-  if (cciBTC[-2] < -50) and (macd[-3] > signal[-3]) and (macd[-2] < signal[-2]) and (adx[-2] >= 40):
+  if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] > 70) and (adx[-2] > 45):
     Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {max_ask} ") 
     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
-  if (cciBTC[-2] > 50) and (macd[-3] < signal[-3]) and (macd[-2] > signal[-2]) and (adx[-2] <= 20): 
+  if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] < 30) and (adx[-2] < 35):
     Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {max_bid} ")
     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
     

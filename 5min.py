@@ -189,9 +189,7 @@ def indicator(symbol):
         }
         }
         
-        print(df['Volume'][-2])
-        print(df['Volume_prom'][-2])
-        
+             
         # TENDENCIA ALCISTA:
         if (diff > 1) and (Close > upperband[-3]) and (rsi[-3] > 70) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])) and (adx[-2] < 30):
           Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_bid} \n🎣 Fishing Pisha")
@@ -219,9 +217,10 @@ def indicator(symbol):
             requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=BOUNCYLONG) 
         
         # CCI FOREX::
-        if (cci20[-3] < 0) and (cci20[-2] > 0) and (adx[-2] > 25):
-          Tb.telegram_canal_prueba(f"🐬 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_bid} \n🐬 Delfin")  
-          requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
+        if cciBTC[-2] > 0 :
+          if (cci20[-3] < 0) and (cci20[-2] > 0) and (adx[-2] > 25):
+            Tb.telegram_canal_prueba(f"🐬 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ Snipper : {max_bid} \n🐬 Delfin")  
+            requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
       
           
            

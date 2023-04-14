@@ -52,7 +52,7 @@ def indicator(symbol):
         bids = depth['bids']
         asks = depth['asks']
         max_bid = max([float(bid[0]) for bid in bids[-1:]])
-        max_ask = max([float(ask[0]) for ask in asks[-1A:]])
+        max_ask = max([float(ask[0]) for ask in asks[-1:]])
     
         klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
         prices = np.array([float(kline[2]) for kline in klines])

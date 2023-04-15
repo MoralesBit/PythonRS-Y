@@ -151,22 +151,24 @@ def indicator(symbol):
         nearest_bid, nearest_ask = get_max_bid_ask(client, symbol)
         
         print(nearest_bid)
+        print(float(df['Close'][-2]))
         print(nearest_ask)
+        
         
              
         # TENDENCIA ALCISTA:
-        if (df['diff'][-3] > 1) and (float(df['Close'][-3]) > upperband[-3]) and (rsi[-3] >= 70) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])) and (adx[-2] < 25):
+        if (df['diff'][-3] > 1) and (df['diff'][-2] < 2) and (float(df['Close'][-3]) > upperband[-3]) and (rsi[-3] >= 70) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])) and (adx[-2] < 25):
           Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
-        elif (df['diff'][-3] > 1) and (float(df['Close'][-3]) > upperband[-3]) and (rsi[-3] > 80) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) < float(df['Open'][-2])) and (adx[-2] > 30): 
+        elif (df['diff'][-3] > 1) and (df['diff'][-2] < 2) and (float(df['Close'][-3]) > upperband[-3]) and (rsi[-3] > 80) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) < float(df['Open'][-2])) and (adx[-2] > 30): 
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {float(df['Close'][-2])} \n⛳️ Snipper : {nearest_ask} ")
           requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
         
         # TENDENCIA BAJISTA:
-        if (df['diff'][-3] > 1) and (float(df['Close'][-3]) < lowerband[-3]) and (rsi[-3] <= 30) and (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) < float(df['Open'][-2])) and (adx[-2] < 25):
+        if (df['diff'][-3] > 1) and (df['diff'][-2] < 2) and (float(df['Close'][-3]) < lowerband[-3]) and (rsi[-3] <= 30) and (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) < float(df['Open'][-2])) and (adx[-2] < 25):
           Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_ask} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
-        elif (df['diff'][-3] > 1) and (float(df['Close'][-3]) < lowerband[-3]) and (rsi[-3] < 20) and (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])) and (adx[-2] > 30): 
+        elif (df['diff'][-3] > 1) and (df['diff'][-2] < 2) and (float(df['Close'][-3]) < lowerband[-3]) and (rsi[-3] < 20) and (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])) and (adx[-2] > 30): 
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {float(df['Close'][-2])} \n⛳️ Snipper : {nearest_bid} ")
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CONTRALONG)   
         
@@ -190,7 +192,7 @@ while True:
   # Espera hasta que sea el comienzo de una nueva hora
   current_time = ti.time()
   seconds_to_wait = 300 - current_time % 300
-  ti.sleep(seconds_to_wait)   
+  #ti.sleep(seconds_to_wait)   
   
   for symbol in symbols:
     indicator(symbol)

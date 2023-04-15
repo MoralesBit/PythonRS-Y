@@ -63,19 +63,27 @@ def indicator(symbol):
           max_bids = sorted([float(bid[0]) for bid in bids], reverse=True)[:5]
           max_asks = sorted([float(ask[0]) for ask in asks])[:5]
           current_price = float(client.futures_symbol_ticker(symbol=symbol)['price'])
-          nearest_bid = get_nearest_price(max_bids, current_price)
-          nearest_ask = get_nearest_price(max_asks, current_price)
-          return nearest_bid, nearest_ask
+          _, second_nearest_bid = get_nearest_price(max_bids, current_price)
+          _, second_nearest_ask = get_nearest_price(max_asks, current_price)
+          return second_nearest_bid, second_nearest_ask
 
         def get_nearest_price(prices, current_price):
           nearest_price = None
+          second_nearest_price = None
           nearest_distance = float('inf')
+          second_nearest_distance = float('inf')
           for price in prices:
             distance = abs(price - current_price)
+          
             if distance < nearest_distance:
-              nearest_price = price
-              nearest_distance = distance
-            return nearest_price            
+                second_nearest_distance = nearest_distance
+                second_nearest_price = nearest_price
+                nearest_distance = distance
+                nearest_price = price
+            elif distance < second_nearest_distance:
+              second_nearest_distance = distance
+              second_nearest_price = price
+            return nearest_price, second_nearest_price           
         
                 
         # DATOS FNDY
@@ -148,38 +156,38 @@ def indicator(symbol):
         }
         }
         
-        nearest_bid, nearest_ask = get_max_bid_ask(client, symbol)
+        second_nearest_bid, second_nearest_ask = get_max_bid_ask(client, symbol)
         
-        print(nearest_bid)
+        print(second_nearest_bid)
         print(float(df['Close'][-2]))
-        print(nearest_ask)
+        print(second_nearest_ask)
         
         
              
         # TENDENCIA ALCISTA:
         if (df['diff'][-3] > 1) and (df['diff'][-2] < 2) and (float(df['Close'][-3]) > upperband[-3]) and (rsi[-3] >= 70) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])) and (adx[-2] < 25):
-          Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid} \n🎣 Fishing Pisha")
+          Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {second_nearest_bid} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         elif (df['diff'][-3] > 1) and (df['diff'][-2] < 2) and (float(df['Close'][-3]) > upperband[-3]) and (rsi[-3] > 80) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) < float(df['Open'][-2])) and (adx[-2] > 30): 
-          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {float(df['Close'][-2])} \n⛳️ Snipper : {nearest_ask} ")
+          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {float(df['Close'][-2])} \n⛳️ Snipper : {second_nearest_ask} ")
           requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
         
         # TENDENCIA BAJISTA:
         if (df['diff'][-3] > 1) and (df['diff'][-2] < 2) and (float(df['Close'][-3]) < lowerband[-3]) and (rsi[-3] <= 30) and (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) < float(df['Open'][-2])) and (adx[-2] < 25):
-          Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_ask} \n🎣 Fishing Pisha")
+          Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {second_nearest_ask} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
         elif (df['diff'][-3] > 1) and (df['diff'][-2] < 2) and (float(df['Close'][-3]) < lowerband[-3]) and (rsi[-3] < 20) and (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])) and (adx[-2] > 30): 
-          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {float(df['Close'][-2])} \n⛳️ Snipper : {nearest_bid} ")
+          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {float(df['Close'][-2])} \n⛳️ Snipper : {second_nearest_bid} ")
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CONTRALONG)   
         
         # Tendencia:
         if cciBTC[-2] > 50 :
           if (df['EMA200'][-2] > float(df['Close'][-2])) and (df['EMA13'][-3] < float(df['Close'][-3])) and (df['EMA13'][-2] > float(df['Close'][-2])) and (40 > rsi[-2] >= 30):
-            Tb.telegram_send_message(f"🦘 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_ask} \n🦘 Bouncy")
+            Tb.telegram_send_message(f"🦘 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {second_nearest_ask} \n🦘 Bouncy")
             requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=BOUNCYSHORT)   
         if cciBTC[-2] < -50 :
           if (df['EMA200'][-2] < float(df['Close'][-2])) and (df['EMA13'][-3] > float(df['Close'][-3])) and (df['EMA13'][-2] < float(df['Close'][-2])) and (70 > rsi[-2] >= 60): 
-            Tb.telegram_send_message(f"🦘 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid} \n🦘 Bouncy")
+            Tb.telegram_send_message(f"🦘 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {second_nearest_bid} \n🦘 Bouncy")
             requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=BOUNCYLONG) 
         
         # CCI FOREX::

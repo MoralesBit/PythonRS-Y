@@ -58,10 +58,10 @@ def indicator(symbol):
       
         def get_max_bid_ask(client, symbol):
           depth = client.futures_order_book(symbol=symbol, limit=50)
-          bids = depth['bids']
-          asks = depth['asks']
-          max_bids = sorted([float(bid[0]) for bid in bids], reverse=True)[:5]
-          max_asks = sorted([float(ask[0]) for ask in asks])[:5]
+          bids = depth['bids'][-50:]
+          asks = depth['asks'][-50:]
+          max_bids = sorted([float(bid[0]) for bid in bids], reverse=True)[:20]
+          max_asks = sorted([float(ask[0]) for ask in asks])[:20]
           return max_bids, max_asks                
         
                 
@@ -136,8 +136,9 @@ def indicator(symbol):
         }
         
         max_bids, max_asks = get_max_bid_ask(client, symbol)
-            
-             
+        #print(max_bids[-1])
+        #print(max_asks[-1])    
+                 
         # TENDENCIA ALCISTA:
         if (df['diff'][-3] > 1) and (float(df['Close'][-3]) > upperband[-3]) and (rsi[-1] > rsi[-2] > rsi[-3] >= 70) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])) and (adx[-2] < 30):
           Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {max_bids[-1]} \n🎣 Fishing Pisha")

@@ -139,7 +139,7 @@ def indicator(symbol):
             
              
         # TENDENCIA ALCISTA:
-        if (df['diff'][-3] > 1) and (float(df['Close'][-3]) > upperband[-3]) and (rsi[-2] > rsi[-3] >= 70) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])) and (adx[-2] < 25):
+        if (df['diff'][-3] > 1) and (float(df['Close'][-3]) > upperband[-3]) and (rsi[-2] > rsi[-3] >= 70) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])) and (adx[-2] < 30):
           Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {max_bids[-1]} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
         elif (df['diff'][-3] > 1) and (float(df['Close'][-3]) > upperband[-3]) and (rsi[-2] < rsi[-3] > 80) and  (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) < float(df['Open'][-2])) and (adx[-2] > 30): 
@@ -147,7 +147,7 @@ def indicator(symbol):
           requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
         
         # TENDENCIA BAJISTA:
-        if (df['diff'][-3] > 1) and (float(df['Close'][-3]) < lowerband[-3]) and (rsi[-2] < rsi[-3] <= 30) and (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) < float(df['Open'][-2])) and (adx[-2] < 25):
+        if (df['diff'][-3] > 1) and (float(df['Close'][-3]) < lowerband[-3]) and (rsi[-2] < rsi[-3] <= 30) and (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) < float(df['Open'][-2])) and (adx[-2] < 30):
           Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {max_asks[-1]} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
         elif (df['diff'][-3] > 1) and (float(df['Close'][-3]) < lowerband[-3]) and (rsi[-2] > rsi[-3] < 20) and (df['Volume'][-2] >= df['Volume_prom'][-2]) and (float(df['Close'][-2]) > float(df['Open'][-2])) and (adx[-2] > 30): 

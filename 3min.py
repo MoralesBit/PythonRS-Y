@@ -1,3 +1,4 @@
+
 import requests
 import pandas as pd
 import numpy as np
@@ -85,7 +86,7 @@ def indicator(symbol):
       imbalance = 0.0 
   
   #consigue max bid y ask
-  url = 'https://api.binance.com/api/v3/depth?symbol={symbol}&limit=10'
+  url = f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}'
   response = requests.get(url).json() 
   bids = response['bids']
   asks = response['asks']
@@ -107,7 +108,7 @@ while True:
     # Espera hasta que sea el comienzo de una nueva hora
     current_time = ti.time()
     seconds_to_wait = 180 - current_time % 180
-    ti.sleep(seconds_to_wait)   
+    #ti.sleep(seconds_to_wait)   
   
     for symbol in symbols:
       indicator(symbol)

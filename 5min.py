@@ -133,19 +133,15 @@ def indicator(symbol):
         "price": float(df['Close'][-2])
         }
         }
-       
-
-        
+              
         # Calcular los niveles Fibonacci
-        precio_alto = max(df['Close'])
-        precio_bajo = min(df['Close'])
-        rango = precio_alto - precio_bajo
-        niveles = [0.786]
+        precio_high = max(df['Close'])
+        precio_low = min(df['Close'])
+        diff_precio = precio_high - precio_low
+        nivel_786 = precio_high - (0.786)*(diff_precio)
+        nivel_382 = precio_high - (0.382)*(diff_precio)
 
-        # Calcular los niveles Fibonacci utilizando talib
-        fibo = np.array([precio_bajo + nivel * rango for nivel in niveles])
-
-                                      
+                                            
         # TENDENCIA ALCISTA:
         if (df['diff'][-2] > 1) and (float(df['Close'][-2]) > upperband[-2]) and (rsi[-2] >= 50) and (adx[-2] <= 20):
           Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid_price} \n🎣 Fishing Pisha")
@@ -174,11 +170,11 @@ def indicator(symbol):
         
         #Cruce de EMAS + FIBO:
         
-        if df['ema_cross'][-1] == 1 and (float(df['Close'][-1] > fibo)):
+        if (df['ema_cross'][-1] == 1 and (float(df['Close'][-1] > nivel_786))) or (df['ema_cross'][-1] == 1 and (float(df['Close'][-1] > nivel_382))):
           Tb.telegram_canal_prueba(f"🐬 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid_price} \n🐬 Delfin")  
           requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
         
-        if df['ema_cross'][-1] == -1 and (float(df['Close'][-1] < fibo)):
+        if (df['ema_cross'][-1] == -1 and (float(df['Close'][-1] < nivel_786))) or (df['ema_cross'][-1] == 1 and (float(df['Close'][-1] < nivel_382))):
           Tb.telegram_canal_prueba(f"🐬 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_ask_price} \n🐬 Delfin")
                   
 while True:

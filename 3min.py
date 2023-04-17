@@ -88,11 +88,14 @@ def indicator(symbol):
   #consigue max bid y ask
   url = f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}'
   response = requests.get(url).json() 
-  bids = response['bids']
-  asks = response['asks']
-
-  max_bid = max([float(bid[0]) for bid in bids])
-  max_ask = max([float(ask[0]) for ask in asks])    
+  if 'bids' in response and 'asks' in response:
+        bids = response['bids']
+        asks = response['asks']
+        max_bid = max([float(bid[0]) for bid in bids])
+        max_ask = max([float(ask[0]) for ask in asks])
+  else:
+    max_bid = 0
+    max_ask = 0    
   
   print(imbalance)
   
@@ -108,7 +111,7 @@ while True:
     # Espera hasta que sea el comienzo de una nueva hora
     current_time = ti.time()
     seconds_to_wait = 180 - current_time % 180
-    ti.sleep(seconds_to_wait)   
+    #ti.sleep(seconds_to_wait)   
   
     for symbol in symbols:
       indicator(symbol)

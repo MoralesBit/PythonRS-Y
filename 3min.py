@@ -66,6 +66,19 @@ def indicator(symbol):
     }
     }
     
+    url = f'https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=10'
+    response = requests.get(url).json() 
+    bids = response['bids']
+    asks = response['asks']
+    max_bid = max([float(bid[0]) for bid in bids])
+    max_ask = max([float(ask[0]) for ask in asks])
+    bid_sum = sum([float(bid[1]) for bid in bids])
+    ask_sum = sum([float(ask[1]) for ask in asks])
+    if bid_sum + ask_sum > 0:
+        imbalance_btc = (ask_sum - bid_sum) / (bid_sum + ask_sum)
+    else:
+        imbalance_btc = 0.0
+        
     depth = 5
 
     url = f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}'
@@ -106,7 +119,14 @@ def indicator(symbol):
   if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] < 30) and (slowk[-2] < 20) and (imbalance > 0.5):
     Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n IMB: {round(imbalance,2)} \n⛳️ Snipper : {max_bid} ")
     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
-
+  
+  #PRUEBAS 3min
+  if (rsi[-3] > 70) and (rsi[-2] <= 70) and (imbalance < -0.5) and (imbalance_btc < -0.5):
+    Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n💵 Precio: {Close}\n IMB: {round(imbalance,2)}\n IMBTC: {round(imbalance_btc,2)} \n⛳️ Snipper : {max_ask} ") 
+    requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
+  if (rsi[-3] < 30) and (rsi[-2] >= 30) and (imbalance > 0.5) and (imbalance_btc > 0.5):
+    Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n💵 Precio: {Close}\n IMB: {round(imbalance,2)}\n IMBTC: {round(imbalance_btc,2)} \n⛳️ Snipper : {max_bid} ")
+    requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
 while True:
     # Espera hasta que sea el comienzo de una nueva hora
     current_time = ti.time()

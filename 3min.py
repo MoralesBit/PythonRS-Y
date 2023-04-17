@@ -74,12 +74,21 @@ def indicator(symbol):
 
     response = requests.get(f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}').json()
 
-    bid_sum = sum([float(bid[1]) for bid in response['bids']])
-    ask_sum = sum([float(ask[1]) for ask in response['asks']])
+    if 'bids' in response:
+          bid_sum = sum([float(bid[1]) for bid in response['bids']])
+    else:
+          bid_sum = 0.0
 
-    imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum) 
-    print(imbalance)
-    
+    if 'asks' in response:
+          ask_sum = sum([float(ask[1]) for ask in response['asks']])
+    else:
+          ask_sum = 0.0
+
+    if bid_sum + ask_sum > 0:
+          imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
+    else:
+          imbalance = 0.0  
+        
   #Actual   
   if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] > 70) and (slowk[-2] > 95) and (imbalance < 0):
     Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {float(df['Close'][-2])} ") 
@@ -93,7 +102,7 @@ while True:
     # Espera hasta que sea el comienzo de una nueva hora
     current_time = ti.time()
     seconds_to_wait = 180 - current_time % 180
-    #ti.sleep(seconds_to_wait)   
+    ti.sleep(seconds_to_wait)   
   
     for symbol in symbols:
       indicator(symbol)

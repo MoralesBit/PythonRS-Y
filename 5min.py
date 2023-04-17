@@ -78,7 +78,7 @@ def indicator(symbol):
       imbalance = 0.0 
   
   #consigue max bid y ask
-  url = 'https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=10'
+  url = f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}'
   response = requests.get(url).json() 
   bids = response['bids']
   asks = response['asks']

@@ -1,37 +1,32 @@
-from binance.client import Client
+
+import requests
 import pandas as pd
 import numpy as np
 import talib as ta
 import Telegram_bot as Tb
-import  schedule as schedule
+import schedule as schedule
 import time as ti
-import requests
 import json
-
 
 api_key = 'TU_API_KEY'
 api_secret = 'TU_API_SECRET'
 
-client = Client(api_key, api_secret)
-
-futures_info = client.futures_exchange_info()
+futures_info_url = 'https://fapi.binance.com/fapi/v1/exchangeInfo'
+response = requests.get(futures_info_url).json()
 symbols = [
-    symbol['symbol'] for symbol in futures_info['symbols']
+    symbol['symbol'] for symbol in response['symbols']
     if symbol['status'] == "TRADING"
   ]
 
 def indicator(symbol):
     
-  kline = client.futures_historical_klines(symbol, "3m", "12 hours ago UTC+1",limit=500)
-  df = pd.read_json(json.dumps(kline))
-    
+  url = f'https://fapi.binance.com/fapi/v1/klines?symbol={symbol}&interval=3m&startTime=12 hours ago UTC+1&limit=500'
+  response = requests.get(url).json()
+  df = pd.DataFrame(response, columns=['Open time', 'Open', 'High', 'Low', 'Close', 'Volume', 'Close time', 'Quote asset volume', 'Number of trades', 'Taker buy base asset volume', 'Taker buy quote asset volume', 'Ignore'])
+  df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
+  df = df.set_index('Open time')
   if not df.empty:
-    df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
-    'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
-    df['Date'] = pd.to_datetime(df['Date'], unit='ms')
-    df = df.set_index('Date')
-      
-    
+
     upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                 timeperiod=20,
                                                 nbdevup=2,
@@ -73,7 +68,8 @@ def indicator(symbol):
     
     depth = 5
 
-    response = requests.get(f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}').json()
+    url = f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}'
+    response = requests.get(url).json()
     if 'bids' in response:
           bid_sum = sum([float(bid[1]) for bid in response['bids']])
     else:
@@ -105,8 +101,7 @@ def indicator(symbol):
   if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] < 30) and (slowk[-2] < 5):
     Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n IMB: {round(imbalance,2)} \n⛳️ Snipper : {max_bid} ")
     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
-    
-      
+
 while True:
     # Espera hasta que sea el comienzo de una nueva hora
     current_time = ti.time()

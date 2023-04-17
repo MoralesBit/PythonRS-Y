@@ -99,6 +99,27 @@ def indicator(symbol):
     prices_low = np.array([float(kline[4]) for kline in klines])
     prices_close = np.array([float(kline[5]) for kline in klines])
     cciBTC = ta.CCI(prices_high, prices_low, prices, timeperiod=20)
+    
+    def get_accumulation_points(client, symbol, num_periods=5):
+          klines = client.futures_klines(symbol=symbol, interval='1h', limit=num_periods)
+          prices = [float(kline[1]) for kline in klines]
+          volumes = [float(kline[5]) for kline in klines]
+          bid_accumulation_points = []
+          ask_accumulation_points = []
+          for i in range(num_periods):
+            depth = client.futures_order_book(symbol=symbol, limit=5)
+            bid_volumes = [float(bid[1]) for bid in depth['bids']]
+            ask_volumes = [float(ask[1]) for ask in depth['asks']]
+            bid_accumulation = sum(bid_volumes)
+            ask_accumulation = sum(ask_volumes)
+            bid_accumulation_points.append(bid_accumulation)
+            ask_accumulation_points.append(ask_accumulation)
+            nearest_bid_price = prices[bid_accumulation_points.index(max(bid_accumulation_points))]
+            nearest_ask_price = prices[ask_accumulation_points.index(max(ask_accumulation_points))]
+          return nearest_bid_price, nearest_ask_price 
+       
+    nearest_bid_price, nearest_ask_price = get_accumulation_points(client, symbol, num_periods=50)              
+        
       
     PORSHORT = {
     "name": "CORTO 3POR",
@@ -106,7 +127,7 @@ def indicator(symbol):
     "side": "sell",
     "symbol": symbol,
     "open": {
-    "price": Close
+    "price": nearest_ask_price
     }
     }
     PORLONG = {
@@ -115,16 +136,16 @@ def indicator(symbol):
     "side": "buy",
     "symbol": symbol,
     "open": {
-    "price": Close
+    "price": nearest_bid_price
     }
     }
      
   #Actual   
-  if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] > 70) and (adx[-2] > 45):
-    Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {max_ask} ") 
+  if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] > 70) and (adx[-2] >= 40) and (slowk[-2] > 90):
+    Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {nearest_ask_price} ") 
     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
-  if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] < 30) and (adx[-2] < 35):
-    Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {max_bid} ")
+  if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] < 30) and (adx[-2] <= 20) and (slowk[-2] < 10):
+    Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {nearest_bid_price} ")
     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
     
       

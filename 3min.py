@@ -1,4 +1,3 @@
-
 import requests
 import pandas as pd
 import numpy as np
@@ -86,7 +85,7 @@ def indicator(symbol):
       imbalance = 0.0 
   
   #consigue max bid y ask
-  url = 'https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=10'
+  url = 'https://api.binance.com/api/v3/depth?symbol={symbol}&limit=10'
   response = requests.get(url).json() 
   bids = response['bids']
   asks = response['asks']

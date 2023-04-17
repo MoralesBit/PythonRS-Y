@@ -48,21 +48,7 @@ def indicator(symbol):
         df['ema_cross'] = np.where(df['EMA13'] > df['EMA100'], np.where(df['EMA13'][-1] <= df['EMA100'][-1],1,0), np.where(df['EMA13'][-1] >= df['EMA100'][-1], -1, 0))
         df['Volume_prom'] = df['Close'].mean()
         df['diff'] = abs((df['High'] / df['Low'] -1) * 100) 
-            
-        klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
-        prices = np.array([float(kline[2]) for kline in klines])
-        prices_high = np.array([float(kline[3]) for kline in klines])
-        prices_low = np.array([float(kline[4]) for kline in klines])
         
-        cciBTC = ta.CCI(prices_high, prices_low, prices, timeperiod=20)
-              
-        #def get_max_bid_ask(client, symbol):
-          #depth = client.futures_order_book(symbol=symbol, limit=50)
-          #bids = depth['bids'][-50:]
-          #asks = depth['asks'][-50:]
-          #max_bids = sorted([float(bid[0]) for bid in bids], reverse=True)[:50]
-          #max_asks = sorted([float(ask[0]) for ask in asks])[:50]
-          #return max_bids, max_asks                
         def get_accumulation_points(client, symbol, num_periods=10):
           klines = client.futures_klines(symbol=symbol, interval='1h', limit=num_periods)
           prices = [float(kline[1]) for kline in klines]
@@ -82,6 +68,7 @@ def indicator(symbol):
           return nearest_bid_price, nearest_ask_price 
        
         nearest_bid_price, nearest_ask_price = get_accumulation_points(client, symbol, num_periods=50)              
+        
         # DATOS FNDY
         FISHINGSHORT = {
         "name": "FISHING SHORT",
@@ -163,9 +150,7 @@ def indicator(symbol):
         # Calcular los niveles Fibonacci utilizando talib
         fibo = np.array([precio_bajo + nivel * rango for nivel in niveles])
 
-        # Imprimir los niveles Fibonacci
-        print(fibo)
-                       
+                                      
         # TENDENCIA ALCISTA:
         if (df['diff'][-2] > 1) and (float(df['Close'][-2]) > upperband[-2]) and (rsi[-2] >= 50) and (adx[-2] <= 20):
           Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid_price} \n🎣 Fishing Pisha")

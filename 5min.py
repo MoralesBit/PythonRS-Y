@@ -179,13 +179,13 @@ def indicator(symbol):
             requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=BOUNCYLONG) 
         
         #Cruce de EMAS + FIBO:
-        
-        if (df['ema_cross'][-1] == 1 and (float(df['Close'][-1] > nivel_786))) or (df['ema_cross'][-1] == 1 and (float(df['Close'][-1] > nivel_382))):
-          Tb.telegram_canal_prueba(f"🐬 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid_price} \n🐬 Delfin")  
-          requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
-        
-        if (df['ema_cross'][-1] == -1 and (float(df['Close'][-1] < nivel_786))) or (df['ema_cross'][-1] == 1 and (float(df['Close'][-1] < nivel_382))):
-          Tb.telegram_canal_prueba(f"🐬 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_ask_price} \n🐬 Delfin")
+        if imbalance > 0:
+          if (df['ema_cross'][-1] == 1 and (float(df['Close'][-1] > nivel_786))) or (df['ema_cross'][-1] == 1 and (float(df['Close'][-1] > nivel_382))):
+            Tb.telegram_canal_prueba(f"🐬 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid_price} \n🐬 Delfin")  
+            requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
+        if imbalance < 0:
+          if (df['ema_cross'][-1] == -1 and (float(df['Close'][-1] < nivel_786))) or (df['ema_cross'][-1] == 1 and (float(df['Close'][-1] < nivel_382))):
+            Tb.telegram_canal_prueba(f"🐬 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_ask_price} \n🐬 Delfin")
                   
 while True:
   # Espera hasta que sea el comienzo de una nueva hora

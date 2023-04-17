@@ -145,13 +145,21 @@ def indicator(symbol):
 
         response = requests.get(f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}').json()
 
-        bid_sum = sum([float(bid[1]) for bid in response['bids']])
-        ask_sum = sum([float(ask[1]) for ask in response['asks']])
+        if 'bids' in response:
+          bid_sum = sum([float(bid[1]) for bid in response['bids']])
+        else:
+          bid_sum = 0.0
 
-        imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum) 
-        
+        if 'asks' in response:
+          ask_sum = sum([float(ask[1]) for ask in response['asks']])
+        else:
+          ask_sum = 0.0
 
-                                            
+        if bid_sum + ask_sum > 0:
+          imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
+        else:
+          imbalance = 0.0 
+                                                    
         # TENDENCIA ALCISTA:
         if (df['diff'][-2] > 1) and (float(df['Close'][-2]) > upperband[-2]) and (rsi[-2] >= 50) and (adx[-2] <= 20) and (imbalance > 0):
           Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid_price} \n🎣 Fishing Pisha")

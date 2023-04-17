@@ -111,7 +111,7 @@ while True:
     # Espera hasta que sea el comienzo de una nueva hora
     current_time = ti.time()
     seconds_to_wait = 180 - current_time % 180
-    #ti.sleep(seconds_to_wait)   
+    ti.sleep(seconds_to_wait)   
   
     for symbol in symbols:
       indicator(symbol)

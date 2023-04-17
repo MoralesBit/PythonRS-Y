@@ -161,39 +161,39 @@ def indicator(symbol):
           imbalance = 0.0 
                                                     
         # TENDENCIA ALCISTA:
-        if (df['diff'][-2] > 1) and (float(df['Close'][-2]) > upperband[-2]) and (rsi[-2] >= 50) and (adx[-2] <= 20) and (imbalance > 0):
-          Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid_price} \n🎣 Fishing Pisha")
+        if (df['diff'][-2] > 1) and (float(df['Close'][-2]) > upperband[-2]) and (rsi[-2] >= 50) and (adx[-2] <= 20):
+          Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid_price} \nIMB : {round(imbalance,2)} \n(🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
-        elif (df['diff'][-2] > 1) and (float(df['Close'][-2]) > upperband[-2]) and (rsi[-2] >= 75) and (adx[-2] >= 40) and (imbalance < 0): 
-          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {float(df['Close'][-2])} \n⛳️ Snipper : {nearest_ask_price} ")
+        elif (df['diff'][-2] > 1) and (float(df['Close'][-2]) > upperband[-2]) and (rsi[-2] >= 75) and (adx[-2] >= 40): 
+          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {float(df['Close'][-2])}\nIMB : {round(imbalance,2)} \n⛳️ Snipper : {nearest_ask_price} ")
           requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
         
         # TENDENCIA BAJISTA:
-        if (df['diff'][-2] > 1) and (float(df['Close'][-2]) < lowerband[-2]) and (rsi[-2] <= 50) and (adx[-2] <= 20) and (imbalance < 0):
-          Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_ask_price} \n🎣 Fishing Pisha")
+        if (df['diff'][-2] > 1) and (float(df['Close'][-2]) < lowerband[-2]) and (rsi[-2] <= 50) and (adx[-2] <= 20):
+          Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_ask_price}\nIMB : {round(imbalance,2)} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
-        elif (df['diff'][-2] > 1) and (float(df['Close'][-2]) < lowerband[-2]) and (rsi[-2] <= 25) and (adx[-2] <= 20) and (imbalance > 0): 
-          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {float(df['Close'][-2])} \n⛳️ Snipper : {nearest_bid_price} ")
+        elif (df['diff'][-2] > 1) and (float(df['Close'][-2]) < lowerband[-2]) and (rsi[-2] <= 25) and (adx[-2] <= 20): 
+          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {float(df['Close'][-2])}\nIMB : {round(imbalance,2)} \n⛳️ Snipper : {nearest_bid_price} ")
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CONTRALONG)   
         
         # Tendencia:
         
         if (df['EMA200'][-2] > float(df['Close'][-2])) and (df['EMA13'][-3] < float(df['Close'][-3])) and (df['EMA13'][-2] > float(df['Close'][-2])) and (40 > rsi[-2] >= 30):
-            Tb.telegram_send_message(f"🦘 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_ask_price} \n🦘 Bouncy")
+            Tb.telegram_send_message(f"🦘 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_ask_price}\nIMB : {round(imbalance,2)} \n🦘 Bouncy")
             requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=BOUNCYSHORT)   
         
         if (df['EMA200'][-2] < float(df['Close'][-2])) and (df['EMA13'][-3] > float(df['Close'][-3])) and (df['EMA13'][-2] < float(df['Close'][-2])) and (70 > rsi[-2] >= 60): 
-            Tb.telegram_send_message(f"🦘 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid_price} \n🦘 Bouncy")
+            Tb.telegram_send_message(f"🦘 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid_price}\nIMB : {round(imbalance,2)} \n🦘 Bouncy")
             requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=BOUNCYLONG) 
         
         #Cruce de EMAS + FIBO:
-        if imbalance > 0:
-          if (df['ema_cross'][-1] == 1 and (float(df['Close'][-1] > nivel_786))) or (df['ema_cross'][-1] == 1 and (float(df['Close'][-1] > nivel_382))):
-            Tb.telegram_canal_prueba(f"🐬 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid_price} \n🐬 Delfin")  
+       
+        if (df['ema_cross'][-1] == 1 and (float(df['Close'][-1] > nivel_786))) or (df['ema_cross'][-1] == 1 and (float(df['Close'][-1] > nivel_382))):
+            Tb.telegram_canal_prueba(f"🐬 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid_price}\nIMB : {round(imbalance,2)} \n🐬 Delfin")  
             requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
-        if imbalance < 0:
-          if (df['ema_cross'][-1] == -1 and (float(df['Close'][-1] < nivel_786))) or (df['ema_cross'][-1] == 1 and (float(df['Close'][-1] < nivel_382))):
-            Tb.telegram_canal_prueba(f"🐬 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_ask_price} \n🐬 Delfin")
+        
+        if (df['ema_cross'][-1] == -1 and (float(df['Close'][-1] < nivel_786))) or (df['ema_cross'][-1] == 1 and (float(df['Close'][-1] < nivel_382))):
+            Tb.telegram_canal_prueba(f"🐬 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_ask_price}\nIMB : {round(imbalance,2)} \n🐬 Delfin")
                   
 while True:
   # Espera hasta que sea el comienzo de una nueva hora

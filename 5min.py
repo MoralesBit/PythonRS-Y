@@ -191,7 +191,7 @@ def indicator(symbol):
     requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
         
         # TENDENCIA BAJISTA:
-  if (diff > 1) and (float(df['Close'][-2]) < lowerband[-2]) and (rsi[-2] <= 50) and (adx[-2] <= 20):
+  if (diff > 1) and (float(df['Close'][-2]) < lowerband[-2]) and (rsi[-2] <= 50) and (imbalance <= -0.5):
     Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_ask_price}\nIMB : {round(imbalance,2)} \n🎣 Fishing Pisha")
     requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
   elif (diff > 1) and (float(df['Close'][-2]) < lowerband[-2]) and (rsi[-2] <= 25) and (imbalance >= 0.5): 

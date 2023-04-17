@@ -72,10 +72,10 @@ def indicator(symbol):
     }
    
   #Actual   
-  if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] > 70) and (adx[-2] >= 40) and (slowk[-2] > 90):
+  if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] > 70) and (adx[-2] >= 40) and (slowk[-2] > 95):
     Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {float(df['Close'][-2])} ") 
     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
-  if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] < 30) and (adx[-2] <= 20) and (slowk[-2] < 10):
+  if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] < 30) and (adx[-2] <= 20) and (slowk[-2] < 5):
     Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n⛳️ Snipper : {float(df['Close'][-2])} ")
     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
     

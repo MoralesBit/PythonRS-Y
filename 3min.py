@@ -94,11 +94,13 @@ def indicator(symbol):
   max_bid = max([float(bid[0]) for bid in bids])
   max_ask = max([float(ask[0]) for ask in asks])    
   
+  print(imbalance)
+  
   #Actual   
-  if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] > 70) and (slowk[-2] > 95):
+  if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] > 70) and (slowk[-2] > 80) and (imbalance < -0.5):
     Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n IMB: {round(imbalance,2)} \n⛳️ Snipper : {max_ask} ") 
     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
-  if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] < 30) and (slowk[-2] < 5):
+  if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] < 30) and (slowk[-2] < 20) and (imbalance > 0.5):
     Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n IMB: {round(imbalance,2)} \n⛳️ Snipper : {max_bid} ")
     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
 

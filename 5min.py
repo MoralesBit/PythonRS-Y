@@ -57,18 +57,13 @@ def indicator(symbol):
           ask_accumulation_points = []
           for i in range(num_periods):
             depth = client.futures_order_book(symbol=symbol, limit=5)
-            bid_volumes = [float(bid[1]) for bid in depth['bids']]
-            ask_volumes = [float(ask[1]) for ask in depth['asks']]
-            bid_accumulation = sum(bid_volumes)
-            ask_accumulation = sum(ask_volumes)
-            bid_accumulation_points.append(bid_accumulation)
-            ask_accumulation_points.append(ask_accumulation)
+            bid_accumulation_points.append(sum(float(bid[1]) for bid in depth['bids']))
+            ask_accumulation_points.append(sum(float(ask[1]) for ask in depth['asks']))
             nearest_bid_price = prices[bid_accumulation_points.index(max(bid_accumulation_points))]
             nearest_ask_price = prices[ask_accumulation_points.index(max(ask_accumulation_points))]
-          return nearest_bid_price, nearest_ask_price 
-       
-        nearest_bid_price, nearest_ask_price = get_accumulation_points(client, symbol, num_periods=50)              
+          return nearest_bid_price, nearest_ask_price
         
+        nearest_bid_price, nearest_ask_price = get_accumulation_points(client, symbol, num_periods=10)
         # DATOS FNDY
         FISHINGSHORT = {
         "name": "FISHING SHORT",

@@ -80,11 +80,14 @@ def indicator(symbol):
   #consigue max bid y ask
   url = f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}'
   response = requests.get(url).json() 
-  bids = response['bids']
-  asks = response['asks']
-
-  max_bid = max([float(bid[0]) for bid in bids])
-  max_ask = max([float(ask[0]) for ask in asks])   
+  if 'bids' in response and 'asks' in response:
+        bids = response['bids']
+        asks = response['asks']
+        max_bid = max([float(bid[0]) for bid in bids])
+        max_ask = max([float(ask[0]) for ask in asks])
+  else:
+    max_bid = 0
+    max_ask = 0      
   
   #ASK y BID
   def get_accumulation_points(symbol, num_periods=10):

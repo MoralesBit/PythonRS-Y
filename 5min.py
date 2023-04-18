@@ -168,17 +168,7 @@ def indicator(symbol):
     Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\nIMB : {round(imbalance,2)}")
     requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CONTRALONG)   
         
-        # Tendencia:
-        
-  if (df['EMA200'][-2] > Close) and (df['EMA13'][-3] < Close_3) and (df['EMA13'][-2] > Close) and (40 > rsi >= 30):
-    Tb.telegram_send_message(f"🦘 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)} \n🦘 Bouncy")
-    requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=BOUNCYSHORT)   
-        
-  if (df['EMA200'][-2] < Close) and (df['EMA13'][-3] > Close_3) and (df['EMA13'][-2] < Close) and (70 > rsi >= 60): 
-    Tb.telegram_send_message(f"🦘 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)} \n🦘 Bouncy")
-    requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=BOUNCYLONG) 
-       
-        #Cruce de EMAS + FIBO:
+    #Cruce de EMAS + FIBO:
        
   if (ema_cross == 1) and (imbalance >  0.5):
     Tb.telegram_canal_prueba(f"🐬 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)} \n🐬 Delfin")  

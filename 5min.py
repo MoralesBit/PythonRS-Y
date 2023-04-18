@@ -190,15 +190,15 @@ def indicator(symbol):
     Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid_price} \nIMB : {round(imbalance,2)} \n(🎣 Fishing Pisha")
     requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
   elif (diff > 1) and (float(df['Close'][-2]) > upperband[-2]) and (rsi[-2] >= 70) and (imbalance <= -0.5): 
-    Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {float(df['Close'][-2])}\nIMB : {round(imbalance,2)} \n⛳️ Snipper : {nearest_ask_price} ")
+    Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {float(df['Close'][-2])}\nIMB : {round(imbalance,2)} \n⛳️ Snipper : {nearest_ask_price} ")
     requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
         
         # TENDENCIA BAJISTA:
-  if (diff > 1) and (float(df['Close'][-2]) < lowerband[-2]) and (rsi[-2] <= 50) and (imbalance <= -0.5):
+  if (diff > 1) and (float(df['Close'][-2]) < lowerband[-2]) and (rsi[-2] <= 30) and (imbalance <= -0.5):
     Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_ask_price}\nIMB : {round(imbalance,2)} \n🎣 Fishing Pisha")
     requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
-  elif (diff > 1) and (float(df['Close'][-2]) < lowerband[-2]) and (rsi[-2] <= 25) and (imbalance >= 0.5): 
-    Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {float(df['Close'][-2])}\nIMB : {round(imbalance,2)} \n⛳️ Snipper : {nearest_bid_price} ")
+  elif (diff > 1) and (float(df['Close'][-2]) < lowerband[-2]) and (rsi[-2] <= 30) and (imbalance >= 0.5): 
+    Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {float(df['Close'][-2])}\nIMB : {round(imbalance,2)} \n⛳️ Snipper : {nearest_bid_price} ")
     requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CONTRALONG)   
         
         # Tendencia:

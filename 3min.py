@@ -79,7 +79,7 @@ def indicator(symbol):
     else:
         imbalance_btc = 0.0
         
-    depth = 5
+    depth = 30
 
     url = f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}'
     response = requests.get(url).json()

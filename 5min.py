@@ -58,7 +58,7 @@ def indicator(symbol):
     nivel_382 = precio_high - (0.382)*(diff_precio)
     
     #imbalaance
-    depth = 5
+    depth = 30
 
     url = f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}'
     response = requests.get(url).json()

@@ -189,7 +189,7 @@ def indicator(symbol):
   if (diff > 1) and (float(df['Close'][-2]) > upperband[-2]) and (rsi[-2] >= 70) and (imbalance >= 0.5):
     Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\n⛳️ Snipper : {nearest_bid_price} \nIMB : {round(imbalance,2)} \n(🎣 Fishing Pisha")
     requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
-  elif (diff > 1) and (float(df['Close'][-2]) > upperband[-2]) and (rsi[-2] >= 75) and (imbalance <= -0.5): 
+  elif (diff > 1) and (float(df['Close'][-2]) > upperband[-2]) and (rsi[-2] >= 70) and (imbalance <= -0.5): 
     Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {float(df['Close'][-2])}\nIMB : {round(imbalance,2)} \n⛳️ Snipper : {nearest_ask_price} ")
     requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
         

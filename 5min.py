@@ -153,7 +153,7 @@ def indicator(symbol):
         }
   
   # TENDENCIA ALCISTA:
-  if (diff > 1) and (Close > upperband[-2]) and (imbalance >= 0.6):
+  if (diff > 1) and (Close > upperband[-2]) and (imbalance >= 0.6) and (adx[-2] >= 25):
     Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\nIMB : {round(imbalance,2)} \n(🎣 Fishing Pisha")
     requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
   elif (diff > 1) and (Close) > upperband[-2] and (rsi >= 70) and (imbalance <= -0.6): 
@@ -161,7 +161,7 @@ def indicator(symbol):
     requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
         
         # TENDENCIA BAJISTA:
-  if (diff > 1) and (Close < lowerband[-2]) and (imbalance <= -0.6):
+  if (diff > 1) and (Close < lowerband[-2]) and (imbalance <= -0.6) and (adx[-2] >= 25):
     Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)} \n🎣 Fishing Pisha")
     requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
   elif (diff > 1) and (Close < lowerband[-2]) and (rsi <= 30) and (imbalance >= 0.6): 

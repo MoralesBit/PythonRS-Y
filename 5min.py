@@ -57,22 +57,18 @@ while True:
       upperband, middleband, lowerband = calculate_bbands(prices_close)
       
       depth = 5
+      order_book = client.futures_order_book(symbol=symbol, limit=depth)
 
-      response = requests.get(f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}').json()
-      if 'bids' in response:
-          bid_sum = sum([float(bid[1]) for bid in response['bids']])
-      else:
-          bid_sum = 0.0
-
-      if 'asks' in response:
-          ask_sum = sum([float(ask[1]) for ask in response['asks']])
-      else:
-         ask_sum = 0.0
+        # Calcula el desequilibrio de ask y bid
+      bids = order_book['bids']
+      asks = order_book['asks']
+      bid_sum = sum([float(bid[1]) for bid in bids])
+      ask_sum = sum([float(ask[1]) for ask in asks])
 
       if bid_sum + ask_sum > 0:
-          imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
+            imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
       else:
-          imbalance = 0.0      
+            imbalance = 0.0    
       
            # DATOS FNDY
       FISHINGSHORT = {

@@ -17,8 +17,8 @@ symbols = [symbol['symbol'] for symbol in futures_info['symbols']]
 
 # Crea una función para generar los canales de Fibonacci:
        
-def calculate_adx(prices_high, prices_low, prices_close):
-    adx = talib.ADX(prices_high, prices_low, prices_close, timeperiod=14)
+def calculate_adx(prices_high, prices_low, prices):
+    adx = talib.ADX(prices_high, prices_low, prices, timeperiod=14)
     return adx 
 
 
@@ -56,6 +56,7 @@ while True:
        # Calcula Bandas de Bollinger
       upperband, middleband, lowerband = calculate_bbands(prices_close)
       
+      #Imbalance
       depth = 5
 
       response = requests.get(f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}').json()
@@ -95,11 +96,11 @@ while True:
       # Chequea si el precio es mayor al canal más alto de Fibonacci y si hay un cruce bajista de MACD y Signal o un cruce bajista del RSI y el nivel 70
       
       #Actual   
-      if (diff[-2] > 1) and (prices_close[-2] > upperband[-2]) and (rsi[-2] > 70)and (imbalance < -0.6):
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff[-2],2)} \n💵 Precio: {prices_close[-2]}\n IMB: {round(imbalance,2)}") 
+      if (diff[-2] > 1) and (prices[-2] > upperband[-2]) and (rsi[-2] > 70)and (imbalance < -0.6):
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff[-2],2)} \n💵 Precio: {prices[-2]}\n IMB: {round(imbalance,2)}") 
         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
-      if (diff[-2] > 1) and (prices_close[-2] < lowerband[-2]) and (rsi[-2] < 30) and (imbalance > 0.6):
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff[-2],2)} \n💵 Precio: {prices_close[-2]}\n IMB: {round(imbalance,2)}")
+      if (diff[-2] > 1) and (prices[-2] < lowerband[-2]) and (rsi[-2] < 30) and (imbalance > 0.6):
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff[-2],2)} \n💵 Precio: {prices[-2]}\n IMB: {round(imbalance,2)}")
         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
       
       # Imprime los resultados

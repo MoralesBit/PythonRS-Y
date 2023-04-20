@@ -26,6 +26,9 @@ def calculate_bbands(prices):
     upper, middle, lower = talib.BBANDS(prices, timeperiod=20, nbdevup=2, nbdevdn=2, matype=talib.MA_Type.SMA)
     return upper, middle, lower  
 
+def calculate_est( prices_high, prices_low, prices_close ):
+    slowk, slowd = talib.STOCH(prices_high, prices_low, prices_close, fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+    return slowk, slowd
 
   
 while True:
@@ -56,19 +59,28 @@ while True:
        # Calcula Bandas de Bollinger
       upperband, middleband, lowerband = calculate_bbands(prices_close)
       
+      #Calcula Slok SloD
+    
+      slowk, slowd = calculate_est(prices_high, prices_low, prices_close)
+      
+      #Imbalance
       depth = 5
-      order_book = client.futures_order_book(symbol=symbol, limit=depth)
 
-        # Calcula el desequilibrio de ask y bid
-      bids = order_book['bids']
-      asks = order_book['asks']
-      bid_sum = sum([float(bid[1]) for bid in bids])
-      ask_sum = sum([float(ask[1]) for ask in asks])
+      response = requests.get(f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}').json()
+      if 'bids' in response:
+          bid_sum = sum([float(bid[1]) for bid in response['bids']])
+      else:
+          bid_sum = 0.0
+
+      if 'asks' in response:
+          ask_sum = sum([float(ask[1]) for ask in response['asks']])
+      else:
+         ask_sum = 0.0
 
       if bid_sum + ask_sum > 0:
-            imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
+          imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
       else:
-            imbalance = 0.0    
+          imbalance = 0.0    
       
            # DATOS FNDY
       FISHINGSHORT = {
@@ -160,11 +172,11 @@ while True:
         
          #Cruce de EMAS + FIBO:
        
-      if (imbalance >  0.9):
+      if (imbalance >  0.9) and (slowk[-2] < 90):
         Tb.telegram_canal_prueba(f"🐬 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\nIMB : {round(imbalance,2)} \n🐬 Delfin")  
         #requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
         
-      if (imbalance <  -0.9):
+      if (imbalance <  -0.9) and (slowk[-2] > 10):
         Tb.telegram_canal_prueba(f"🐬 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\nIMB : {round(imbalance,2)} \n🐬 Delfin")
       
         # Imprime los resultados

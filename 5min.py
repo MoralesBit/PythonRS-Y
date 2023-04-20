@@ -182,12 +182,13 @@ while True:
       if (imbalance <  -0.9) and (slowk[-2] > 10):
         Tb.telegram_canal_prueba(f"🐬 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \n🐬 Delfin")
         
-      if (ema_13[-3] <  ema_100[-3]) and (ema_13[-2] > ema_100[-2]):
-            Tb.telegram_canal_prueba(f"EMA {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA")  
+      if (ema_13[-3] <  ema_100[-3]) and (ema_13[-2] > ema_100[-2]) and (imbalance < 0):
+            
+        Tb.telegram_canal_prueba(f"EMA {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA")   
         #requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
         
-      if (ema_13[-3] >  ema_100[-3]) and (ema_13[-2] < ema_100[-2]):
-        Tb.telegram_canal_prueba(f"EMA {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA")  
+      if (ema_13[-3] >  ema_100[-3]) and (ema_13[-2] < ema_100[-2]) and (imbalance > 0):
+        Tb.telegram_canal_prueba(f"EMA {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA")  
         
       
         # Imprime los resultados

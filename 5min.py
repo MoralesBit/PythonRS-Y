@@ -143,7 +143,7 @@ while True:
       # Chequea si el precio es mayor al canal más alto de Fibonacci y si hay un cruce bajista de MACD y Signal o un cruce bajista del RSI y el nivel 70
       
        # TENDENCIA ALCISTA:
-      if (diff[-2] > 1) and (prices_close[-2] > upperband[-2]) and (imbalance >= 0.5) and (adx[-2] <= 25):
+      if (diff[-2] > 1) and (prices_close[-2] > upperband[-2]) and (imbalance >= 0.5) and (adx[-2] <= 20):
           Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\n⛳️ IMB : {round(imbalance,2)} \n(🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
       elif (diff[-2] > 1) and (prices_close[-2] > upperband[-2]) and (rsi[-2] >= 75) and (imbalance <= -0.6): 

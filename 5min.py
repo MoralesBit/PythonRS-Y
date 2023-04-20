@@ -151,7 +151,7 @@ while True:
         "side": "buy",
         "symbol": symbol,
         "open": {
-        "price": prices_close
+        "price": ema_13[-2]
         }
         }
      
@@ -184,12 +184,20 @@ while True:
         
       if (ema_13[-3] <  ema_100[-3]) and (ema_13[-2] > ema_100[-2]) and (imbalance < 0):
             
-        Tb.telegram_canal_prueba(f"EMA {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA")   
+        Tb.telegram_canal_prueba(f"EMA {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA CONTRA")   
         #requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
         
       if (ema_13[-3] >  ema_100[-3]) and (ema_13[-2] < ema_100[-2]) and (imbalance > 0):
-        Tb.telegram_canal_prueba(f"EMA {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA")  
+        Tb.telegram_canal_prueba(f"EMA {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA CONTRA")  
         
+      #Cruve de ema normal en el mismo sentido del cruce pero lanzando la orden de compra en la ema13:
+      if (ema_13[-3] <  ema_100[-3]) and (ema_13[-2] > ema_100[-2]) and (imbalance < 0):
+        Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA en tendencia")     
+          
+        requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
+        
+      if (ema_13[-3] >  ema_100[-3]) and (ema_13[-2] < ema_100[-2]) and (imbalance > 0):
+         Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA en tendencia") 
       
         # Imprime los resultados
 

@@ -161,7 +161,7 @@ while True:
       if (diff[-2] > 1) and (prices[-2] > upperband[-2]) and (imbalance >= 0.5) and (adx[-2] <= 20):
           Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\n⛳️ IMB : {round(imbalance,2)} \n(🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
-      elif (diff[-2] > 1) and (prices[-2] > upperband[-2]) and (rsi[-2] >= 75) and (imbalance <= -0.6): 
+      elif (diff[-2] > 1) and (prices[-2] > upperband[-2]) and (rsi[-2] >= 70) and (imbalance <= -0.6): 
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff[-2],2)} \n💵 Precio: {prices[-2]}\n⛳️ IMB : {round(imbalance,2)}")
           requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
         
@@ -169,7 +169,7 @@ while True:
       if (diff[-2] > 1) and (prices[-2] < lowerband[-2]) and (imbalance <= -0.5) and (adx[-2] >= 45):
           Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\n⛳️ IMB : {round(imbalance,2)} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
-      elif (diff[-2] > 1) and (prices[-2] < lowerband[-2]) and (rsi[-2] <= 25) and (imbalance >= 0.6): 
+      elif (diff[-2] > 1) and (prices[-2] < lowerband[-2]) and (rsi[-2] <= 30) and (imbalance >= 0.6): 
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff[-2],2)} \n💵 Precio: {prices[-2]}\n⛳️ IMB : {round(imbalance,2)}")
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CONTRALONG)   
         

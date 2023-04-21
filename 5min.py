@@ -40,7 +40,13 @@ def indicator(symbol):
     ema_100 = df['Close'].ewm(span=100, adjust=False).mean()
 
 # Calcular la señal de cruce
-    signal = pd.Series(data=(ema_13 > ema_100).astype(int), index=df.index)
+    # Encontrar el punto exacto del cruce
+    crossing_index = np.where(np.diff(np.sign(ema_13 - ema_100)))[0]
+    crossing_point = df['Close'].iloc[crossing_index].interpolate()
+
+# Calcular la señal de cruce
+   signal = pd.Series(0, index=df.index)
+   signal.iloc[crossing_index] = np.sign(ema_13 - ema_100).astype(int)
 
 # ema 200
     ema_200 = df['Close'].ewm(200).mean()

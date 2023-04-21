@@ -43,15 +43,22 @@ def indicator(symbol):
     ema_100 = df['Close'].ewm(span=100, adjust=False).mean()
     ema_200 = df['Close'].ewm(span=200, adjust=False).mean()
 
-# Calcular la señal de cruce
-    ema_diff = ema_13 - ema_100
-    crossing_index = np.where((ema_diff.shift(1) < 0) & (ema_diff > 0))[0]
-    signal = pd.Series(0, index=df.index)
-    signal.iloc[crossing_index] = 1
-    signal.iloc[np.where((ema_diff.shift(1) > 0) & (ema_diff < 0))[0]] = -1
-
-# ema 200
     
+# Detectar el cruce de las EMAs y enviar una señal
+    signal = pd.Series(0, index=df.index)
+    for i in range(1, len(df)):
+            if (ema_13.iloc[i] > ema_100.iloc[i]) and (ema_13.iloc[i-1] <= ema_100.iloc[i-1]):
+                  signal.iloc[i] = 1
+            elif (ema_13.iloc[i] < ema_100.iloc[i]) and (ema_13.iloc[i-1] >= ema_100.iloc[i-1]):
+                  signal.iloc[i] = -1
+
+# Calcular el punto exacto del cruce
+    crossing_points = pd.Series(index=signal.index, dtype='float64')
+    for i in range(1, len(signal)):
+     if (signal.iloc[i] == 1) or (signal.iloc[i] == -1):
+        x0, x1 = ema_13.index[i-1], ema_13.index[i]
+        y0, y1 = ema_13.iloc[i-1], ema_13.iloc[i]
+        crossing_points.iloc[i] = x0 + (x1 - x0) * (y0 / (y0 - y1))
     
     upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                timeperiod=20,

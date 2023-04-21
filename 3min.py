@@ -94,7 +94,7 @@ while True:
        
         # Espera hasta que sea el comienzo de una nueva hora
         current_time = time.time()
-        seconds_to_wait = 300 - current_time % 300
+        seconds_to_wait = 180 - current_time % 180
         time.sleep(seconds_to_wait)     
         check_symbol(symbol)
         print(symbol)

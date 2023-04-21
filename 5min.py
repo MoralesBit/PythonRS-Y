@@ -20,7 +20,7 @@ symbols = [
 
 def indicator(symbol):
   
-  kline = client.futures_historical_klines(symbol, "5m", "12 hours ago UTC+1",limit=500)
+  kline = client.futures_historical_klines(symbol, "5m", "20 hours ago UTC+1",limit=500)
   df = pd.DataFrame(kline)
   
   if not df.empty:
@@ -126,7 +126,10 @@ def indicator(symbol):
         }
         }
      
+  print(symbol)
       
+  
+  
        # TENDENCIA ALCISTA:
   if (ema_200[-2] < Close) and (ema_13[-3] <  ema_100[-3]) and (ema_13[-2] > ema_100[-2]) and (imbalance > -0.15):
           Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ IMB : {round(imbalance,2)} \n🎣 Fishing Pisha")
@@ -159,4 +162,4 @@ while True:
   
   for symbol in symbols:
       indicator(symbol)
-      print(symbol)
+      

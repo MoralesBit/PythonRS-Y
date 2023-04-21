@@ -34,6 +34,7 @@ def indicator(symbol):
     High = float(df['High'][-2])
     Low = float(df['Low'][-2])
     diff = abs((High / Low -1) * 100)
+    cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
     
     upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                timeperiod=20,
@@ -45,6 +46,8 @@ def indicator(symbol):
 
     bid_sum = sum([float(bid[1]) for bid in order_book['bids']])
     ask_sum = sum([float(ask[1]) for ask in order_book['asks']])
+    max_bid = float(order_book['bids'][0][0])
+    max_ask = float(order_book['asks'][0][0])
  
     if bid_sum + ask_sum > 0:
      imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
@@ -58,7 +61,7 @@ def indicator(symbol):
     "side": "sell",
     "symbol": symbol,
     "open": {
-    "price": Close
+    "price": max_ask
     }
     }
     PORLONG = {
@@ -67,7 +70,7 @@ def indicator(symbol):
     "side": "buy",
     "symbol": symbol,
     "open": {
-    "price": Close
+    "price": max_bid
     }
     }
       # Chequea si el precio es mayor al canal más alto de Fibonacci y si hay un cruce bajista de MACD y Signal o un cruce bajista del RSI y el nivel 70
@@ -79,7 +82,10 @@ def indicator(symbol):
     if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] < 30) and (imbalance > 0.60):
         Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n IMB: {round(imbalance,2)}")
         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
-          
+    if (cci20[-3] > 0) and (cci20[-2] < 0) and (imbalance < 0.05) and (imbalance > -0.05):
+        Tb.telegram_canal_prueba(f"C-I {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)} C-I bid {max_bid} ask {max_ask}  " ) 
+        requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)     
+             
 while True:
   current_time = ti.time()
   seconds_to_wait = 180 - current_time % 180

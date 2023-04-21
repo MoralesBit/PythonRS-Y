@@ -30,6 +30,13 @@ def calculate_est( prices_high, prices_low, prices ):
     slowk, slowd = talib.STOCH(prices_high, prices_low, prices, fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
     return slowk, slowd
 
+def get_price(imbalance, ema_13, prices):
+        if imbalance < 0:
+          return ema_13
+        elif imbalance > 0:
+          return prices
+        else:
+          return None
   
 while True:
     # Espera hasta que sea el comienzo de una nueva hora
@@ -67,6 +74,9 @@ while True:
     
       slowk, slowd = calculate_est(prices_high, prices_low, prices)
       
+      #price in
+      
+      prices_in = get_price(imbalance, ema_13, prices)
       
       # Calcula el precio máximo y mínimo
       high = np.max(prices)
@@ -101,7 +111,7 @@ while True:
         "side": "sell",
         "symbol": symbol,
         "open": {
-        "price": prices_close
+        "price": prices_in[-1]
         }
         }
         
@@ -111,7 +121,7 @@ while True:
         "side": "buy",
         "symbol": symbol,
         "open": {
-        "price": prices_close
+        "price": prices_in[-1]
         }
         }
     
@@ -168,7 +178,7 @@ while True:
       
        # TENDENCIA ALCISTA:
       if (ema_200[-2] < prices[-2]) and (ema_13[-3] <  ema_100[-3]) and (ema_13[-2] > ema_100[-2]) and (imbalance > -0.15):
-          Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\n⛳️ IMB : {round(imbalance,2)} \n🎣 Fishing Pisha")
+          Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\n⛳️ IMB : {round(imbalance,2)} \nprice_in: {prices_in[-1]} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
       if (diff[-2] > 1) and (prices[-2] >= upperband[-2]) and (rsi[-2] >= 70) and (imbalance <= -0.6): 
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff[-2],2)} \n💵 Precio: {prices[-2]}\n⛳️ IMB : {round(imbalance,2)}")
@@ -176,7 +186,7 @@ while True:
         
         # TENDENCIA BAJISTA:
       if (ema_200[-2] > prices[-2]) and (ema_13[-3] >  ema_100[-3]) and (ema_13[-2] < ema_100[-2]) and (imbalance < 0.15):
-          Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\n⛳️ IMB : {round(imbalance,2)} \n🎣 Fishing Pisha")
+          Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\n⛳️ IMB : {round(imbalance,2)}\nprice_in: {prices_in[-1]} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
       if (diff[-2] > 1) and (prices[-2] <= lowerband[-2]) and (rsi[-2] <= 30) and (imbalance >= 0.6): 
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff[-2],2)} \n💵 Precio: {prices[-2]}\n⛳️ IMB : {round(imbalance,2)}")

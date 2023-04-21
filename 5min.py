@@ -151,7 +151,7 @@ def indicator(symbol):
           requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
         
         # TENDENCIA BAJISTA:
-  if (signal == 0) and (imbalance < -0.35):
+  if (signal == -1) and (imbalance < -0.35):
           Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ IMB : {round(imbalance,2)}\n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
   if (diff >= 1) and (Close <= lowerband[-2]) and (rsi[-2] <= 30) and (imbalance >= 0.5): 

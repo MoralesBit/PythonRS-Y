@@ -73,10 +73,10 @@ def indicator(symbol):
       # Chequea si el precio es mayor al canal más alto de Fibonacci y si hay un cruce bajista de MACD y Signal o un cruce bajista del RSI y el nivel 70
       
       #Actual   
-    if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] > 70)and (imbalance < 0.10):
+    if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] > 70)and (imbalance < 0.35):
         Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n IMB: {round(imbalance,2)}") 
         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
-    if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] < 30) and (imbalance > -0.10):
+    if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] < 30) and (imbalance > -0.35):
         Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n IMB: {round(imbalance,2)}")
         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
           

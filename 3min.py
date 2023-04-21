@@ -100,10 +100,10 @@ def indicator(symbol):
     
       #Actual   
     if (rsi[-2] >= 80) and (imbalance < -0.5) and (spread_por < 0.005):
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n IMB: {round(imbalance,2)}") 
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}") 
         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
     if (rsi[-2] <= 20) and (imbalance > 0.5) and (spread_por > 0.005):
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n IMB: {round(imbalance,2)}")
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}")
         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
     if (ema_200[-2] > Close) and (50 > cci20[-2] > 0) and (imbalance < -0.50) and (spread_por < 0.005) and (50 < rsi[-2] < 60):
         Tb.telegram_send_message(f"C-I {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close} \n Trend" ) 

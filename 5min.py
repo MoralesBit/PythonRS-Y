@@ -35,8 +35,14 @@ def indicator(symbol):
     Low = float(df['Low'][-2])
     diff = abs((High / Low -1) * 100)
     
-    ema_13 = df['Close'].ewm(13).mean()
-    ema_100 = df['Close'].ewm(100).mean()
+    # Calcular las EMAs de 13 días y 100 días
+    ema_13 = df['Close'].ewm(span=13, adjust=False).mean()
+    ema_100 = df['Close'].ewm(span=100, adjust=False).mean()
+
+# Calcular la señal de cruce
+    signal = pd.Series(data=(ema_13 > ema_100).astype(int), index=df.index)
+
+# ema 200
     ema_200 = df['Close'].ewm(200).mean()
     
     upperband, middleband, lowerband = ta.BBANDS(df['Close'],
@@ -131,7 +137,7 @@ def indicator(symbol):
   
   
        # TENDENCIA ALCISTA:
-  if (ema_200[-2] < ema_13[-2]) and (ema_13[-3] < ema_100[-3]) and (ema_13[-2] > ema_100[-2]) and (imbalance > 0.35):
+  if (signal == 1) and (imbalance > 0.35):
           Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ IMB : {round(imbalance,2)} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
   if (diff >= 1) and (Close >= upperband[-2]) and (rsi[-2] >= 70) and (imbalance <= -0.5): 
@@ -139,7 +145,7 @@ def indicator(symbol):
           requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
         
         # TENDENCIA BAJISTA:
-  if (ema_200[-2] > ema_13[-2]) and (ema_13[-3] > ema_100[-3]) and (ema_13[-2] < ema_100[-2]) and (imbalance < -0.35):
+  if (signal == 0) and (imbalance < -0.35):
           Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ IMB : {round(imbalance,2)}\n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
   if (diff >= 1) and (Close <= lowerband[-2]) and (rsi[-2] <= 30) and (imbalance >= 0.5): 

@@ -127,7 +127,7 @@ def indicator(symbol):
         }
      
   print(symbol)
-  print(ema_200[-2])    
+   
   
   
        # TENDENCIA ALCISTA:

@@ -51,7 +51,8 @@ while True:
       
       #Cruce de EMAS
       ema_13 = talib.EMA(prices, timeperiod=13)
-      ema_100 = talib.EMA(prices, timeperiod=100) 
+      ema_100 = talib.EMA(prices, timeperiod=100)
+      ema_200 = talib.EMA(prices, timeperiod=200) 
                   
       # Calcula el indicador RSI
       rsi = talib.RSI(prices, timeperiod=14)
@@ -66,8 +67,16 @@ while True:
     
       slowk, slowd = calculate_est(prices_high, prices_low, prices)
       
+      
+      # Calcula el precio máximo y mínimo
+      high = np.max(prices)
+      low = np.min(prices)
+      # Genera los canales de Fibonacci
+      diference = high - low
+      fourth_level = high -  diference*0.618
+      
       #Imbalance
-      depth = 5
+      depth = 10
 
       response = requests.get(f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}').json()
       if 'bids' in response:
@@ -158,45 +167,37 @@ while True:
       # Chequea si el precio es mayor al canal más alto de Fibonacci y si hay un cruce bajista de MACD y Signal o un cruce bajista del RSI y el nivel 70
       
        # TENDENCIA ALCISTA:
-      if (diff[-2] > 1) and (prices[-2] > upperband[-2]) and (imbalance >= 0.5) and (adx[-2] <= 20):
-          Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\n⛳️ IMB : {round(imbalance,2)} \n(🎣 Fishing Pisha")
+      if (ema_200[-2] < prices[-2]) and (ema_13[-3] <  ema_100[-3]) and (ema_13[-2] > ema_100[-2]) and (imbalance > -0.15):
+          Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\n⛳️ IMB : {round(imbalance,2)} \n {ema_200[-2]}\n 🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
-      elif (diff[-2] > 1) and (prices[-2] > upperband[-2]) and (rsi[-2] >= 70) and (imbalance <= -0.6): 
+      if (diff[-2] > 1) and (prices[-2] > upperband[-2]) and (rsi[-2] >= 70) and (imbalance <= -0.6): 
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff[-2],2)} \n💵 Precio: {prices[-2]}\n⛳️ IMB : {round(imbalance,2)}")
           requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
         
         # TENDENCIA BAJISTA:
-      if (diff[-2] > 1) and (prices[-2] < lowerband[-2]) and (imbalance <= -0.5) and (adx[-2] >= 45):
-          Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\n⛳️ IMB : {round(imbalance,2)} \n🎣 Fishing Pisha")
+      if (ema_200[-2] > prices[-2]) and (ema_13[-3] >  ema_100[-3]) and (ema_13[-2] < ema_100[-2]) and (imbalance < 0.15):
+          Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\n⛳️ IMB : {round(imbalance,2)}\n {ema_200[-2]} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
-      elif (diff[-2] > 1) and (prices[-2] < lowerband[-2]) and (rsi[-2] <= 30) and (imbalance >= 0.6): 
+      if (diff[-2] > 1) and (prices[-2] < lowerband[-2]) and (rsi[-2] <= 30) and (imbalance >= 0.6): 
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff[-2],2)} \n💵 Precio: {prices[-2]}\n⛳️ IMB : {round(imbalance,2)}")
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CONTRALONG)   
         
          #Cruce de EMAS + FIBO:
        
-      if (imbalance >  0.9) and (slowk[-2] < 90):
+      if (imbalance >  0.7) and (prices[-3] < fourth_level) and (prices[-2] > fourth_level) :
         Tb.telegram_canal_prueba(f"🐬 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \n🐬 Delfin")  
         #requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
         
-      if (imbalance <  -0.9) and (slowk[-2] > 10):
+      if (imbalance <  -0.7) and (prices[-3] > fourth_level) and (prices[-2] < fourth_level) :
         Tb.telegram_canal_prueba(f"🐬 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \n🐬 Delfin")
         
-      if (ema_13[-3] <  ema_100[-3]) and (ema_13[-2] > ema_100[-2]) and (imbalance < 0):
-            
-        Tb.telegram_canal_prueba(f"EMA {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA CONTRA")   
-        #requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
-        
-      if (ema_13[-3] >  ema_100[-3]) and (ema_13[-2] < ema_100[-2]) and (imbalance > 0):
-        Tb.telegram_canal_prueba(f"EMA {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA CONTRA")  
-        
-      #Cruve de ema normal en el mismo sentido del cruce pero lanzando la orden de compra en la ema13:
-      if (ema_13[-3] <  ema_100[-3]) and (ema_13[-2] > ema_100[-2]) and (imbalance < 0):
+       #Cruve de ema normal en el mismo sentido del cruce pero lanzando la orden de compra en la ema13:
+      if (ema_13[-3] <  ema_100[-3]) and (ema_13[-2] > ema_100[-2]) and (imbalance > -0.15):
         Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA en tendencia")     
           
         requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
         
-      if (ema_13[-3] >  ema_100[-3]) and (ema_13[-2] < ema_100[-2]) and (imbalance > 0):
+      if (ema_13[-3] >  ema_100[-3]) and (ema_13[-2] < ema_100[-2]) and (imbalance < 0.15):
          Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA en tendencia") 
       
         # Imprime los resultados

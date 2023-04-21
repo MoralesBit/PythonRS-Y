@@ -12,11 +12,15 @@ Skey = ''
 client = Client(api_key=Pkey, api_secret=Skey)
 
 futures_info = client.futures_exchange_info()
-symbols = [symbol['symbol'] for symbol in futures_info['symbols']]
+
+symbols = [
+    symbol['symbol'] for symbol in futures_info['symbols']
+    if symbol['status'] == "TRADING"
+  ]
 
 def indicator(symbol):
   
-  kline = client.futures_historical_klines(symbol, "3m", "24 hours ago UTC+1",limit=1000)
+  kline = client.futures_historical_klines(symbol, "3m", "12 hours ago UTC+1",limit=500)
   df = pd.DataFrame(kline)
   
   if not df.empty:
@@ -45,7 +49,8 @@ def indicator(symbol):
     if bid_sum + ask_sum > 0:
      imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
     else:
-     imbalance = 0.0     
+     imbalance = 0.0
+    
     
     PORSHORT = {
     "name": "CORTO 3POR",

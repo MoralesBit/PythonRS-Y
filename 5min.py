@@ -20,7 +20,7 @@ symbols = [
 
 def indicator(symbol):
   
-  kline = client.futures_historical_klines(symbol, "3m", "12 hours ago UTC+1",limit=500)
+  kline = client.futures_historical_klines(symbol, "5m", "12 hours ago UTC+1",limit=500)
   df = pd.DataFrame(kline)
   
   if not df.empty:
@@ -147,7 +147,6 @@ def indicator(symbol):
        #Cruve de ema normal en el mismo sentido del cruce pero lanzando la orden de compra en la ema13:
   if (ema_13[-3] <  ema_100[-3]) and (ema_13[-2] > ema_100[-2]) and (imbalance > -0.15):
         Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)}")     
-          
         requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
         
   if (ema_13[-3] >  ema_100[-3]) and (ema_13[-2] < ema_100[-2]) and (imbalance < 0.15):

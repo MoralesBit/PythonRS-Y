@@ -5,6 +5,7 @@ import Telegram_bot as Tb
 import  schedule as schedule
 import time as ti
 import requests
+import numpy as np
 
 Pkey = ''
 Skey = ''
@@ -30,6 +31,8 @@ def indicator(symbol):
     df = df.set_index('Date')
     
     rsi = ta.RSI(df["Close"], timeperiod=14)
+    adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+    
     Close = float(df['Close'][-2])
     High = float(df['High'][-2])
     Low = float(df['Low'][-2])
@@ -38,6 +41,7 @@ def indicator(symbol):
     # Calcular las EMAs de 13 días y 100 días
     ema_13 = df['Close'].ewm(span=13, adjust=False).mean()
     ema_100 = df['Close'].ewm(span=100, adjust=False).mean()
+    ema_200 = df['Close'].ewm(span=200, adjust=False).mean()
 
 # Calcular la señal de cruce
     # Encontrar el punto exacto del cruce
@@ -45,11 +49,11 @@ def indicator(symbol):
     crossing_point = df['Close'].iloc[crossing_index].interpolate()
 
 # Calcular la señal de cruce
-   signal = pd.Series(0, index=df.index)
-   signal.iloc[crossing_index] = np.sign(ema_13 - ema_100).astype(int)
+    signal = pd.Series(0, index=df.index)
+    signal.iloc[crossing_index] = np.sign(ema_13 - ema_100).astype(int)
 
 # ema 200
-    ema_200 = df['Close'].ewm(200).mean()
+    
     
     upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                timeperiod=20,
@@ -160,11 +164,11 @@ def indicator(symbol):
   
   
        #Cruve de ema normal en el mismo sentido del cruce pero lanzando la orden de compra en la ema13:
-  if (ema_13[-3] <  ema_100[-3]) and (ema_13[-2] > ema_100[-2]) and (imbalance > -0.15):
+  if (signal[-2] == 1) and (imbalance > 0) and (adx[-2] > 25):
         Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)}")     
         requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
         
-  if (ema_13[-3] >  ema_100[-3]) and (ema_13[-2] < ema_100[-2]) and (imbalance < 0.15):
+  if ((signal[-2] == -1)) and (imbalance < 0) and ((adx[-2] > 25)):
          Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)}") 
                 
 while True:

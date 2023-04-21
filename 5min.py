@@ -35,7 +35,7 @@ while True:
     # Espera hasta que sea el comienzo de una nueva hora
     current_time = time.time()
     seconds_to_wait = 300 - current_time % 300
-    #time.sleep(seconds_to_wait)   
+    time.sleep(seconds_to_wait)   
   
     for symbol in symbols:
          
@@ -96,37 +96,14 @@ while True:
           imbalance = 0.0    
       
       
-      def get_price_short(imbalance, ema_13, prices):
-        if imbalance < 0:
-          return ema_13[-2]
-        elif imbalance > 0:
-          return prices[-2]
-        else:
-            return prices[-2]
-        
-        
-      def get_price_long(imbalance, ema_13, prices):
-        if imbalance > 0:
-          return ema_13[-2]
-        elif imbalance < 0:
-          return prices[-2]
-        else:
-            return prices[-2]
-       
-        
-      #price in
-      
-      prices_in_short = get_price_short(imbalance, ema_13, prices)
-      prices_in_long = get_price_long(imbalance, ema_13, prices)  
-      
-           # DATOS FNDY
+     # DATOS FNDY
       FISHINGSHORT = {
         "name": "FISHING SHORT",
         "secret": "azsdb9x719",
         "side": "sell",
         "symbol": symbol,
         "open": {
-        "price": prices_in_short
+        "price": prices_close
         }
         }
         
@@ -136,7 +113,7 @@ while True:
         "side": "buy",
         "symbol": symbol,
         "open": {
-        "price": prices_in_long
+        "price": prices_close
         }
         }
     
@@ -192,7 +169,7 @@ while True:
       
        # TENDENCIA ALCISTA:
       if (ema_200[-2] < prices[-2]) and (ema_13[-3] <  ema_100[-3]) and (ema_13[-2] > ema_100[-2]) and (imbalance > -0.15):
-          Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\n⛳️ IMB : {round(imbalance,2)} \nprice_in: {prices_in_long} \n🎣 Fishing Pisha")
+          Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\n⛳️ IMB : {round(imbalance,2)} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
       if (diff[-2] > 1) and (prices[-2] >= upperband[-2]) and (rsi[-2] >= 70) and (imbalance <= -0.6): 
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff[-2],2)} \n💵 Precio: {prices[-2]}\n⛳️ IMB : {round(imbalance,2)}")
@@ -200,7 +177,7 @@ while True:
         
         # TENDENCIA BAJISTA:
       if (ema_200[-2] > prices[-2]) and (ema_13[-3] >  ema_100[-3]) and (ema_13[-2] < ema_100[-2]) and (imbalance < 0.15):
-          Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\n⛳️ IMB : {round(imbalance,2)}\nprice_in: {prices_in_short} \n🎣 Fishing Pisha")
+          Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices_close[-2]}\n⛳️ IMB : {round(imbalance,2)}\n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
       if (diff[-2] > 1) and (prices[-2] <= lowerband[-2]) and (rsi[-2] <= 30) and (imbalance >= 0.6): 
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff[-2],2)} \n💵 Precio: {prices[-2]}\n⛳️ IMB : {round(imbalance,2)}")
@@ -217,12 +194,12 @@ while True:
         
        #Cruve de ema normal en el mismo sentido del cruce pero lanzando la orden de compra en la ema13:
       if (ema_13[-3] <  ema_100[-3]) and (ema_13[-2] > ema_100[-2]) and (imbalance > -0.15):
-        Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nprice_in: {prices_in_long}")     
+        Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)}")     
           
         requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
         
       if (ema_13[-3] >  ema_100[-3]) and (ema_13[-2] < ema_100[-2]) and (imbalance < 0.15):
-         Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nprice_in: {prices_in_short}") 
+         Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)}") 
       
         # Imprime los resultados
 

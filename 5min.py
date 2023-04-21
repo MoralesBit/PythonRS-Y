@@ -84,7 +84,7 @@ def indicator(symbol):
         "side": "sell",
         "symbol": symbol,
         "open": {
-        "price": ema_13[-2]
+        "price": Close*(abs(imbalance))
         }
         }
         
@@ -94,7 +94,7 @@ def indicator(symbol):
         "side": "buy",
         "symbol": symbol,
         "open": {
-        "price": ema_13[-2]
+        "price": (Close * (1 - abs(imbalance)/100))
         }
         }
     

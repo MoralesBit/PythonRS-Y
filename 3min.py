@@ -36,7 +36,7 @@ def indicator(symbol):
                                                nbdevup=2,
                                                nbdevdn=2,
                                                matype=0)
-    depth = 20
+    depth = 5
 
     response = requests.get(f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}').json()
     if 'bids' in response:

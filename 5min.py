@@ -156,7 +156,7 @@ def indicator(symbol):
   if (ema_200[-2] < ema_13[-2]) and (signal[-2] == 1) and (imbalance > 0.35):
           Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ IMB : {round(imbalance,2)} \n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
-  if (diff >= 1) and (Close >= upperband[-2]) and (rsi[-2] >= 70) and (imbalance <= -0.5): 
+  if (diff >= 1) and (Close >= upperband[-2]) and (rsi[-2] >= 70) and (imbalance <= -0.6): 
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n⛳️ IMB : {round(imbalance,2)}")
           requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
         
@@ -164,7 +164,7 @@ def indicator(symbol):
   if (ema_200[-2] > ema_13[-2]) and (signal[-2] == -1) and (imbalance < -0.35):
           Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n⛳️ IMB : {round(imbalance,2)}\n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
-  if (diff >= 1) and (Close <= lowerband[-2]) and (rsi[-2] <= 30) and (imbalance >= 0.5): 
+  if (diff >= 1) and (Close <= lowerband[-2]) and (rsi[-2] <= 30) and (imbalance >= 0.6): 
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n⛳️ IMB : {round(imbalance,2)}")
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CONTRALONG)  
   
@@ -178,7 +178,7 @@ def indicator(symbol):
 while True:
   current_time = ti.time()
   seconds_to_wait = 300 - current_time % 300
-  ti.sleep(seconds_to_wait)   
+  #ti.sleep(seconds_to_wait)   
   
   for symbol in symbols:
       indicator(symbol)

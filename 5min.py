@@ -44,13 +44,11 @@ def indicator(symbol):
     ema_200 = df['Close'].ewm(span=200, adjust=False).mean()
 
 # Calcular la señal de cruce
-    # Encontrar el punto exacto del cruce
-    crossing_index = np.where(np.diff(np.sign(ema_13 - ema_100)))[0]
-    crossing_point = df['Close'].iloc[crossing_index].interpolate()
-
-# Calcular la señal de cruce
+    ema_diff = ema_13 - ema_100
+    crossing_index = np.where((ema_diff.shift(1) < 0) & (ema_diff > 0))[0]
     signal = pd.Series(0, index=df.index)
-    signal.iloc[crossing_index] = np.sign(ema_13 - ema_100).astype(int)
+    signal.iloc[crossing_index] = 1
+    signal.iloc[np.where((ema_diff.shift(1) > 0) & (ema_diff < 0))[0]] = -1
 
 # ema 200
     
@@ -143,6 +141,7 @@ def indicator(symbol):
         }
      
   print(symbol)
+  print(signal[-2])
    
   
   
@@ -162,8 +161,6 @@ def indicator(symbol):
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n⛳️ IMB : {round(imbalance,2)}")
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CONTRALONG)  
   
-  
-       #Cruve de ema normal en el mismo sentido del cruce pero lanzando la orden de compra en la ema13:
   if (signal[-2] == 1) and (imbalance > 0) and (adx[-2] > 25):
         Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)}")     
         requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
@@ -174,7 +171,7 @@ def indicator(symbol):
 while True:
   current_time = ti.time()
   seconds_to_wait = 300 - current_time % 300
-  ti.sleep(seconds_to_wait)   
+  #ti.sleep(seconds_to_wait)   
   
   for symbol in symbols:
       indicator(symbol)

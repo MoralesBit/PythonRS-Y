@@ -70,6 +70,8 @@ def indicator(symbol):
 
     bid_sum = sum([float(bid[1]) for bid in order_book['bids']])
     ask_sum = sum([float(ask[1]) for ask in order_book['asks']])
+    max_bid = float(order_book['bids'][0][0])
+    max_ask = float(order_book['asks'][0][0])
  
     if bid_sum + ask_sum > 0:
      imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
@@ -84,7 +86,7 @@ def indicator(symbol):
         "side": "sell",
         "symbol": symbol,
         "open": {
-        "price": Close*(abs(imbalance))
+        "price": max_ask
         }
         }
         
@@ -94,7 +96,7 @@ def indicator(symbol):
         "side": "buy",
         "symbol": symbol,
         "open": {
-        "price": (Close * (1 - abs(imbalance)/100))
+        "price": max_bid
         }
         }
     
@@ -148,9 +150,7 @@ def indicator(symbol):
         }
      
   print(symbol)
-  print(signal[-2])
-   
-  
+    
   
        # TENDENCIA ALCISTA:
   if (ema_200[-2] < ema_13[-2]) and (signal[-2] == 1) and (imbalance > 0.35):

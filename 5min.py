@@ -30,21 +30,7 @@ def calculate_est( prices_high, prices_low, prices ):
     slowk, slowd = talib.STOCH(prices_high, prices_low, prices, fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
     return slowk, slowd
 
-def get_price_short(imbalance, ema_13, prices):
-        if imbalance < 0:
-          return ema_13
-        elif imbalance > 0:
-          return prices
-        else:
-          return None
-        
-def get_price_long(imbalance, ema_13, prices):
-        if imbalance > 0:
-          return ema_13
-        elif imbalance < 0:
-          return prices
-        else:
-          return None
+
           
   
 while True:
@@ -83,10 +69,7 @@ while True:
     
       slowk, slowd = calculate_est(prices_high, prices_low, prices)
       
-      #price in
-      
-      prices_in_short = get_price_short(imbalance, ema_13, prices)
-      prices_in_long = get_price_long(imbalance, ema_13, prices)
+     
       
       # Calcula el precio máximo y mínimo
       high = np.max(prices)
@@ -113,6 +96,28 @@ while True:
           imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
       else:
           imbalance = 0.0    
+      
+      
+      def get_price_short(imbalance, ema_13, prices):
+        if imbalance < 0:
+          return ema_13
+        elif imbalance > 0:
+          return prices
+        else:
+          return None
+        
+      def get_price_long(imbalance, ema_13, prices):
+        if imbalance > 0:
+          return ema_13
+        elif imbalance < 0:
+          return prices
+        else:
+          return None
+        
+      #price in
+      
+      prices_in_short = get_price_short(imbalance, ema_13, prices)
+      prices_in_long = get_price_long(imbalance, ema_13, prices)  
       
            # DATOS FNDY
       FISHINGSHORT = {

@@ -35,6 +35,7 @@ def indicator(symbol):
     Low = float(df['Low'][-2])
     diff = abs((High / Low -1) * 100)
     cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
+    ema_200 = df['Close'].ewm(span=200, adjust=False).mean()
     
     upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                timeperiod=20,
@@ -104,11 +105,11 @@ def indicator(symbol):
     if (rsi[-2] <= 30) and (imbalance > 0.65) and (spread_por > 0.005):
         Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n IMB: {round(imbalance,2)}")
         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
-    if (50 > cci20[-2] > 0) and (imbalance < -0.50) and (spread_por < 0.005) and (50 < rsi[-2] < 60):
-        Tb.telegram_canal_prueba(f"C-I {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)} C-I bid {max_bid} ask {max_ask}  " ) 
+    if (ema_200[-2] > Close) and (50 > cci20[-2] > 0) and (imbalance < -0.50) and (spread_por < 0.005) and (50 < rsi[-2] < 60):
+        Tb.telegram_canal_prueba(f"C-I {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)} C-I EMA {ema_200[-2]} " ) 
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=BOUNCYSHORT)     
-    if (-50 < cci20[-2] < 0) and (imbalance > 0.50) and (spread_por > 0.005) and (40 < rsi[-2] < 50):
-        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)} C-I bid {max_bid} ask {max_ask}  ")
+    if (ema_200[-2] < Close) and (-50 < cci20[-2] < 0) and (imbalance > 0.50) and (spread_por > 0.005) and (40 < rsi[-2] < 50):
+        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)} C-I  EMA{ema_200[-2]}  ")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=BOUNCYLONG) 
                
 while True:

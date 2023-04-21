@@ -35,7 +35,7 @@ while True:
     # Espera hasta que sea el comienzo de una nueva hora
     current_time = time.time()
     seconds_to_wait = 300 - current_time % 300
-    time.sleep(seconds_to_wait)   
+    #time.sleep(seconds_to_wait)   
   
     for symbol in symbols:
          
@@ -101,6 +101,8 @@ while True:
           return ema_13[-2]
         elif imbalance > 0:
           return prices[-2]
+        else:
+            return prices[-2]
         
         
       def get_price_long(imbalance, ema_13, prices):
@@ -108,6 +110,8 @@ while True:
           return ema_13[-2]
         elif imbalance < 0:
           return prices[-2]
+        else:
+            return prices[-2]
        
         
       #price in
@@ -213,12 +217,12 @@ while True:
         
        #Cruve de ema normal en el mismo sentido del cruce pero lanzando la orden de compra en la ema13:
       if (ema_13[-3] <  ema_100[-3]) and (ema_13[-2] > ema_100[-2]) and (imbalance > -0.15):
-        Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA en tendencia")     
+        Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nprice_in: {prices_in_long}")     
           
         requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
         
       if (ema_13[-3] >  ema_100[-3]) and (ema_13[-2] < ema_100[-2]) and (imbalance < 0.15):
-         Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nEMA en tendencia") 
+         Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {prices[-2]}\nIMB : {round(imbalance,2)} \nprice_in: {prices_in_short}") 
       
         # Imprime los resultados
 

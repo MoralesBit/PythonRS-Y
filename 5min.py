@@ -86,7 +86,7 @@ def indicator(symbol):
         "side": "sell",
         "symbol": symbol,
         "open": {
-        "price": max_ask
+        "price": ema_13[-2]
         }
         }
         
@@ -96,7 +96,7 @@ def indicator(symbol):
         "side": "buy",
         "symbol": symbol,
         "open": {
-        "price": max_bid
+        "price": ema_13[-2]
         }
         }
     
@@ -154,7 +154,7 @@ def indicator(symbol):
   
        # TENDENCIA ALCISTA:
   if (signal[-2] == 1) and (imbalance > 0) and (adx[-2] > 25):
-          Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
+          Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio in: {ema_13[-2]}\n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
   if (diff >= 1) and (Close >= upperband[-2]) and (rsi[-2] >= 70) and (imbalance <= -0.6): 
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}")
@@ -162,7 +162,7 @@ def indicator(symbol):
         
         # TENDENCIA BAJISTA:
   if ((signal[-2] == -1)) and (imbalance < 0) and ((adx[-2] > 25)):
-          Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
+          Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio in: {ema_13[-2]}\n🎣 Fishing Pisha")
           requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
   if (diff >= 1) and (Close <= lowerband[-2]) and (rsi[-2] <= 30) and (imbalance >= 0.6): 
           Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}")

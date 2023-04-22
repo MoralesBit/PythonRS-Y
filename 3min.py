@@ -84,7 +84,7 @@ def indicator(symbol):
   "side": "sell",
   "symbol": symbol,
   "open": {
-    "price": max_ask
+    "price": Close
   }
 }
     BOUNCYLONG= {
@@ -93,7 +93,7 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol,
   "open": {
-    "price": max_bid
+    "price": Close
   }
 }
       # Chequea si el precio es mayor al canal más alto de Fibonacci y si hay un cruce bajista de MACD y Signal o un cruce bajista del RSI y el nivel 70
@@ -105,11 +105,11 @@ def indicator(symbol):
     if (rsi[-2] <= 20) and (imbalance > 0.5) and (spread_por > 0.005):
         Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}")
         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
-    if (ema_200[-2] > Close) and (50 > cci20[-2] > 0) and (imbalance < -0.40) and (spread_por < 0.005) and (50 < rsi[-2] < 60):
-        Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close} \n Trend" ) 
+    if (ema_200[-2] > Close) and (50 > cci20[-2] > 0) and (imbalance < -0.50) and (spread_por < 0.005) and (50 < rsi[-2] < 60):
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend" ) 
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=BOUNCYSHORT)     
-    if (ema_200[-2] < Close) and (-50 < cci20[-2] < 0) and (imbalance > 0.40) and (spread_por > 0.005) and (40 < rsi[-2] < 50):
-        Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n Trend")
+    if (ema_200[-2] < Close) and (-50 < cci20[-2] < 0) and (imbalance > 0.50) and (spread_por > 0.005) and (40 < rsi[-2] < 50):
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=BOUNCYLONG) 
                
 while True:

@@ -109,7 +109,7 @@ def indicator(symbol):
     if (Close < ema_200[-2]) and (imbalance < -0.50) and (60 < rsi[-2] < 70):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend" ) 
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=BOUNCYSHORT)     
-    if (Close > ema_200[-2]) (imbalance > 0.50) and (30 < rsi[-2] < 40):
+    if (Close > ema_200[-2]) and (imbalance > 0.50) and (30 < rsi[-2] < 40):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=BOUNCYLONG) 
                

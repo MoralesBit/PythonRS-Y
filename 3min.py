@@ -11,12 +11,12 @@ Skey = ''
 
 client = Client(api_key=Pkey, api_secret=Skey)
 
-url = "https://fapi.binance.com/fapi/v1/exchangeInfo"
-response = requests.get(url)
-data = response.json()
+futures_info = client.futures_exchange_info()
 
-symbols = [symbol['symbol'] for symbol in data['symbols'] if symbol['status'] == "TRADING"]
-#symbols = ["BLZUSDT", "ARUSDT", "INJUSDT", "STORJUSDT","HNTUSDT", "ARPAUSDT"]
+symbols = [
+    symbol['symbol'] for symbol in futures_info['symbols']
+    if symbol['status'] == "TRADING"
+  ]
 
 def indicator(symbol):
   
@@ -116,11 +116,11 @@ def indicator(symbol):
         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
         
     #Tendencia:     
-    if (cciB[-2] < 0) and (cci20[-2] < 0) and (imbalance < -0.50):
+    if (cciB[-2] < 0) and (imbalance < -0.50) and (adx[-2] >= 20):
       if (60 < rsi[-2] < 70) or (40 < rsi[-2] < 50):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend" ) 
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=TRENDSHORT)     
-    if (cciB[-2] > 0) and (cci20[-2] > 0) and (imbalance > 0.50): 
+    if (cciB[-2] > 0) and (imbalance > 0.50) and (adx[-2] >= 20): 
       if (30 < rsi[-2] < 40) or (50 < rsi[-2] < 60):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=TRENDLONG) 

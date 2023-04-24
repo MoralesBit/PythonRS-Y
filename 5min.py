@@ -153,21 +153,21 @@ def indicator(symbol):
     
   
 # TENDENCIA :
-  if (signal[-2] == 1) and (bid_sum[-2] > ask_sum[-2]):
-      Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio in: {round(ema_13[-2],2)}\n🎣 Fishing Pisha")
+  if (signal[-2] == 1) and (bid_sum > ask_sum):
+      Tb.telegram_canal_prueba(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio in: {round(ema_13[-2],2)}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
       
   if ((signal[-2] == -1)) and (ask_sum > bid_sum):
-      Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio in: {round(ema_13[-2],2)}\n🎣 Fishing Pisha")
+      Tb.telegram_canal_prueba(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio in: {round(ema_13[-2],2)}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
           
 #CONTRA TENDENCIA        
   if (diff >= 1) and (Close >= upperband[-2]) and (rsi[-2] >= 80) and (ask_sum > bid_sum): 
-          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📉 RSI: {rsi[-2]}")
+          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📉 RSI: {rsi[-2]}")
           requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
   
   if (diff >= 1) and (Close <= lowerband[-2]) and (rsi[-2] <= 20) and (ask_sum < bid_sum): 
-          Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📈 RSI: {rsi[-2]}")
+          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📈 RSI: {rsi[-2]}")
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CONTRALONG)  
   
   #if (signal[-2] == 1) and (imbalance > 0) and (adx[-2] > 25):
@@ -180,7 +180,7 @@ def indicator(symbol):
 while True:
   current_time = ti.time()
   seconds_to_wait = 300 - current_time % 300
-  ti.sleep(seconds_to_wait)   
+  #ti.sleep(seconds_to_wait)   
   
   for symbol in symbols:
       indicator(symbol)

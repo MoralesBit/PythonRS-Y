@@ -58,7 +58,16 @@ def indicator(symbol):
      imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
     else:
      imbalance = 0.0
-    
+     
+    info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
+    df_new = pd.DataFrame(info)
+       
+    if not df_new.empty:
+        df_new.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
+      'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
+    df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
+    df_new = df_new.set_index('Date')
+    cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=20)
     
     PORSHORT = {
     "name": "CORTO 3POR",
@@ -106,18 +115,18 @@ def indicator(symbol):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}")
         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
         
-    #Tendencia:    
-    if (Close < ema_200[-2]) and (imbalance < -0.50) and (60 < rsi[-2] < 70):
+    #Tendencia:     
+    if (cciB[-2] < 0) and (imbalance < -0.50) and (60 < rsi[-2] < 70):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend" ) 
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=TRENDSHORT)     
-    if (Close > ema_200[-2]) and (imbalance > 0.50) and (30 < rsi[-2] < 40):
+    if (cciB[-2] > 0) and (imbalance > 0.50) and (30 < rsi[-2] < 40):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=TRENDLONG) 
                
 while True:
   current_time = ti.time()
   seconds_to_wait = 180 - current_time % 180
-  ti.sleep(seconds_to_wait)   
+  #ti.sleep(seconds_to_wait)   
   
   for symbol in symbols:
       indicator(symbol)

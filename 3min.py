@@ -111,11 +111,11 @@ def indicator(symbol):
     if (rsi[-2] >= 70) and (diff > 1) and (ask_sum > bid_sum) and (imbalance < 0):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}") 
         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
-        ti.sleep(0.1) 
+         
     if (rsi[-2] <= 30) and (diff > 1) and (ask_sum < bid_sum) and (imbalance > 0):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}")
         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
-        ti.sleep(0.1)  
+       
         
     #Tendencia:     
     if (cciB[-2] < -30) and (imbalance < -0.50):
@@ -127,7 +127,7 @@ def indicator(symbol):
       if (30 < rsi[-2] < 40) or (50 < rsi[-2] < 60):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=TRENDLONG) 
-        ti.sleep(0.1) 
+       
                
 while True:
   current_time = ti.time()

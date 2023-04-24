@@ -34,7 +34,7 @@ def indicator(symbol):
     High = float(df['High'][-2])
     Low = float(df['Low'][-2])
     diff = abs((High / Low -1) * 100)
-    #cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
+    cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
     #ema_200 = df['Close'].ewm(span=200, adjust=False).mean()
     #adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
     
@@ -121,13 +121,13 @@ def indicator(symbol):
        
         
     #Tendencia:     
-    if (imbalance < -0.60):
+    if (imbalance < -0.60) and (cci20[-2] <= -100):
       if (60 < rsi[-2] < 70) or (40 < rsi[-2] < 50):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend" ) 
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=TRENDSHORT)
              
              
-    if (imbalance > 0.60): 
+    if (imbalance > 0.60) and (cci20[-2] >= 100): 
       if (30 < rsi[-2] < 40) or (50 < rsi[-2] < 60):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=TRENDLONG)    

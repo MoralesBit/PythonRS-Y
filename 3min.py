@@ -20,7 +20,7 @@ symbols = [
 
 def indicator(symbol):
   
-  kline = client.futures_historical_klines(symbol, "3m", "12 hours ago UTC+1",limit=500)
+  kline = client.futures_historical_klines(symbol, "3m", "24 hours ago UTC+1",limit=500)
   df = pd.DataFrame(kline)
   
   if not df.empty:
@@ -79,8 +79,8 @@ def indicator(symbol):
     }
     }
     
-    BOUNCYSHORT= {
-  "name": "BOUNCY SHORT",
+    TRENDSHORT= {
+  "name": "TREND SHORT",
   "secret": "hgw3399vhh",
   "side": "sell",
   "symbol": symbol,
@@ -88,8 +88,8 @@ def indicator(symbol):
     "price": Close
   }
 }
-    BOUNCYLONG= {
-  "name": "BOUNCY LONG",
+    TRENDLONG= {
+  "name": "TREND LONG",
   "secret": "xjth0i3qgb",
   "side": "buy",
   "symbol": symbol,
@@ -109,10 +109,10 @@ def indicator(symbol):
     #Tendencia:    
     if (Close < ema_200[-2]) and (imbalance < -0.50) and (60 < rsi[-2] < 70):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend" ) 
-        requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=BOUNCYSHORT)     
+        requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=TRENDSHORT)     
     if (Close > ema_200[-2]) and (imbalance > 0.50) and (30 < rsi[-2] < 40):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend")
-        requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=BOUNCYLONG) 
+        requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=TRENDLONG) 
                
 while True:
   current_time = ti.time()

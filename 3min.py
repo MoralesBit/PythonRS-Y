@@ -126,24 +126,24 @@ def indicator(symbol):
    
     #Contra tendencia al 1%   
     if (diff > 1) and (Close < lowerband[-2]) and (imbalance < -0.25): 
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}") 
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}") 
         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
     if (diff > 1) and (Close > upperband[-2]) and (imbalance > 0.25):
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}")
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}")
         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
        
         
     #Tendencia:     
     if (imbalance < -0.60) and (60 < rsi_B[-2] < 70) or (40 < rsi_B[-2] < 50) and (imbalanceS < -0.6) and (adx[-2] < 40): 
       if (60 < rsi[-2] < 70) or (40 < rsi[-2] < 50) :
-        Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend" ) 
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close} \n⛳️ Trend" ) 
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=TRENDSHORT)
              
              
     if (imbalance > 0.60) and (30 < rsi_B[-2] < 40) or (50 < rsi_B[-2] < 60) and (imbalanceS > 0.6) and (adx[-2] < 40): 
       if (30 < rsi[-2] < 40) or (50 < rsi[-2] < 60):
-        Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend")
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close} \n⛳️ Trend")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=TRENDLONG)    
        
         
@@ -151,7 +151,7 @@ def indicator(symbol):
                
 while True:
   current_time = ti.time()
-  seconds_to_wait = 180 - current_time % 180
+  seconds_to_wait = 300 - current_time % 300
   ti.sleep(seconds_to_wait)   
   
   for symbol in symbols:

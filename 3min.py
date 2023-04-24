@@ -98,10 +98,10 @@ def indicator(symbol):
 }
    
     #Contra tendencia al 1%   
-    if (rsi[-2] >= 70) and (diff > 1) and (ask_sum[-1] > bid_sum[-1]):
+    if (rsi[-2] >= 70) and (diff > 1) and (ask_sum > bid_sum):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}") 
         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
-    if (rsi[-2] <= 30) and (diff > 1) and (ask_sum[-1] < bid_sum[-1]):
+    if (rsi[-2] <= 30) and (diff > 1) and (ask_sum < bid_sum):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}")
         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
         

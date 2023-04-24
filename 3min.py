@@ -11,12 +11,12 @@ Skey = ''
 
 client = Client(api_key=Pkey, api_secret=Skey)
 
-futures_info = client.futures_exchange_info()
+url = "https://fapi.binance.com/fapi/v1/exchangeInfo"
+response = requests.get(url)
+data = response.json()
 
-symbols = [
-    symbol['symbol'] for symbol in futures_info['symbols']
-    if symbol['status'] == "TRADING"
-  ]
+symbols = [symbol['symbol'] for symbol in data['symbols'] if symbol['status'] == "TRADING"]
+#symbols = ["BLZUSDT", "ARUSDT", "INJUSDT", "STORJUSDT","HNTUSDT", "ARPAUSDT"]
 
 def indicator(symbol):
   

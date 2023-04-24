@@ -153,11 +153,11 @@ def indicator(symbol):
     
   
 # TENDENCIA :
-  if (signal[-2] == 1) and (bid_sum > ask_sum):
+  if (signal[-2] == 1) and (bid_sum > ask_sum) and (rsi[-2] < 50):
       Tb.telegram_canal_prueba(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
       
-  if ((signal[-2] == -1)) and (ask_sum > bid_sum):
+  if ((signal[-2] == -1)) and (ask_sum > bid_sum) and (rsi[-2] > 50):
       Tb.telegram_canal_prueba(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
           
@@ -180,7 +180,7 @@ def indicator(symbol):
 while True:
   current_time = ti.time()
   seconds_to_wait = 300 - current_time % 300
-  ti.sleep(seconds_to_wait)   
+  #ti.sleep(seconds_to_wait)   
   
   for symbol in symbols:
       indicator(symbol)

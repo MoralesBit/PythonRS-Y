@@ -135,14 +135,14 @@ def indicator(symbol):
        
         
     #Tendencia:     
-    if (imbalance < -0.60) and (60 < rsi_B[-2] < 70) or (40 < rsi_B[-2] < 50) and (imbalanceS < -0.6) and (adx[-2] < 40): 
-      if (60 < rsi[-2] < 70) or (40 < rsi[-2] < 50) :
+    if (imbalance < -0.60) and (50 < rsi_B[-2] < 70) and (imbalanceS < -0.6) and (adx[-2] < 40): 
+      if (50 < rsi[-2] < 70):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close} \n⛳️ Trend" ) 
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=TRENDSHORT)
              
              
-    if (imbalance > 0.60) and (30 < rsi_B[-2] < 40) or (50 < rsi_B[-2] < 60) and (imbalanceS > 0.6) and (adx[-2] < 40): 
-      if (30 < rsi[-2] < 40) or (50 < rsi[-2] < 60):
+    if (imbalance > 0.60) and (30 < rsi_B[-2] < 50) and (imbalanceS > 0.6) and (adx[-2] < 40): 
+      if (30 < rsi[-2] < 50):
         Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close} \n⛳️ Trend")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=TRENDLONG)    
        

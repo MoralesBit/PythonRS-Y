@@ -13,7 +13,7 @@ import binance as Client
 Pkey = ''
 Skey = ''
 
-client = Client(api_key=Pkey, api_secret=Skey)
+#client = Client(api_key=Pkey, api_secret=Skey)
 
 url = "https://fapi.binance.com/fapi/v1/exchangeInfo"
 response = requests.get(url)

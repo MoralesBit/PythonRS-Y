@@ -1,19 +1,16 @@
-
-import requests
+from binance.client import Client
 import pandas as pd
-import numpy as np
 import talib as ta
 import Telegram_bot as Tb
-import schedule as schedule
+import  schedule as schedule
 import time as ti
-import json
-import binance as Client
-
+import requests
+import numpy as np
 
 Pkey = ''
 Skey = ''
 
-#client = Client(api_key=Pkey, api_secret=Skey)
+client = Client(api_key=Pkey, api_secret=Skey)
 
 url = "https://fapi.binance.com/fapi/v1/exchangeInfo"
 response = requests.get(url)
@@ -23,78 +20,73 @@ symbols = [symbol['symbol'] for symbol in data['symbols'] if symbol['status'] ==
 #symbols = ["BLZUSDT", "ARUSDT", "INJUSDT", "STORJUSDT","HNTUSDT", "ARPAUSDT"]
 
 def indicator(symbol):
-    
-  url = f'https://fapi.binance.com/fapi/v1/klines?symbol={symbol}&interval=5m&startTime=2 days ago UTC+1&limit=500'
-  response = requests.get(url).json()
-  df = pd.DataFrame(response, columns=['Open time', 'Open', 'High', 'Low', 'Close', 'Volume', 'Close time', 'Quote asset volume', 'Number of trades', 'Taker buy base asset volume', 'Taker buy quote asset volume', 'Ignore'])
-  df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
-  df = df.set_index('Open time')
+  
+  kline = client.futures_historical_klines(symbol, "5m", "20 hours ago UTC+1",limit=500)
+  df = pd.DataFrame(kline)
+  
   if not df.empty:
-
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'],
-                                                timeperiod=20,
-                                                nbdevup=2,
-                                                nbdevdn=2,
-                                                matype=0)
-    df['upperband'] = upperband
-    df['middleband'] = middleband
-    df['lowerband'] = lowerband
-       
-    df['rsi'] = ta.RSI(df["Close"], timeperiod=14)
+    df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close',
+      'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
+    df['Date'] = pd.to_datetime(df['Date'], unit='ms')
+    df = df.set_index('Date')
+    
+    rsi = ta.RSI(df["Close"], timeperiod=14)
     adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
-         
+    
     Close = float(df['Close'][-2])
-    Close_3 = float(df['Close'][-3])
-    Open = float(df['Open'][-2])
     High = float(df['High'][-2])
     Low = float(df['Low'][-2])
     diff = abs((High / Low -1) * 100)
-    rsi = df['rsi'][-2]
-        
-    df['EMA13'] = (df['Close'].ewm(13).mean())
-    df['EMA200'] = (df['Close'].ewm(200).mean())
-    df['EMA100'] = (df['Close'].ewm(100).mean())
-    df['ema_cross'] = np.where(df['EMA13'] > df['EMA100'], np.where(df['EMA13'][-1] <= df['EMA100'][-1],1,0), np.where(df['EMA13'][-1] >= df['EMA100'][-1], -1, 0))
     
-    ema_cross = df['ema_cross'][-2]
-     
+    # Calcular las EMAs de 13 días y 100 días
+    ema_13 = df['Close'].ewm(span=13, adjust=False).mean()
+    ema_100 = df['Close'].ewm(span=100, adjust=False).mean()
+    ema_200 = df['Close'].ewm(span=200, adjust=False).mean()
 
-    # Calcular los niveles Fibonacci
-    precio_high = float(max(df['Close']))
-    precio_low = float(min(df['Close']))
-    diff_precio = precio_high - precio_low
-    nivel_786 = precio_high - (0.786)*(diff_precio)
-    nivel_382 = precio_high - (0.382)*(diff_precio)
     
-    #imbalaance
+# Detectar el cruce de las EMAs y enviar una señal
+    signal = pd.Series(0, index=df.index)
+    for i in range(1, len(df)):
+            if (ema_13.iloc[i] > ema_100.iloc[i]) and (ema_13.iloc[i-1] <= ema_100.iloc[i-1]):
+                  signal.iloc[i] = 1
+            elif (ema_13.iloc[i] < ema_100.iloc[i]) and (ema_13.iloc[i-1] >= ema_100.iloc[i-1]):
+                  signal.iloc[i] = -1
+
+# Calcular el punto exacto del cruce
+    crossing_points = pd.Series(index=signal.index, dtype='float64')
+    for i in range(1, len(signal)):
+     if (signal.iloc[i] == 1) or (signal.iloc[i] == -1):
+        x0, x1 = ema_13.index[i-1], ema_13.index[i]
+        y0, y1 = ema_13.iloc[i-1], ema_13.iloc[i]
+        crossing_points.iloc[i] = x0 + (x1 - x0) * (y0 / (y0 - y1))
+    
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'],
+                                               timeperiod=20,
+                                               nbdevup=2,
+                                               nbdevdn=2,
+                                               matype=0)
     depth = 5
+    order_book = client.futures_order_book(symbol=symbol, limit=depth)
 
-    url = f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}'
-    response = requests.get(url).json()
-    if 'bids' in response:
-          bid_sum = sum([float(bid[1]) for bid in response['bids']])
-    else:
-      bid_sum = 0.0
-
-    if 'asks' in response:
-      ask_sum = sum([float(ask[1]) for ask in response['asks']])
-    else:
-      ask_sum = 0.0
-
+    bid_sum = sum([float(bid[1]) for bid in order_book['bids']])
+    ask_sum = sum([float(ask[1]) for ask in order_book['asks']])
+    max_bid = float(order_book['bids'][0][0])
+    max_ask = float(order_book['asks'][0][0])
+ 
     if bid_sum + ask_sum > 0:
-      imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
+     imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
     else:
-      imbalance = 0.0 
-  
-
-  # DATOS FNDY
+     imbalance = 0.0
+    
+    
+   # DATOS FNDY
   FISHINGSHORT = {
         "name": "FISHING SHORT",
         "secret": "azsdb9x719",
         "side": "sell",
         "symbol": symbol,
         "open": {
-        "price": Close
+        "price": ema_13[-2]
         }
         }
         
@@ -104,7 +96,7 @@ def indicator(symbol):
         "side": "buy",
         "symbol": symbol,
         "open": {
-        "price": Close
+        "price": ema_13[-2]
         }
         }
     
@@ -156,38 +148,40 @@ def indicator(symbol):
         "price": Close
         }
         }
+     
+  print(symbol)
+    
   
-  # TENDENCIA ALCISTA:
-  if (diff > 1) and (Close > upperband[-2]) and (imbalance >= 0.6) and (adx[-2] > 25):
-    Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {float(df['Close'][-2])}\nIMB : {round(imbalance,2)} \n(🎣 Fishing Pisha")
-    requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
-  elif (diff > 1) and (Close) > upperband[-2] and (rsi >= 70) and (imbalance <= -0.6): 
-    Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\nIMB : {round(imbalance,2)}")
-    requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
+# TENDENCIA :
+  if (signal[-2] == 1) and (bid_sum > ask_sum) and (rsi[-2] < 50):
+      Tb.telegram_canal_prueba(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
+      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
+      
+  if ((signal[-2] == -1)) and (ask_sum > bid_sum) and (rsi[-2] > 50):
+      Tb.telegram_canal_prueba(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
+      requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
+          
+#CONTRA TENDENCIA        
+  if (diff >= 1) and (Close >= upperband[-2]) and (rsi[-2] >= 80) and (ask_sum > bid_sum): 
+          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📉 RSI: {round(rsi[-2],2)}")
+          requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
+  
+  if (diff >= 1) and (Close <= lowerband[-2]) and (rsi[-2] <= 20) and (ask_sum < bid_sum): 
+          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📈 RSI: {round(rsi[-2],2)}")
+          requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CONTRALONG)  
+  
+  #if (signal[-2] == 1) and (imbalance > 0) and (adx[-2] > 25):
+        #Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)}")     
+        #requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
         
-        # TENDENCIA BAJISTA:
-  if (diff > 1) and (Close < lowerband[-2]) and (imbalance <= -0.6) and (adx[-2] > 25):
-    Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)} \n🎣 Fishing Pisha")
-    requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
-  elif (diff > 1) and (Close < lowerband[-2]) and (rsi <= 30) and (imbalance >= 0.6): 
-    Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\nIMB : {round(imbalance,2)}")
-    requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CONTRALONG)   
-        
-    #Cruce de EMAS + FIBO:
-       
-  if (ema_cross == 1) and (imbalance >  0.6):
-    Tb.telegram_canal_prueba(f"🐬 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)} \n🐬 Delfin")  
-    requests.post('https://hook.finandy.com/9nQNB3NdMGaoK-xWqVUK', json=DELFINLONG) 
-        
-  if (ema_cross == -1) and (imbalance <  -0.6):
-    Tb.telegram_canal_prueba(f"🐬 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)} \n🐬 Delfin")
-                  
+  #if ((signal[-2] == -1)) and (imbalance < 0) and ((adx[-2] > 25)):
+         #Tb.telegram_canal_prueba(f"EMA normal {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\nIMB : {round(imbalance,2)}") 
+                
 while True:
-  # Espera hasta que sea el comienzo de una nueva hora
   current_time = ti.time()
   seconds_to_wait = 300 - current_time % 300
   ti.sleep(seconds_to_wait)   
   
   for symbol in symbols:
-    indicator(symbol)
-    print(symbol)
+      indicator(symbol)
+      

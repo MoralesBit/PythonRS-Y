@@ -118,12 +118,12 @@ def indicator(symbol):
        
         
     #Tendencia:     
-    if (cciB[-2] < -30) and (imbalance < -0.50):
+    if (cciB[-3] > cciB[-2] < -30) and (imbalance < -0.50):
       if (60 < rsi[-2] < 70) or (40 < rsi[-2] < 50):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend" ) 
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=TRENDSHORT)
         ti.sleep(0.1)      
-    if (cciB[-2] > 30) and (imbalance > 0.50): 
+    if (cciB[-3] < cciB[-2] > 30) and (imbalance > 0.50): 
       if (30 < rsi[-2] < 40) or (50 < rsi[-2] < 60):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=TRENDLONG) 

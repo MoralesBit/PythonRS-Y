@@ -59,7 +59,7 @@ def indicator(symbol):
     else:
      imbalance = 0.0
      
-    info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
+    info = client.futures_historical_klines("BTCUSDT", "3m", "12 hours ago UTC+1",limit=500) 
     df_new = pd.DataFrame(info)
        
     if not df_new.empty:

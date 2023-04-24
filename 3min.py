@@ -44,7 +44,7 @@ def indicator(symbol):
     #                                           nbdevdn=2,
     #                                           matype=0)
     depth = 5
-    order_book = client.futures_order_book(symbol=symbol, limit=depth)
+    order_book = client.futures_order_book(symbol="BTCUSDT", limit=depth)
 
     bid_sum = sum([float(bid[1]) for bid in order_book['bids']])
     ask_sum = sum([float(ask[1]) for ask in order_book['asks']])
@@ -135,7 +135,7 @@ def indicator(symbol):
 while True:
   current_time = ti.time()
   seconds_to_wait = 180 - current_time % 180
-  #ti.sleep(seconds_to_wait)   
+  ti.sleep(seconds_to_wait)   
   
   for symbol in symbols:
       indicator(symbol)

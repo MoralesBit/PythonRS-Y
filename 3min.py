@@ -108,18 +108,20 @@ def indicator(symbol):
 }
    
     #Contra tendencia al 1%   
-    if (rsi[-2] >= 80) and (diff > 1) and (ask_sum > bid_sum) and (adx[-2] >= 40):
+    if (rsi[-2] >= 80) and (diff > 1) and (ask_sum > bid_sum) and (adx[-2] >= 30):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}") 
         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
-    if (rsi[-2] <= 20) and (diff > 1) and (ask_sum < bid_sum) and (adx[-2] <= 20):
+    if (rsi[-2] <= 20) and (diff > 1) and (ask_sum < bid_sum) and (adx[-2] <= 30):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}")
         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
         
     #Tendencia:     
-    if (cciB[-2] < 0) and (imbalance < -0.50) and (60 < rsi[-2] < 70):
+    if (cciB[-2] < 0) and (imbalance < -0.50):
+      if (60 < rsi[-2] < 70) or (40 < rsi[-2] < 50):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend" ) 
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=TRENDSHORT)     
-    if (cciB[-2] > 0) and (imbalance > 0.50) and (30 < rsi[-2] < 40):
+    if (cciB[-2] > 0) and (imbalance > 0.50): 
+      if (30 < rsi[-2] < 40) or (50 < rsi[-2] < 60):
         Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=TRENDLONG) 
                

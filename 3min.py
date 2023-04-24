@@ -36,13 +36,13 @@ def indicator(symbol):
     diff = abs((High / Low -1) * 100)
     cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
     #ema_200 = df['Close'].ewm(span=200, adjust=False).mean()
-    #adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+    adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
     
-    #upperband, middleband, lowerband = ta.BBANDS(df['Close'],
-    #                                           timeperiod=20,
-    #                                           nbdevup=2,
-    #                                           nbdevdn=2,
-    #                                           matype=0)
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'],
+                                               timeperiod=20,
+                                               nbdevup=2,
+                                               nbdevdn=2,
+                                               matype=0)
     depth = 5
     order_book = client.futures_order_book(symbol=symbol, limit=depth)
 
@@ -125,25 +125,25 @@ def indicator(symbol):
 }
    
     #Contra tendencia al 1%   
-    if (diff > 1) and (ask_sum > bid_sum) and (imbalance < 0):
-        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}") 
+    if (diff > 1) and (Close < lowerband[-2]) and (imbalance < -0.25): 
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}") 
         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
-    if (diff > 1) and (ask_sum < bid_sum) and (imbalance > 0):
-        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}")
+    if (diff > 1) and (Close > upperband[-2]) and (imbalance > 0.25):
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}")
         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
        
         
     #Tendencia:     
-    if (imbalance < -0.60) and (60 < rsi_B[-2] < 70) or (40 < rsi_B[-2] < 50): 
-      if (60 < rsi[-2] < 70) or (40 < rsi[-2] < 50) and (imbalanceS < -0.6):
-        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend" ) 
+    if (imbalance < -0.60) and (60 < rsi_B[-2] < 70) or (40 < rsi_B[-2] < 50) and (imbalanceS < -0.6) and (adx[-2] < 40): 
+      if (60 < rsi[-2] < 70) or (40 < rsi[-2] < 50) :
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend" ) 
         requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=TRENDSHORT)
              
              
-    if (imbalance > 0.60) and (30 < rsi_B[-2] < 40) or (50 < rsi_B[-2] < 60): 
-      if (30 < rsi[-2] < 40) or (50 < rsi[-2] < 60) and (imbalanceS > 0.6):
-        Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend")
+    if (imbalance > 0.60) and (30 < rsi_B[-2] < 40) or (50 < rsi_B[-2] < 60) and (imbalanceS > 0.6) and (adx[-2] < 40): 
+      if (30 < rsi[-2] < 40) or (50 < rsi[-2] < 60):
+        Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min\n💵 Precio: {Close} \n⛳️ Trend")
         requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=TRENDLONG)    
        
         

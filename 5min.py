@@ -163,11 +163,11 @@ def indicator(symbol):
           
 #CONTRA TENDENCIA        
   if (diff >= 1) and (Close >= upperband[-2]) and (rsi[-2] >= 80) and (ask_sum > bid_sum): 
-          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📉 RSI: {rsi[-2]}")
+          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📉 RSI: {round(rsi[-2],2)}")
           requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=CONTRASHORT)   
   
   if (diff >= 1) and (Close <= lowerband[-2]) and (rsi[-2] <= 20) and (ask_sum < bid_sum): 
-          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📈 RSI: {rsi[-2]}")
+          Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📈 RSI: {round(rsi[-2],2)}")
           requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=CONTRALONG)  
   
   #if (signal[-2] == 1) and (imbalance > 0) and (adx[-2] > 25):

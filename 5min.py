@@ -154,11 +154,11 @@ def indicator(symbol):
   
 # TENDENCIA :
   if (signal[-2] == 1) and (bid_sum > ask_sum):
-      Tb.telegram_canal_prueba(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio in: {round(ema_13[-2],2)}\n🎣 Fishing Pisha")
+      Tb.telegram_canal_prueba(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
       
   if ((signal[-2] == -1)) and (ask_sum > bid_sum):
-      Tb.telegram_canal_prueba(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio in: {round(ema_13[-2],2)}\n🎣 Fishing Pisha")
+      Tb.telegram_canal_prueba(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
           
 #CONTRA TENDENCIA        

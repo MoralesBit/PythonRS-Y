@@ -83,15 +83,27 @@ def indicator(symbol):
     
     #noro strategy
     ma = ta.SMA(df['Close'], timeperiod=3)
-    long = ma + ((ma / 100) *(-1))
-    short = ma + ((ma / 100) *(1))
+    long = ma + ((ma / 100) *(-0.75))
+    short = ma + ((ma / 100) *(0.75))
        
     # Enviar la solicitud a la API pública de Binance
     response = requests.get(f'https://fapi.binance.com/fapi/v1/ticker/24hr?symbol={symbol}')
 
 # Obtener el volumen de negociación de las últimas 24 horas
     volume = float(response.json()['volume'])
-                  
+    
+    depth = 5
+    order_book = client.futures_order_book(symbol=symbol, limit=depth)
+
+    bid_sum = sum([float(bid[1]) for bid in order_book['bids']])
+    ask_sum = sum([float(ask[1]) for ask in order_book['asks']])
+    max_bid = float(order_book['bids'][0][0])
+    max_ask = float(order_book['asks'][0][0])
+ 
+    if bid_sum + ask_sum > 0:
+     imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
+    else:
+     imbalance = 0.0              
    # DATOS FNDY
   FISHINGSHORT = {
         "name": "FISHING SHORT",
@@ -119,11 +131,11 @@ def indicator(symbol):
   
 # TENDENCIA :
   
-  if (ema_200[-2] < Close) and (Close <= long[-2]):
+  if (ema_200[-2] < Close) and (Close <= long[-2]) and (imbalance > 0.6):
       Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 15 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
          
-  if (ema_200[-2] > Close) and (Close >= short[-2]):
+  if (ema_200[-2] > Close) and (Close >= short[-2]) and (imbalance < -0.6):
       Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 15 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
           

@@ -36,10 +36,18 @@ def indicator(symbol):
       close_prices = np.asarray([float(entry[4]) for entry in klines])
       # Calcular el CCI con la fórmula directa
       typical_prices = (close_prices + close_prices + close_prices) / 3
-      ma = ta.SMA(typical_prices, timeperiod=20)
-      deviation = ta.STDDEV(typical_prices, timeperiod=20, nbdev=1)
+      ma = ta.SMA(typical_prices, timeperiod=28)
+      deviation = ta.STDDEV(typical_prices, timeperiod=28, nbdev=1)
       cci_new = (typical_prices - ma) / (0.015 * deviation)
-      cci_20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
+      cci_20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
+      ema_200 = df['Close'].ewm(span=200, adjust=False).mean()
+      adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+      
+# Enviar la solicitud a la API pública de Binance
+      response = requests.get(f'https://fapi.binance.com/fapi/v1/ticker/24hr?symbol={symbol}')
+
+# Obtener el volumen de negociación de las últimas 24 horas
+      volume = float(response.json()['volume'])
       
     
    # DATOS FNDY
@@ -68,12 +76,12 @@ def indicator(symbol):
     
   
 # TENDENCIA :
-  if (cci_20[-2] >= cci_new[-2]):
-      Tb.telegram_canal_prueba(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
+  if (ema_200[-2] < Close) and (cci_20[-2] >= cci_new[-2]) and (adx[-2] <= 20):
+      Tb.telegram_canal_prueba(f"🎣 {symbol}\n🟢 LONG\n⏳ 15 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
       
-  if (cci_20[-2] <= cci_new[-2]):
-      Tb.telegram_canal_prueba(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
+  if (ema_200[-2] > Close) and (cci_20[-2] <= cci_new[-2]) and (adx[-2] > 40):
+      Tb.telegram_canal_prueba(f"🎣 {symbol}\n🔴 SHORT\n⏳ 15 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
           
 

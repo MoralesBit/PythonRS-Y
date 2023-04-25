@@ -131,18 +131,18 @@ def indicator(symbol):
       
     #Noro strategy:
     if Close <= long[-2]:
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n Volumen:{round(volume,2)}\n 📍 Picker")     
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n Volumen:{round(volume,2)}\n 📍 Picker")     
     if Close >= short[-2]:
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n Volumen:{round(volume,2)}\n 📍 Picker") 
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n Volumen:{round(volume,2)}\n 📍 Picker") 
       
       
     #Contra tendencia al 1%   
     if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] > 70) and (slowk[-3] < slowd[-3]) and (slowk[-2] > slowd[-2] >= 80):
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n fi: {fi[-2]} \n Volumen:{round(volume,2)}") 
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n fi: {fi[-2]} \n Volumen:{round(volume,2)}") 
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
     if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] < 30) and (slowk[-3] < slowd[-3]) and (slowk[-2] < slowd[-2] >= 20):
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n fi: {fi[-2]} \n Volumen:{round(volume,2)}")
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n fi: {fi[-2]} \n Volumen:{round(volume,2)}")
         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
                
 while True:

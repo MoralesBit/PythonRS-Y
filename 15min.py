@@ -21,7 +21,7 @@ symbols = [symbol['symbol'] for symbol in data['symbols'] if symbol['status'] ==
 
 def indicator(symbol):
       
-  kline = client.futures_historical_klines(symbol, "3m", "24 hours ago UTC+1",limit=500)
+  kline = client.futures_historical_klines(symbol, "15m", "24 hours ago UTC+1",limit=500)
   df = pd.DataFrame(kline)
   
   if not df.empty:
@@ -131,11 +131,11 @@ def indicator(symbol):
   
 # TENDENCIA :
   
-  if (ema_200[-2] < Close) and (Close <= long[-2]) and (imbalance > 0.6):
+  if (ema_200[-2] < Close) and (Close <= long[-2]):
       Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 15 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
          
-  if (ema_200[-2] > Close) and (Close >= short[-2]) and (imbalance < -0.6):
+  if (ema_200[-2] > Close) and (Close >= short[-2]):
       Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 15 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
           

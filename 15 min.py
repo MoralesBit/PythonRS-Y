@@ -79,8 +79,8 @@ def indicator(symbol):
 
 while True:
   current_time = ti.time()
-  seconds_to_wait = 300 - current_time % 300
-  #ti.sleep(seconds_to_wait)   
+  seconds_to_wait = 900 - current_time % 900
+  ti.sleep(seconds_to_wait)   
   
   for symbol in symbols:
       indicator(symbol)

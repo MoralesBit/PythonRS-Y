@@ -142,22 +142,33 @@ def indicator(symbol):
     "price": Close
   }
 }
+  CARLOSSHORT = {
+  "name": "Hook 200276",
+  "secret": "gwbzsussxu5",
+  "side": "sell",
+  "symbol": symbol,
+  "open": {
+    "price": Close
+  }
+}
+  
       
     #Noro strategy:
-    if Close <= long[-2]:
+  if Close <= long[-2]:
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n 📍 Picker: {round(imbalance,2)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)    
-    if Close >= short[-2]:
+  if Close >= short[-2]:
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n 📍 Picker: {round(imbalance,2)}")
-      requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)  
+      requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
+      requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT)   
       
       
     #Contra tendencia al 1%   
-    if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] > 70) and (slowk[-3] < slowd[-3]) and (slowk[-2] > slowd[-2] >= 80):
+  if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] > 70) and (slowk[-3] < slowd[-3]) and (slowk[-2] > slowd[-2] >= 80):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n fi: {fi[-2]}") 
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
-    if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] < 30) and (slowk[-3] < slowd[-3]) and (slowk[-2] < slowd[-2] >= 20):
+  if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] < 30) and (slowk[-3] < slowd[-3]) and (slowk[-2] < slowd[-2] >= 20):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n fi: {fi[-2]}")
       requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
                

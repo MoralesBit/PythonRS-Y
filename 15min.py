@@ -131,11 +131,11 @@ def indicator(symbol):
   
 # TENDENCIA :
   
-  if (ema_200[-2] < Close) and (Close <= long[-2]):
+  if (ema_200[-2] < Close) and (Close <= long[-2]) and (rsi[-2] <= 30):
       Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 15 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
          
-  if (ema_200[-2] > Close) and (Close >= short[-2]):
+  if (ema_200[-2] > Close) and (Close >= short[-2]) and (rsi[-2] >= 70):
       Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 15 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
           
@@ -143,7 +143,7 @@ def indicator(symbol):
 while True:
   current_time = ti.time()
   seconds_to_wait = 900 - current_time % 900
-  #ti.sleep(seconds_to_wait)   
+  ti.sleep(seconds_to_wait)   
   
   for symbol in symbols:
       indicator(symbol)

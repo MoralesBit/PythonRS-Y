@@ -69,7 +69,7 @@ def indicator(symbol):
                   df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
                   df_new = df_new.set_index('Date')
                   ema_200_new = df_new['Close'].ewm(span=200, adjust=False).mean()
-                  Close_new = df_new['Close'].astype(float)
+                  Close_new = float(df_new['Close'][-2])
                   
                   
    # DATOS FNDY

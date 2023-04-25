@@ -110,8 +110,8 @@ def indicator(symbol):
     }
     }
     
-    TRENDSHORT= {
-  "name": "TREND SHORT",
+    PICKERSHORT= {
+  "name": "PICKER SHORT",
   "secret": "hgw3399vhh",
   "side": "sell",
   "symbol": symbol,
@@ -119,8 +119,8 @@ def indicator(symbol):
     "price": Close
   }
 }
-    TRENDLONG= {
-  "name": "TREND LONG",
+    PICKERLONG = {
+  "name": "PICKER LONG",
   "secret": "xjth0i3qgb",
   "side": "buy",
   "symbol": symbol,
@@ -131,9 +131,11 @@ def indicator(symbol):
       
     #Noro strategy:
     if Close <= long[-2]:
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n 📍 Picker")     
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n 📍 Picker") 
+      requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)    
     if Close >= short[-2]:
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n 📍 Picker") 
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n 📍 Picker")
+      requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)  
       
       
     #Contra tendencia al 1%   
@@ -142,8 +144,8 @@ def indicator(symbol):
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
     if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] < 30) and (slowk[-3] < slowd[-3]) and (slowk[-2] < slowd[-2] >= 20):
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n fi: {fi[-2]}")
-        requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n fi: {fi[-2]}")
+      requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
                
 while True:
   current_time = ti.time()

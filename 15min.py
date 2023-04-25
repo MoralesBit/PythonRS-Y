@@ -60,7 +60,18 @@ def indicator(symbol):
             imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
       else:
             imbalance = 0.0
-    
+      klines = client.futures_historical_klines("BTCUSDT", "15m", "24 hours ago UTC+1",limit=500)
+      df_new = pd.DataFrame(klines)
+  
+      if not df_new.empty:
+                  df_new.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close',
+                  'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
+                  df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
+                  df_new = df_new.set_index('Date')
+                  ema_200_new = df_new['Close'].ewm(span=200, adjust=False).mean()
+                  Close_new = df_new['Close'].astype(float)
+                  
+                  
    # DATOS FNDY
   FISHINGSHORT = {
         "name": "FISHING SHORT",
@@ -88,13 +99,14 @@ def indicator(symbol):
     
   
 # TENDENCIA :
-  if (ema_200[-2] < Close) and (cci_20[-2] >= cci_new[-2]) and (imbalance > 0.6):
-      Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 15 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
-      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
-      
-  if (ema_200[-2] > Close) and (cci_20[-2] <= cci_new[-2]) and (imbalance < -0.6):
-      Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 15 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
-      requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
+  if (Close_new > ema_200_new[-2]):
+      if (ema_200[-2] < Close) and (cci_20[-2] >= cci_new[-2]) and (imbalance > 0.6):
+            Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 15 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
+            requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
+  if (Close_new < ema_200_new[-2]):    
+      if (ema_200[-2] > Close) and (cci_20[-2] <= cci_new[-2]) and (imbalance < -0.6):
+            Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 15 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
+            requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
           
 
 while True:

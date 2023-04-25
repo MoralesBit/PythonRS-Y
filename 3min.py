@@ -91,6 +91,20 @@ def indicator(symbol):
 # Obtener el volumen de negociación de las últimas 24 horas
     volume = float(response.json()['volume'])
     
+    depth = 5
+    order_book = client.futures_order_book(symbol=symbol, limit=depth)
+
+    bid_sum = sum([float(bid[1]) for bid in order_book['bids']])
+    ask_sum = sum([float(ask[1]) for ask in order_book['asks']])
+    max_bid = float(order_book['bids'][0][0])
+    max_ask = float(order_book['asks'][0][0])
+ 
+    if bid_sum + ask_sum > 0:
+     imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
+    else:
+     imbalance = 0.0
+    
+    
     PORSHORT = {
     "name": "CORTO 3POR",
     "secret": "ao2cgree8fp",
@@ -131,10 +145,10 @@ def indicator(symbol):
       
     #Noro strategy:
     if Close <= long[-2]:
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n 📍 Picker") 
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n 📍 Picker: {round(imbalance,2)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)    
     if Close >= short[-2]:
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n 📍 Picker")
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n 📍 Picker: {round(imbalance,2)}")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)  
       
       

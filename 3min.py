@@ -20,7 +20,7 @@ symbols = [
 
 def indicator(symbol):
   
-  kline = client.futures_historical_klines(symbol, "5m", "24 hours ago UTC+1",limit=500)
+  kline = client.futures_historical_klines(symbol, "3m", "24 hours ago UTC+1",limit=500)
   df = pd.DataFrame(kline)
   
   if not df.empty:
@@ -34,57 +34,58 @@ def indicator(symbol):
     High = float(df['High'][-2])
     Low = float(df['Low'][-2])
     diff = abs((High / Low -1) * 100)
-    cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
+    #cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
     #ema_200 = df['Close'].ewm(span=200, adjust=False).mean()
-    adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+    #adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+    ad = ta.AD(df['High'], df['Low'], df['Close'], df['Volume'])
+    df['Close'] = df['Close'].astype(float)
+    delta = df['Close'].diff()
+    fi = delta * ad
+    #macd, signal, hist = ta.MACD(df['Close'], fastperiod=12, slowperiod=26, signalperiod=9)
+    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+   
+    
     
     upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                timeperiod=20,
                                                nbdevup=2,
                                                nbdevdn=2,
                                                matype=0)
-    depth = 5
-    order_book = client.futures_order_book(symbol=symbol, limit=depth)
+    #depth = 5
+    #order_book = client.futures_order_book(symbol=symbol, limit=depth)
 
-    bid_sum = sum([float(bid[1]) for bid in order_book['bids']])
-    ask_sum = sum([float(ask[1]) for ask in order_book['asks']])
-    max_bid = float(order_book['bids'][0][0])
-    max_ask = float(order_book['asks'][0][0])
+    #bid_sum = sum([float(bid[1]) for bid in order_book['bids']])
+    #ask_sum = sum([float(ask[1]) for ask in order_book['asks']])
+    #max_bid = float(order_book['bids'][0][0])
+    #max_ask = float(order_book['asks'][0][0])
  
-    if bid_sum + ask_sum > 0:
-     imbalanceS = (ask_sum - bid_sum) / (bid_sum + ask_sum)
-    else:
-     imbalanceS = 0.0
+    #if bid_sum + ask_sum > 0:
+     #imbalanceS = (ask_sum - bid_sum) / (bid_sum + ask_sum)
+    #else:
+     #imbalanceS = 0.0
     
-    depth = 5
-    order_book = client.futures_order_book(symbol="BTCUSDT", limit=depth)
+    #depth = 5
+    #order_book = client.futures_order_book(symbol=symbol, limit=depth)
 
-    bid_sum = sum([float(bid[1]) for bid in order_book['bids']])
-    ask_sum = sum([float(ask[1]) for ask in order_book['asks']])
+    #bid_sum = sum([float(bid[1]) for bid in order_book['bids']])
+    #ask_sum = sum([float(ask[1]) for ask in order_book['asks']])
     #max_bid = float(order_book['bids'][0][0])
     #max_ask = float(order_book['asks'][0][0])
     #mean_price = (max_ask + max_bid )/2
     #spread = max_ask - max_bid  # Calcula el spread
     #spread_por = ((max_ask - max_bid ) /mean_price)*100
  
-    if bid_sum + ask_sum > 0:
-     imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
-    else:
-     imbalance = 0.0
-     
-    info = client.futures_historical_klines("BTCUSDT", "5m", "24 hours ago UTC+1",limit=500) 
-    df_new = pd.DataFrame(info)
+    #if bid_sum + ask_sum > 0:
+    # imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
+    #else:
+    # imbalance = 0.0
+    
+    #noro strategy
+    ma = ta.SMA(df['Close'], timeperiod=3)
+    long = ma + ((ma / 100) *(-1))
+    short = ma + ((ma / 100) *(1))
        
-    if not df_new.empty:
-        df_new.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
-      'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
-    df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
-    df_new = df_new.set_index('Date')
-
-    cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=20)
-    ema_200B = df_new['Close'].ewm(span=200, adjust=False).mean()
-    Close_B = float(df_new['Close'][-2])
-    rsi_B = ta.RSI(df_new["Close"], timeperiod=14)
+    
     
     PORSHORT = {
     "name": "CORTO 3POR",
@@ -123,35 +124,26 @@ def indicator(symbol):
     "price": Close
   }
 }
-   
+      
+    #Noro strategy:
+    if Close <= long[-2]:
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker")     
+    if Close >= short[-2]:
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker") 
+      
+      
     #Contra tendencia al 1%   
-    if (diff > 1) and (Close < lowerband[-2]) and (imbalance < -0.25): 
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}") 
-        requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
+    if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] > 70) and (slowk[-3] < slowd[-3]) and (slowk[-2] > slowd[-2] >= 80):
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n fi: {fi[-2]}") 
+      requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
-    if (diff > 1) and (Close > upperband[-2]) and (imbalance > 0.25):
-        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}")
+    if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] < 30) and (slowk[-3] < slowd[-3]) and (slowk[-2] < slowd[-2] >= 20):
+        Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n fi: {fi[-2]}")
         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
-       
-        
-    #Tendencia:     
-    if (imbalance < -0.60) and (50 < rsi_B[-2] < 70) and (imbalanceS < -0.6) and (adx[-2] < 40): 
-      if (50 < rsi[-2] < 70):
-        Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close} \n⛳️ Trend" ) 
-        requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=TRENDSHORT)
-             
-             
-    if (imbalance > 0.60) and (30 < rsi_B[-2] < 50) and (imbalanceS > 0.6) and (adx[-2] < 40): 
-      if (30 < rsi[-2] < 50):
-        Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close} \n⛳️ Trend")
-        requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=TRENDLONG)    
-       
-        
-       
                
 while True:
   current_time = ti.time()
-  seconds_to_wait = 300 - current_time % 300
+  seconds_to_wait = 180 - current_time % 180
   ti.sleep(seconds_to_wait)   
   
   for symbol in symbols:

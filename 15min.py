@@ -88,11 +88,11 @@ def indicator(symbol):
     
   
 # TENDENCIA :
-  if (ema_200[-2] < Close) and (cci_20[-2] >= cci_new[-2]) and (imbalance > 0.25):
+  if (ema_200[-2] < Close) and (cci_20[-2] >= cci_new[-2]) and (imbalance > 0.6):
       Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 15 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
       
-  if (ema_200[-2] > Close) and (cci_20[-2] <= cci_new[-2]) and (imbalance < -0.25):
+  if (ema_200[-2] > Close) and (cci_20[-2] <= cci_new[-2]) and (imbalance < -0.6):
       Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 15 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
           

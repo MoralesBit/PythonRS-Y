@@ -83,8 +83,8 @@ def indicator(symbol):
     
     #noro strategy
     ma = ta.SMA(df['Close'], timeperiod=3)
-    long = ma + ((ma / 100) *(-0.75))
-    short = ma + ((ma / 100) *(0.75))
+    long = ma + ((ma / 100) *(-1))
+    short = ma + ((ma / 100) *(1))
        
     # Enviar la solicitud a la API pública de Binance
     response = requests.get(f'https://fapi.binance.com/fapi/v1/ticker/24hr?symbol={symbol}')
@@ -143,7 +143,7 @@ def indicator(symbol):
 while True:
   current_time = ti.time()
   seconds_to_wait = 900 - current_time % 900
-  ti.sleep(seconds_to_wait)   
+  #ti.sleep(seconds_to_wait)   
   
   for symbol in symbols:
       indicator(symbol)

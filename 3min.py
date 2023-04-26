@@ -74,7 +74,7 @@ def indicator(symbol):
     }
     }
     
-    PICKERSHORT= {
+  PICKERSHORT= {
   "name": "PICKER SHORT",
   "secret": "hgw3399vhh",
   "side": "sell",
@@ -83,7 +83,7 @@ def indicator(symbol):
     "price": enter
   }
 }
-    PICKERLONG = {
+  PICKERLONG = {
   "name": "PICKER LONG",
   "secret": "xjth0i3qgb",
   "side": "buy",
@@ -115,7 +115,7 @@ def indicator(symbol):
 
   FASTERSHORT = {
   "name": "FASTER SHORT",
-  "secret": "azsdb9x719",
+  "secret": "w48ulz23f6",
   "side": "sell",
   "symbol": symbol,
   "open": {
@@ -124,21 +124,21 @@ def indicator(symbol):
 }
       
 #    Noro strategy:
-  if (Close <= long[-2]) and (rsi[-2] > 20):
+  if (Close < long[-2]) and (rsi[-2] > 20):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
    
-  if ((Close >= short[-2]) and (rsi[-2] < 80)):
+  if ((Close > short[-2]) and (rsi[-2] < 80)):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
       requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
       
 # Tendencia
-  if  (Close <= long[-2]) and (rsi[-1] < 20):      
+  if  (Close < long[-2]) and (rsi[-1] < 20):      
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄🏻 FASTER")
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=FASTERSHORT)
       
-  if (Close >= short[-2]) and (rsi[-1] > 80):  
+  if (Close > short[-2]) and (rsi[-1] > 80):  
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄‍♂️ FASTER") 
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
          

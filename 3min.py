@@ -153,25 +153,51 @@ def indicator(symbol):
     "price": enter
   }
 }
-  
+
+  FASTERLONG = {
+  "name": "FASTER LONG",
+  "secret": "xxuxkqf0gpj",
+  "side": "buy",
+  "symbol": symbol,
+  "open": {
+    "price": enter
+  }
+}  
+
+
+  FASTERSHORT = {
+  "name": "FASTER SHORT",
+  "secret": "w48ulz23f6",
+  "side": "sell",
+  "symbol": symbol,
+  "open": {
+    "price": enter
+  }
+}
       
     #Noro strategy:
-  if ((Close <= long[-2]) and (rsi[-2] > 20)) or ((Close >= short[-2]) and (rsi[-2] > 80)):
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n fi: {fi[-2]} \n📍 Picker: {round(imbalance,2)}") 
-      requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)    
-  if ((Close >= short[-2]) and (rsi[-2] < 80)) or (((Close <= long[-2]) and (rsi[-2] < 20))):
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n fi: {fi[-2]} \n📍 Picker: {round(imbalance,2)}")
+  if (Close <= long[-2]) and (rsi[-2] > 20):
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(imbalance,2)}") 
+      requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
+  if (Close >= short[-2]) and (rsi[-2] > 80):  
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄‍♂️ FASTER: {round(imbalance,2)}") 
+      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
+  
+  if ((Close >= short[-2]) and (rsi[-2] < 80)):
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(imbalance,2)}")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
-      requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT)   
-      
+      requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
+  if  (Close <= long[-2]) and (rsi[-2] < 20):      
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄🏻 FASTER: {round(imbalance,2)}")
+      requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=FASTERSHORT)
       
     #Contra tendencia al 1%   
   if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] > 70) (slowk[-2] > slowd[-2] >= 80):
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n fi: {fi[-2]}") 
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}") 
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
   if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] < 30) and (slowk[-2] < slowd[-2] <= 20):
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close} \n fi: {fi[-2]}")
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}")
       requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
                
 while True:

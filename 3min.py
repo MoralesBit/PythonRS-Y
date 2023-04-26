@@ -34,14 +34,7 @@ def indicator(symbol):
     High = float(df['High'][-2])
     Low = float(df['Low'][-2])
     diff = abs((High / Low -1) * 100)
-#    cci20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
-#    ema_200 = df['Close'].ewm(span=200, adjust=False).mean()
-#    adx = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
-#    ad = ta.AD(df['High'], df['Low'], df['Close'], df['Volume'])
-#    df['Close'] = df['Close'].astype(float)
-#    delta = df['Close'].diff()
-#    fi = delta * ad
-    #macd, signal, hist = ta.MACD(df['Close'], fastperiod=12, slowperiod=26, signalperiod=9)
+
     slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
    
     
@@ -51,58 +44,13 @@ def indicator(symbol):
                                                nbdevup=2,
                                                nbdevdn=2,
                                                matype=0)
-    #depth = 5
-    #order_book = client.futures_order_book(symbol=symbol, limit=depth)
-
-    #bid_sum = sum([float(bid[1]) for bid in order_book['bids']])
-    #ask_sum = sum([float(ask[1]) for ask in order_book['asks']])
-    #max_bid = float(order_book['bids'][0][0])
-    #max_ask = float(order_book['asks'][0][0])
- 
-    #if bid_sum + ask_sum > 0:
-     #imbalanceS = (ask_sum - bid_sum) / (bid_sum + ask_sum)
-    #else:
-     #imbalanceS = 0.0
-    
-    #depth = 5
-    #order_book = client.futures_order_book(symbol=symbol, limit=depth)
-
-    #bid_sum = sum([float(bid[1]) for bid in order_book['bids']])
-    #ask_sum = sum([float(ask[1]) for ask in order_book['asks']])
-    #max_bid = float(order_book['bids'][0][0])
-    #max_ask = float(order_book['asks'][0][0])
-    #mean_price = (max_ask + max_bid )/2
-    #spread = max_ask - max_bid  # Calcula el spread
-    #spread_por = ((max_ask - max_bid ) /mean_price)*100
- 
-    #if bid_sum + ask_sum > 0:
-    # imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
-    #else:
-    # imbalance = 0.0
+   
     
     #noro strategy
     ma = ta.SMA(df['Close'], timeperiod=3)
     long = ma + ((ma / 100) *(-1))
     short = ma + ((ma / 100) *(1))
        
-#    # Enviar la solicitud a la API pública de Binance
-#    response = requests.get(f'https://fapi.binance.com/fapi/v1/ticker/24hr?symbol={symbol}')
-
-# Obtener el volumen de negociación de las últimas 24 horas
-#    volume = float(response.json()['volume'])
-#    
-#    depth = 5
-#    order_book = client.futures_order_book(symbol=symbol, limit=depth)
-#
-#    bid_sum = sum([float(bid[1]) for bid in order_book['bids']])
-#    ask_sum = sum([float(ask[1]) for ask in order_book['asks']])
-#    max_bid = float(order_book['bids'][0][0])
-#    max_ask = float(order_book['asks'][0][0])
-# 
-#    if bid_sum + ask_sum > 0:
-#     imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
-#    else:
-#     imbalance = 0.0
     
     enter = Close*(0.97)
     
@@ -175,23 +123,26 @@ def indicator(symbol):
   }
 }
       
-    #Noro strategy:
+#    Noro strategy:
   if (Close <= long[-2]) and (rsi[-2] > 20):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
-  if (Close >= short[-2]) and (rsi[-2] > 80):  
-      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄‍♂️ FASTER") 
-      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
-  
+   
   if ((Close >= short[-2]) and (rsi[-2] < 80)):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
       requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
+      
+# Tendencia
   if  (Close <= long[-2]) and (rsi[-2] < 20):      
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄🏻 FASTER")
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=FASTERSHORT)
       
-    #Contra tendencia al 1%   
+  if (Close >= short[-2]) and (rsi[-2] > 80):  
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄‍♂️ FASTER") 
+      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
+         
+# Contra tendencia al 1%   
   if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] > 70) (slowk[-2] > slowd[-2] >= 80):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}") 
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)

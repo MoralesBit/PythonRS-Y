@@ -35,8 +35,8 @@ def indicator(symbol):
 
         #noro strategy
     ma = ta.SMA(df['Close'], timeperiod=3)
-    long = ma + ((ma / 100) *(-0.8))
-    short = ma + ((ma / 100) *(0.8))
+    long = ma + ((ma / 100) *(-0.9))
+    short = ma + ((ma / 100) *(0.9))
        
    # DATOS FNDY
   FISHINGSHORT = {

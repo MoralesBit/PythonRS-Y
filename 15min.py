@@ -16,12 +16,12 @@ url = "https://fapi.binance.com/fapi/v1/exchangeInfo"
 response = requests.get(url)
 data = response.json()
 
-symbols = [symbol['symbol'] for symbol in data['symbols'] if symbol['status'] == "TRADING"]
-#symbols = ["BLZUSDT", "ARUSDT", "INJUSDT", "STORJUSDT","HNTUSDT", "ARPAUSDT"]
+#symbols = [symbol['symbol'] for symbol in data['symbols'] if symbol['status'] == "TRADING"]
+symbols = ["BELUSDT", "BNXUSDT", "BTSUSDT", "CELOUSDT","FLMUSDT", "ICXUSDT", "INJUSDT", "IOSTUSDT", "OGNUSDT", "RAYUSDT"]
 
 def indicator(symbol):
       
-  kline = client.futures_historical_klines(symbol, "30m", "2 Days ago UTC+1",limit=500)
+  kline = client.futures_historical_klines(symbol, "5m", "24 hours ago UTC+1",limit=500)
   df = pd.DataFrame(kline)
   
   if not df.empty:
@@ -33,10 +33,11 @@ def indicator(symbol):
     Close = float(df['Close'][-2])
     ema_200 = df['Close'].ewm(span=200, adjust=False).mean()
 
-        #noro strategy
+    #noro strategy
+    var = 0.5
     ma = ta.SMA(df['Close'], timeperiod=3)
-    long = ma + ((ma / 100) *(-0.9))
-    short = ma + ((ma / 100) *(0.9))
+    long = ma - ((ma / 100) *(var))
+    short = ma + ((ma / 100) *(var))
        
    # DATOS FNDY
   FISHINGSHORT = {
@@ -66,17 +67,17 @@ def indicator(symbol):
 # TENDENCIA :
   
   if (ema_200[-2] < Close) and (Close <= long[-2]):
-      Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 30 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
+      Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
          
   if (ema_200[-2] > Close) and (Close >= short[-2]):
-      Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 30 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
+      Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
           
 
 while True:
   current_time = ti.time()
-  seconds_to_wait = 900 - current_time % 900
+  seconds_to_wait = 300 - current_time % 300
   ti.sleep(seconds_to_wait)   
   
   for symbol in symbols:

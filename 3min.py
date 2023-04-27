@@ -135,11 +135,11 @@ def indicator(symbol):
       
 # Tendencia
   if  symbols == ["RNDRUSDT", "TOMOUSDT", "COCOSUSDT", "INJUSDT", "EGLDUSDT"]:
-    if (Close < long[-2]) and (rsi[-1] < 20) and (Close > middleband[-2]):      
+    if (Close < long[-2]) and (rsi[-1] < 20) and (Close < middleband[-2]):      
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄🏻 FASTER")
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=FASTERSHORT)
       
-    if (Close > short[-2]) and (rsi[-1] > 80) and (Close < middleband[-2]): 
+    if (Close > short[-2]) and (rsi[-1] > 80) and (Close > middleband[-2]): 
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄‍♂️ FASTER") 
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
          

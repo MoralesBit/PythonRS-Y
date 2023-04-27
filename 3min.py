@@ -124,7 +124,7 @@ def indicator(symbol):
 }
       
 #    Noro strategy:
-  if (Close < long[-2]) and (rsi[-2] > 20) and (Close < middleband[-2]) :
+  if (Close < long[-2]) and (rsi[-2] > 20) and (Close < middleband[-2]):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
    
@@ -135,20 +135,20 @@ def indicator(symbol):
       
 # Tendencia
   if  symbols == ["RNDRUSDT", "TOMOUSDT", "COCOSUSDT", "INJUSDT", "EGLDUSDT"]:
-    if (Close < long[-2]) and (rsi[-1] < 20):      
+    if (Close < long[-2]) and (rsi[-1] < 20) and (Close > middleband[-2]):      
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄🏻 FASTER")
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=FASTERSHORT)
       
-    if (Close > short[-2]) and (rsi[-1] > 80):  
+    if (Close > short[-2]) and (rsi[-1] > 80) and (Close < middleband[-2]): 
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄‍♂️ FASTER") 
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
          
 # Contra tendencia al 1%   
-  if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] < 80) and (slowk[-2] > slowd[-2] >= 80):
+  if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] < 80) and (slowk[-2] > slowd[-2] >= 80):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}") 
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
-  if (diff > 1) and (Close > upperband[-2]) and (rsi[-2] > 30) and (slowk[-2] < slowd[-2] <= 20):
+  if (diff > 1) and (Close < lowerband[-2]) and (rsi[-2] > 30) and (slowk[-2] < slowd[-2] <= 20):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}")
       requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
                

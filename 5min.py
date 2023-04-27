@@ -39,6 +39,9 @@ def indicator(symbol):
     ema_13 = df['Close'].ewm(span=13, adjust=False).mean()
     lrc = ta.LINEARREG(df['Close'], timeperiod=20)
     
+    crossover = np.where((lrc[-3] < ema_13[-3]) & (lrc[-2] > ema_13[-2]))[0]
+    crossunder = np.where((lrc[-3] > ema_13[-3]) & (lrc[-2] < ema_13[-2]))[0]
+    
     info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
     df_new = pd.DataFrame(info)
        
@@ -48,7 +51,8 @@ def indicator(symbol):
     df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
     df_new = df_new.set_index('Date')
     cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=28)
-
+    
+    
            
    # DATOS FNDY
   FISHINGSHORT = {
@@ -73,17 +77,16 @@ def indicator(symbol):
  
      
   print(symbol)
-  
-  
+   
 # TENDENCIA :
   
   if (cciB[-2] > 0):
-    if (lrc[-3] < ema_13[-3]) and (lrc[-2] > ema_13[-2]):    
+    if len(crossover) > 0:    
       Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
       
   if (cciB[-2] < 0):       
-   if (lrc[-3] > ema_13[-3]) and (lrc[-2] < ema_13[-2]): 
+   if len(crossunder) > 0: 
       Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
           

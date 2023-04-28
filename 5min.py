@@ -54,6 +54,9 @@ def indicator(symbol):
 # Rellenar hacia adelante los valores de cruce para obtener el punto exacto del cruce
     cross_points = cross_points.ffill()
 
+# Interpolar los valores faltantes
+    cross_points = cross_points.interpolate()
+
 # Agregar la columna de puntos de cruce al DataFrame original
     df['cross'] = cross_points
 
@@ -61,10 +64,11 @@ def indicator(symbol):
     df.dropna(subset=['cross'], inplace=True)
 
 # Calcular la posición
-    df['position'] = df['cross'].diff()
+    last_cross = df['cross'][:df.index.get_loc(df[df['cross'].notnull()].index[-1])].last_valid_index()
+    df['position'] = df['cross'] - df['cross'][last_cross]
     
         
-    info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
+    info = client.futures_historical_klines("BTCUSDT", "5m", "24 hours ago UTC+1",limit=1000) 
     df_new = pd.DataFrame(info)
        
     if not df_new.empty:
@@ -97,16 +101,16 @@ def indicator(symbol):
         }
       
   print(symbol)
-      
+       
 # TENDENCIA :
   
   if (cciB[-2] > 0):
-    if  df['position'][-2] == 1:    
+    if  df['position'][-2] == 1.0:    
       Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
       
   if (cciB[-2] < 0):       
-   if df['position'][-2] == -1: 
+   if df['position'][-2] == -1.0: 
       Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
           

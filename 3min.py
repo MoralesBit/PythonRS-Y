@@ -36,10 +36,11 @@ def indicator(symbol):
     Low = float(df['Low'][-2])
     Open = float(df['Open'][-2])
     diff = abs((High / Low -1) * 100)
-    diff_high = abs((High / Close -1)*100)
-    diff_low = abs((Low / Close -1)*100)
+#    diff_high = abs((High / Close -1)*100)
+#    diff_low = abs((Low / Close -1)*100)
+    df['ema_200'] = df['Close'].ewm(span=200, adjust=False).mean()
     cci_20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
-    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+#    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
    
     
     
@@ -126,7 +127,8 @@ def indicator(symbol):
     "price": enter
   }
 }
-      
+
+
 #    Noro strategy:
   if (Close < long[-2]) and (rsi[-2] > 20) and (Close < middleband[-2]):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker") 
@@ -139,11 +141,11 @@ def indicator(symbol):
       
 # Tendencia
  
-  if (Close_3 > middleband[-3]) and (Close < middleband[-2]) and (cci_20[-2] < -100):      
+  if (df['ema_200'][-3] > middleband[-3]) and (df['ema_200'][-2] < middleband[-2]) and (cci_20[-2] < -100):      
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄🏻 FASTER")
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=FASTERSHORT)
       
-  if (Close_3 < middleband[-3]) and (Close > middleband[-2]) and (cci_20[-2] > 100): 
+  if (df['ema_200'][-3] < middleband[-3]) and (df['ema_200'][-2] > middleband[-2]) and (cci_20[-2] > 100): 
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄‍♂️ FASTER") 
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
          

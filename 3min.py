@@ -64,7 +64,7 @@ def indicator(symbol):
     "side": "sell",
     "symbol": symbol,
     "open": {
-    "price": enter
+    "price": Close
     }
     }
     PORLONG = {
@@ -73,7 +73,7 @@ def indicator(symbol):
     "side": "buy",
     "symbol": symbol,
     "open": {
-    "price": enter
+    "price": Close
     }
     }
     
@@ -152,7 +152,7 @@ def indicator(symbol):
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
   if (diff > 1) and (Close < lowerband[-2]) and (diff_high <= 0.25) :
-      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}n📍 1%")
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 1%")
       requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
                
 while True:

@@ -38,10 +38,11 @@ def indicator(symbol):
     df['ema_200'] = df['Close'].ewm(span=200, adjust=False).mean()
     df['ema_13'] = df['Close'].ewm(span=13, adjust=False).mean()
     df['lrc'] = ta.LINEARREG(df['Close'], timeperiod=20)
-        
+    
+    df['ema_13'] = df['ema_13'].iloc[200:]
+       
     df['crossover'] = np.where(df['lrc'] > df['ema_13'],1,0)
-    
-    
+        
     df['position'] = df['crossover'].diff()
     
         

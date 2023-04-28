@@ -35,37 +35,17 @@ def indicator(symbol):
                                                nbdevdn=2,
                                                matype=0)
     Close = float(df['Close'][-2])
-   # Calcular la EMA de 200 y 13 períodos y la LRC de 20 períodos
+    
+  # Calcular la EMA de 200 y 13 períodos y la LRC de 20 períodos
     df['ema_200'] = df['Close'].ewm(span=200, adjust=False).mean()
     df['ema_13'] = df['Close'].ewm(span=13, adjust=False).mean()
     df['lrc'] = ta.LINEARREG(df['Close'], timeperiod=20)
 
-# Encontrar los índices donde la LRC cruza por encima de la EMA y viceversa
-    crossover_long = np.where((df['lrc'].shift(1) < df['ema_13'].shift(1)) & (df['lrc'] > df['ema_13']))[0]
-    crossover_short = np.where((df['lrc'].shift(1) > df['ema_13'].shift(1)) & (df['lrc'] < df['ema_13']))[0]
-
-# Crear un DataFrame de pandas para almacenar los puntos de cruce
-    cross_points = pd.DataFrame(index=df.index, columns=['cross'])
-
-# Asignar 1 a los puntos de cruce alcistas y -1 a los puntos de cruce bajistas
-    cross_points.iloc[crossover_long] = 1
-    cross_points.iloc[crossover_short] = -1
-
-# Rellenar hacia adelante los valores de cruce para obtener el punto exacto del cruce
-    cross_points = cross_points.ffill()
-
-# Interpolar los valores faltantes
-    cross_points = cross_points.interpolate()
-
-# Agregar la columna de puntos de cruce al DataFrame original
-    df['cross'] = cross_points
-
-# Eliminar filas sin cruce
-    df.dropna(subset=['cross'], inplace=True)
-
-# Calcular la posición
-    last_cross = df['cross'][:df.index.get_loc(df[df['cross'].notnull()].index[-1])].last_valid_index()
-    df['position'] = df['cross'] - df['cross'][last_cross]
+# Calcular el punto exacto del cruce
+   # Calcular el punto exacto del cruce
+    cross_above = (df['lrc'] > df['ema_13']) & (df['lrc'].shift(1) <= df['ema_13'].shift(1))
+    cross_below = (df['lrc'] < df['ema_13']) & (df['lrc'].shift(1) >= df['ema_13'].shift(1))
+    df['Cross Points'] = np.where(cross_above, 1, np.where(cross_below, -1, 0))
     
         
     info = client.futures_historical_klines("BTCUSDT", "5m", "24 hours ago UTC+1",limit=1000) 
@@ -101,16 +81,17 @@ def indicator(symbol):
         }
       
   print(symbol)
+ 
        
 # TENDENCIA :
   
   if (cciB[-2] > 0):
-    if  df['position'][-2] == 1.0:    
+    if  df['Cross Points'][-2]  == 1:    
       Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
       
   if (cciB[-2] < 0):       
-   if df['position'][-2] == -1.0: 
+   if df['Cross Points'][-2]  == -1: 
       Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
           

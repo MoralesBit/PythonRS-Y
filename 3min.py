@@ -147,11 +147,11 @@ def indicator(symbol):
 #      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
          
 # Contra tendencia al 1%   
-  if (diff > 1) and (Close > upperband[-2]) and (diff_low <= 0.25):
+  if (diff > 1) and (Close > upperband[-2]) and (diff_high <= 0.25):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 1%") 
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
-  if (diff > 1) and (Close < lowerband[-2]) and (diff_high <= 0.25) :
+  if (diff > 1) and (Close < lowerband[-2]) and (diff_low <= 0.25) :
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 1%")
       requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
                

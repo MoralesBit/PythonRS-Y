@@ -37,7 +37,7 @@ def indicator(symbol):
     diff = abs((High / Low -1) * 100)
     diff_high = abs((High / Close -1)*100)
     diff_low = abs((Low / Close -1)*100)
-
+    cci_20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
     slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
    
     
@@ -147,11 +147,11 @@ def indicator(symbol):
 #      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
          
 # Contra tendencia al 1%   
-  if (diff > 1) and (Close > upperband[-2]) and (diff_high <= 0.25):
+  if (diff > 1) and (Close < upperband[-2]) and (cci_20[-2] > 120):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 1%") 
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
-  if (diff > 1) and (Close < lowerband[-2]) and (diff_low <= 0.25) :
+  if (diff > 1) and (Close > lowerband[-2]) and (cci_20[-2] < -120) :
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 1%")
       requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
                

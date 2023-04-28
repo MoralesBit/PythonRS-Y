@@ -31,6 +31,7 @@ def indicator(symbol):
     
     rsi = ta.RSI(df["Close"], timeperiod=14)
     Close = float(df['Close'][-2])
+    Close_3 = float(df['Close'][-3])
     High = float(df['High'][-2])
     Low = float(df['Low'][-2])
     Open = float(df['Open'][-2])
@@ -138,13 +139,13 @@ def indicator(symbol):
       
 # Tendencia
  
-#  if (Close < long[-2]) and (rsi[-1] < 20) and (Close < middleband[-2]):      
-#      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄🏻 FASTER")
-#      requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=FASTERSHORT)
+  if (Close_3 > middleband[-3]) and (Close < middleband[-2]) and (cci_20[-2] < -100):      
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄🏻 FASTER")
+      requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=FASTERSHORT)
       
-#  if (Close > short[-2]) and (rsi[-1] > 80) and (Close > middleband[-2]): 
-#      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄‍♂️ FASTER") 
-#      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
+  if (Close_3 < middleband[-3]) and (Close > middleband[-2]) and (cci_20[-2] > 100): 
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄‍♂️ FASTER") 
+      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
          
 # Contra tendencia al 1%   
   if (diff > 0.5) and (Close < upperband[-2]) and (cci_20[-2] > 120) and (rsi[-2] > 75): 

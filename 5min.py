@@ -2,7 +2,6 @@ from binance.client import Client
 import pandas as pd
 import talib as ta
 import Telegram_bot as Tb
-import  schedule as schedule
 import time as ti
 import requests
 import numpy as np
@@ -12,11 +11,12 @@ Skey = ''
 
 client = Client(api_key=Pkey, api_secret=Skey)
 
-url = "https://fapi.binance.com/fapi/v1/exchangeInfo"
-response = requests.get(url)
-data = response.json()
+futures_info = client.futures_exchange_info()
 
-symbols = [symbol['symbol'] for symbol in data['symbols'] if symbol['status'] == "TRADING"]
+symbols = [
+    symbol['symbol'] for symbol in futures_info['symbols']
+    if symbol['status'] == "TRADING"
+  ]
 #symbols = ["BELUSDT", "BNXUSDT", "BTSUSDT", "CELOUSDT","FLMUSDT", "ICXUSDT", "INJUSDT", "IOSTUSDT", "OGNUSDT", "RAYUSDT"]
 
 def indicator(symbol):
@@ -35,15 +35,33 @@ def indicator(symbol):
                                                nbdevdn=2,
                                                matype=0)
     Close = float(df['Close'][-2])
+   # Calcular la EMA de 200 y 13 períodos y la LRC de 20 períodos
     df['ema_200'] = df['Close'].ewm(span=200, adjust=False).mean()
     df['ema_13'] = df['Close'].ewm(span=13, adjust=False).mean()
     df['lrc'] = ta.LINEARREG(df['Close'], timeperiod=20)
-    
-    df['ema_13'] = df['ema_13'].iloc[200:]
-       
-    df['crossover'] = np.where(df['lrc'] > df['ema_13'],1,0)
-        
-    df['position'] = df['crossover'].diff()
+
+# Encontrar los índices donde la LRC cruza por encima de la EMA y viceversa
+    crossover_long = np.where((df['lrc'].shift(1) < df['ema_13'].shift(1)) & (df['lrc'] > df['ema_13']))[0]
+    crossover_short = np.where((df['lrc'].shift(1) > df['ema_13'].shift(1)) & (df['lrc'] < df['ema_13']))[0]
+
+# Crear un DataFrame de pandas para almacenar los puntos de cruce
+    cross_points = pd.DataFrame(index=df.index, columns=['cross'])
+
+# Asignar 1 a los puntos de cruce alcistas y -1 a los puntos de cruce bajistas
+    cross_points.iloc[crossover_long] = 1
+    cross_points.iloc[crossover_short] = -1
+
+# Rellenar hacia adelante los valores de cruce para obtener el punto exacto del cruce
+    cross_points = cross_points.ffill()
+
+# Agregar la columna de puntos de cruce al DataFrame original
+    df['cross'] = cross_points
+
+# Eliminar filas sin cruce
+    df.dropna(subset=['cross'], inplace=True)
+
+# Calcular la posición
+    df['position'] = df['cross'].diff()
     
         
     info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
@@ -79,7 +97,7 @@ def indicator(symbol):
         }
       
   print(symbol)
-     
+      
 # TENDENCIA :
   
   if (cciB[-2] > 0):

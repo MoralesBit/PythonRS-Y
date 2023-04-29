@@ -38,6 +38,7 @@ def indicator(symbol):
     diff = abs((High / Low -1) * 100)
 #    diff_high = abs((High / Close -1)*100)
 #    diff_low = abs((Low / Close -1)*100)
+    df['ema_13'] = df['Close'].ewm(span=13, adjust=False).mean()
     df['ema_200'] = df['Close'].ewm(span=200, adjust=False).mean()
     cci_20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
 #    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
@@ -141,12 +142,12 @@ def indicator(symbol):
       
 # Tendencia
  
-  if (df['ema_200'][-3] > middleband[-3]) and (df['ema_200'][-2] < middleband[-2]) and (cci_20[-2] < -100):      
-      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄🏻 FASTER")
+  if (df['ema_200'][-3] > df['ema_13'][-3]) and (df['ema_200'][-2] < df['ema_13'][-2]) and (cci_20[-2] < -100):      
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄🏻 KROSS")
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=FASTERSHORT)
       
-  if (df['ema_200'][-3] < middleband[-3]) and (df['ema_200'][-2] > middleband[-2]) and (cci_20[-2] > 100): 
-      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄‍♂️ FASTER") 
+  if (df['ema_200'][-3] < df['ema_13'][-3]) and (df['ema_200'][-2] > df['ema_13'][-2]) and (cci_20[-2] > 100): 
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄‍♂️ KROSS") 
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
          
 # Contra tendencia al 1%   

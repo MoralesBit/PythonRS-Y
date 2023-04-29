@@ -151,11 +151,11 @@ def indicator(symbol):
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
          
 # Contra tendencia al 1%   
-  if (diff > 0.5) and (Close < upperband[-2]) and (cci_20[-2] > 120) and (rsi[-2] > 80): 
+  if (Close < upperband[-2]) and (cci_20[-2] > 150) and (rsi[-2] > 70): 
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 1%") 
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
-  if (diff > 0.5) and (Close > lowerband[-2]) and (cci_20[-2] < -120) and (rsi[-2] < -20):
+  if (Close > lowerband[-2]) and (cci_20[-2] < -150) and (rsi[-2] < -30):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 1%")
       requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
                

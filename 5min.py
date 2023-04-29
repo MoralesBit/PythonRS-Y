@@ -39,7 +39,8 @@ def indicator(symbol):
 # Calcular la EMA de 200 y 13 períodos y la LRC de 20 períodos
     df['ema_200'] = df['Close'].ewm(span=200, adjust=False).mean()
     df['ema_50'] = df['Close'].ewm(span=50, adjust=False).mean()
-    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=5, slowk_matype=0, slowd_period=3, slowd_matype=0)
+    cci_20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
+    
 
            
    # DATOS FNDY
@@ -63,18 +64,18 @@ def indicator(symbol):
         }
         }
       
-  
+  print(symbol)
  
        
 # TENDENCIA :
   
   
-  if  (slowk[-3] < slowd[-3]) and (slowk[-2]> slowd[-2]) and (Close > df['ema_50'][-2] > df['ema_200'][-2]):    
+  if  (cci_20[-3] < -100) and (cci_20[-2]> -100) and (Close > df['ema_50'][-2] > df['ema_200'][-2]):    
       Tb.telegram_canal_prueba(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
       
          
-  if (slowk[-3] > slowd[-3]) and (slowk[-2] < slowd[-2]) and (Close < df['ema_50'][-2] < df['ema_200'][-2]):  
+  if (cci_20[-3] > 100) and (cci_20[-2] < 100) and (Close < df['ema_50'][-2] < df['ema_200'][-2]):  
       Tb.telegram_canal_prueba(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
           

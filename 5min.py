@@ -13,11 +13,11 @@ client = Client(api_key=Pkey, api_secret=Skey)
 
 futures_info = client.futures_exchange_info()
 
-symbols = [
-    symbol['symbol'] for symbol in futures_info['symbols']
-    if symbol['status'] == "TRADING"
-  ]
-#symbols = ["BELUSDT", "BNXUSDT", "BTSUSDT", "CELOUSDT","FLMUSDT", "ICXUSDT", "INJUSDT", "IOSTUSDT", "OGNUSDT", "RAYUSDT"]
+#symbols = [
+#    symbol['symbol'] for symbol in futures_info['symbols']
+#    if symbol['status'] == "TRADING"
+#  ]
+symbols = ["STMXUSDT", "ALPHAUSDT", "ICPUSDT", "DYDXUSDT","LUNA2USDT"]
 
 def indicator(symbol):
       
@@ -29,35 +29,18 @@ def indicator(symbol):
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'],
-                                               timeperiod=20,
-                                               nbdevup=2,
-                                               nbdevdn=2,
-                                               matype=0)
+#    upperband, middleband, lowerband = ta.BBANDS(df['Close'],
+#                                               timeperiod=20,
+#                                               nbdevup=2,
+#                                               nbdevdn=2,
+#                                               matype=0)
     Close = float(df['Close'][-2])
     
-  # Calcular la EMA de 200 y 13 períodos y la LRC de 20 períodos
+# Calcular la EMA de 200 y 13 períodos y la LRC de 20 períodos
     df['ema_200'] = df['Close'].ewm(span=200, adjust=False).mean()
-    df['ema_13'] = df['Close'].ewm(span=13, adjust=False).mean()
-    df['lrc'] = ta.LINEARREG(df['Close'], timeperiod=20)
+    df['ema_50'] = df['Close'].ewm(span=50, adjust=False).mean()
+    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=5, slowk_matype=0, slowd_period=3, slowd_matype=0)
 
-# Calcular el punto exacto del cruce
-   # Calcular el punto exacto del cruce
-    cross_above = (df['lrc'] > df['ema_13']) & (df['lrc'].shift(1) <= df['ema_13'].shift(1))
-    cross_below = (df['lrc'] < df['ema_13']) & (df['lrc'].shift(1) >= df['ema_13'].shift(1))
-    df['Cross Points'] = np.where(cross_above, 1, np.where(cross_below, -1, 0))
-    
-        
-    info = client.futures_historical_klines("BTCUSDT", "5m", "24 hours ago UTC+1",limit=1000) 
-    df_new = pd.DataFrame(info)
-       
-    if not df_new.empty:
-        df_new.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
-      'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
-    df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
-    df_new = df_new.set_index('Date')
-    cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=28)
-      
            
    # DATOS FNDY
   FISHINGSHORT = {
@@ -80,19 +63,19 @@ def indicator(symbol):
         }
         }
       
-  print(symbol)
+  
  
        
 # TENDENCIA :
   
-  if (cciB[-2] > 0):
-    if  df['Cross Points'][-2]  == 1:    
-      Tb.telegram_send_message(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
+  
+  if  (slowk[-3] < slowd[-3]) and (slowk[-2]> slowd[-2]) and (Close > df['ema_50'][-2] > df['ema_200'][-2]):    
+      Tb.telegram_canal_prueba(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
       
-  if (cciB[-2] < 0):       
-   if df['Cross Points'][-2]  == -1: 
-      Tb.telegram_send_message(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
+         
+  if (slowk[-3] > slowd[-3]) and (slowk[-2] < slowd[-2]) and (Close < df['ema_50'][-2] < df['ema_200'][-2]):  
+      Tb.telegram_canal_prueba(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)   
           
 
@@ -103,4 +86,5 @@ while True:
   
   for symbol in symbols:
       indicator(symbol)
+      print(symbol)
       

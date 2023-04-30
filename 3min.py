@@ -130,7 +130,7 @@ def indicator(symbol):
 }
 
 
-#    Noro strategy:
+# Noro strategy:
   if (Close < long[-2]) and (rsi[-2] > 20) and (Close < middleband[-2]):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
@@ -142,20 +142,20 @@ def indicator(symbol):
       
 # Tendencia
  
-  if (df['ema_200'][-3] > df['ema_13'][-3]) and (df['ema_200'][-2] < df['ema_13'][-2]) and (cci_20[-2] < -100):      
+  if (df['ema_200'][-3] > df['ema_13'][-3]) and (df['ema_200'][-2] < df['ema_13'][-2]) and (cci_20[-2] < -50):      
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄🏻 KROSS")
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=FASTERSHORT)
       
-  if (df['ema_200'][-3] < df['ema_13'][-3]) and (df['ema_200'][-2] > df['ema_13'][-2]) and (cci_20[-2] > 100): 
+  if (df['ema_200'][-3] < df['ema_13'][-3]) and (df['ema_200'][-2] > df['ema_13'][-2]) and (cci_20[-2] > 50): 
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄‍♂️ KROSS") 
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
          
 # Contra tendencia al 1%   
-  if (Close < upperband[-2]) and (cci_20[-2] > 150) and (rsi[-2] > 75): 
+  if (Close < upperband[-2]) and (cci_20[-2] >= 200) and (rsi[-2] >= 80): 
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 1%") 
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
-  if (Close > lowerband[-2]) and (cci_20[-2] < -150) and (rsi[-2] < -25):
+  if (Close > lowerband[-2]) and (cci_20[-2] <= -200) and (rsi[-2] <= -20):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 1%")
       requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
                

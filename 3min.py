@@ -60,6 +60,15 @@ def indicator(symbol):
        
     
     enter = Close*(0.98)
+    info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
+    df_new = pd.DataFrame(info)
+       
+    if not df_new.empty:
+        df_new.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close' 'IGNORE',
+      'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
+    df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
+    df_new = df_new.set_index('Date')
+    cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=28)
     
     
     PORSHORT = {
@@ -81,52 +90,53 @@ def indicator(symbol):
     }
     }
     
-  PICKERSHORT= {
+    PICKERSHORT= {
   "name": "PICKER SHORT",
   "secret": "hgw3399vhh",
   "side": "sell",
   "symbol": symbol,
   "open": {
-    "price": enter
+    "price": Close
   }
 }
-  PICKERLONG = {
+    PICKERLONG = {
   "name": "PICKER LONG",
   "secret": "xjth0i3qgb",
   "side": "buy",
   "symbol": symbol,
   "open": {
-    "price": enter
+    "price": Close
   }
 }
-  CARLOSSHORT = {
+    
+    CARLOSSHORT = {
   "name": "Hook 200276",
   "secret": "gwbzsussxu5",
   "side": "sell",
   "symbol": symbol,
   "open": {
-    "price": enter
+    "price": Close
   }
 }
 
-  FASTERLONG = {
+    FASTERLONG = {
   "name": "FASTER LONG",
   "secret": "xxuxkqf0gpj",
   "side": "buy",
   "symbol": symbol,
   "open": {
-    "price": enter
+    "price": Close
   }
 }  
 
 
-  FASTERSHORT = {
+    FASTERSHORT = {
   "name": "FASTER SHORT",
   "secret": "w48ulz23f6",
   "side": "sell",
   "symbol": symbol,
   "open": {
-    "price": enter
+    "price": Close
   }
 }
 
@@ -142,12 +152,12 @@ def indicator(symbol):
       requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
       
 # Tendencia
- 
-  if (df['ema_200'][-3] < df['ema_13'][-3]) and (df['ema_200'][-2] > df['ema_13'][-2]) and (cci_20[-3] > cci_20[-2]) and (cci_20[-2] < -100):      
+  if cciB[-3] > cciB[-2] :
+    if (df['ema_200'][-3] < df['ema_13'][-3]) and (df['ema_200'][-2] > df['ema_13'][-2]) and (cci_20[-3] > cci_20[-2]) and (cci_20[-2] < -100):      
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄🏻 KROSS")
       requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=FASTERSHORT)
-      
-  if (df['ema_200'][-3] > df['ema_13'][-3]) and (df['ema_200'][-2] < df['ema_13'][-2]) and (cci_20[-3] < cci_20[-2] > 100) and (cci_20[-2] > 100): 
+  if cciB[-3] < cciB[-2] :    
+    if (df['ema_200'][-3] > df['ema_13'][-3]) and (df['ema_200'][-2] < df['ema_13'][-2]) and (cci_20[-3] < cci_20[-2] > 100) and (cci_20[-2] > 100): 
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄‍♂️ KROSS") 
       requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
          

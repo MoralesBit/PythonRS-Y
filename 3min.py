@@ -64,7 +64,8 @@ def indicator(symbol):
        
     
     enter = (Close + High)/2
-    info = client.futures_historical_klines("BTCUSDT", "15m", "2 days ago UTC+1",limit=1000) 
+    
+    info = client.futures_historical_klines("BTCUSDT", "3m", "24 hours ago UTC+1",limit=1000) 
     df_new = pd.DataFrame(info)
        
     if not df_new.empty:
@@ -72,7 +73,7 @@ def indicator(symbol):
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
     df_new['Date'] = pd.to_datetime(df_new['Date'], unit='ms')
     df_new = df_new.set_index('Date')
-    cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=28)
+    cciB = ta.CCI(df_new['High'], df_new['Low'], df_new['Close'], timeperiod=58)
     
     
     PORSHORT = {

@@ -53,7 +53,7 @@ def indicator(symbol):
    
     
     #noro strategy
-    var = 0.75
+    var = 0.85
     ma = ta.SMA(df['Close'], timeperiod=3)
     long = ma + ((ma / 100) *(-var))
     short = ma + ((ma / 100) *(var))

@@ -31,6 +31,8 @@ def indicator(symbol):
     df = df.set_index('Date')
     
     rsi = ta.RSI(df["Close"], timeperiod=14)
+    adx= ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+    
     Close = float(df['Close'][-2])
     Close_3 = float(df['Close'][-3])
     High = float(df['High'][-2])
@@ -175,12 +177,12 @@ def indicator(symbol):
       requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
       
 # Tendencia:
-  if (df['ema_13'][-2] < df['ema_660'][-2]):
+  if (df['ema_13'][-2] < df['ema_660'][-2]) and (adx[-2] >= 20):
     if (df['ema_200'][-3] < df['ema_13'][-3]) and (df['ema_200'][-2] > df['ema_13'][-2]) and (cci_20[-3] > cci_20[-2]):      
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
   
-  if (df['ema_13'][-2] > df['ema_660'][-2]):    
+  if (df['ema_13'][-2] > df['ema_660'][-2]) and (adx[-2] >= 20):    
     if (df['ema_200'][-3] > df['ema_13'][-3]) and (df['ema_200'][-2] < df['ema_13'][-2]) and (cci_20[-3] < cci_20[-2]): 
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha") 
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)

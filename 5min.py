@@ -44,27 +44,32 @@ def indicator(symbol):
     df['ema_660'] = df['Close'].ewm(span=660, adjust=False).mean()
     cci_20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
 #    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
-   
-    
-    
+     
     upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                timeperiod=20,
                                                nbdevup=2,
                                                nbdevdn=2,
                                                matype=0)
+    m = 3
+    # Calculamos los Canales de Keltner
+    atr = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=20)
+    upperband_kc = upperband + atr*m
+    middleband_kc = middleband
+    lowerband_kc = lowerband - atr*m
    
      # Calcula el precio máximo y mínimo
     #high_price = np.max(df['Close'])
     #low_price = np.min(df['Close'])
     
     #noro strategy
-    var = 0.75
-    ma = ta.SMA(df['Close'], timeperiod=3)
-    long = ma + ((ma / 100) *(-var))
-    short = ma + ((ma / 100) *(var))
+    #var = 0.75
+    #ma = ta.SMA(df['Close'], timeperiod=3)
+    #long = ma + ((ma / 100) *(-var))
+    #short = ma + ((ma / 100) *(var))
        
     
-    enter = (Close + High)/2
+    enter_high = (Close + High)/2
+    enter_low = (Close + Low)/2
 
     
     PORSHORT = {
@@ -73,7 +78,7 @@ def indicator(symbol):
     "side": "sell",
     "symbol": symbol,
     "open": {
-    "price": enter
+    "price": enter_high
     }
     }
     PORLONG = {
@@ -82,7 +87,7 @@ def indicator(symbol):
     "side": "buy",
     "symbol": symbol,
     "open": {
-    "price": enter
+    "price": enter_low
     }
     }
     
@@ -92,7 +97,7 @@ def indicator(symbol):
   "side": "sell",
   "symbol": symbol,
   "open": {
-    "price": enter
+    "price": enter_high
   }
 }
     PICKERLONG = {
@@ -101,7 +106,7 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol,
   "open": {
-    "price": enter
+    "price": enter_low
   }
 }
     
@@ -135,37 +140,56 @@ def indicator(symbol):
     "price": Close
   }
 }
-       
-# Noro strategy:
+  # DATOS FNDY
+  FISHINGSHORT = {
+        "name": "FISHING SHORT",
+        "secret": "azsdb9x719",
+        "side": "sell",
+        "symbol": symbol,
+        "open": {
+        "price": Close
+        }
+        }
+        
+  FISHINGLONG = {
+        "name": "FISHING LONG",
+        "secret": "0kivpja7tz89",
+        "side": "buy",
+        "symbol": symbol,
+        "open": {
+        "price": Close
+        }
+        }       
+# KC strategy:
   if (Close > df['ema_660'][-2]):
-    if (Close < long[-2]) and (rsi[-2] > 20) and (Close < middleband[-2]):
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {enter}") 
+    if (Close_3 < lowerband_kc[-3]) and (Close > lowerband_kc[-2]) and (rsi[-2] < 30):
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_low,4)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
       
   if (Close < df['ema_660'][-2]):
-   if (Close > short[-2]) and (rsi[-2] < 80) and (Close > middleband[-2]):
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {enter}")
+   if (Close_3 > upperband_kc[-3]) and (Close < lowerband_kc[-2]) and (rsi[-2] > 70):
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_high,4)}")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
       requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
       
 # Tendencia:
-  if (Close < df['ema_660'][-2]):
+  if (df['ema_13'][-2] < df['ema_660'][-2]):
     if (df['ema_200'][-3] < df['ema_13'][-3]) and (df['ema_200'][-2] > df['ema_13'][-2]) and (cci_20[-3] > cci_20[-2]):      
-      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄🏻 KROSS")
-      requests.post('https://hook.finandy.com/gZZtqWYCtUdF0WwyqFUK', json=FASTERSHORT)
+      Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha")
+      requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
   
-  if (Close > df['ema_660'][-2]):    
+  if (df['ema_13'][-2] > df['ema_660'][-2]):    
     if (df['ema_200'][-3] > df['ema_13'][-3]) and (df['ema_200'][-2] < df['ema_13'][-2]) and (cci_20[-3] < cci_20[-2]): 
-      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n🏄‍♂️ KROSS") 
-      requests.post('https://hook.finandy.com/VMfD-y_3G5EgI5DUqFUK', json=FASTERLONG)
+      Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha") 
+      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
          
 # Contra tendencia al 1%   
   if (Close <= upperband[-2]) and (cci_20[-2] >= 200): 
-      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Enter: {enter}") 
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Enter: {round(enter_high,4)}") 
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
   if (Close >= lowerband[-2]) and (cci_20[-2] <= -200):
-      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Enter: {enter}")
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Enter: {round(enter_low,4)}")
       requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
                
 while True:

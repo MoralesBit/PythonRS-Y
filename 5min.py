@@ -21,7 +21,7 @@ symbols = [
 
 def indicator(symbol):
   
-  kline = client.futures_historical_klines(symbol, "5m", "2 Days ago UTC+1",limit=1000)
+  kline = client.futures_historical_klines(symbol, "5m", "24 hours ago UTC+1",limit=1000)
   df = pd.DataFrame(kline)
   
   if not df.empty:
@@ -171,12 +171,12 @@ def indicator(symbol):
    
 # KC strategy:
   if (Close > df['ema_660'][-2]):
-    if (Close < long[-2]) and (rsi[-2] <= 25):
+    if (Close < long[-2]):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_low,6)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
       
   if (Close < df['ema_660'][-2]):
-   if (Close > short[-2]) and (rsi[-2] >= 75):
+   if (Close > short[-2]):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_high,6)}")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
       requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
@@ -193,11 +193,11 @@ def indicator(symbol):
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
          
 # Contra tendencia al 1%   
-  if (roc[-2] >= 1) and (Close >= upperband[-2]) and (rsi[-2] >= 75) and (adx[-2] >= 40): 
+  if (roc[-2] >= 1) and (Close >= upperband[-2]) and (rsi[-2] >= 70): 
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Enter: {round(enter_high,6)}") 
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
-  if (roc[-2] <= -1) and (Close <= lowerband[-2]) and (rsi[-2] <= 25) and (adx[-2] <= 20):
+  if (roc[-2] <= -1) and (Close <= lowerband[-2]) and (rsi[-2] <= 30):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Enter: {round(enter_low,6)}")
       requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
                

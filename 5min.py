@@ -78,7 +78,7 @@ def indicator(symbol):
     enter_high = (Close + High)/2
     enter_low = (Close + Low)/2
     
-      
+          
     PORSHORT = {
     "name": "CORTO 3POR",
     "secret": "ao2cgree8fp",
@@ -171,12 +171,12 @@ def indicator(symbol):
    
 # KC strategy:
   if (Close > df['ema_660'][-2]):
-    if (Close < long[-2]) and (rsi[-2] < 25):
+    if (Close < long[-2]) and (rsi[-2] <= 25):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_low,6)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
       
   if (Close < df['ema_660'][-2]):
-   if (Close > short[-2]) and (rsi[-2] > 75):
+   if (Close > short[-2]) and (rsi[-2] >= 75):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_high,6)}")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
       requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 

@@ -30,50 +30,54 @@ def indicator(symbol):
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
     
+    #Calculo RSI:
     rsi = ta.RSI(df["Close"], timeperiod=14)
+    
+    #Calculo ADX
     adx= ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
     
+    # Calculo de DIFF:
     Close = float(df['Close'][-2])
     Close_3 = float(df['Close'][-3])
     High = float(df['High'][-2])
     Low = float(df['Low'][-2])
     Open = float(df['Open'][-2])
     diff = abs((High / Low -1) * 100)
-    
-#    diff_high = abs((High / Close -1)*100)
-#    diff_low = abs((Low / Close -1)*100)
+#   diff_high = abs((High / Close -1)*100)
+#   diff_low = abs((Low / Close -1)*100)
+
+    #Calculo de EMAS:
     df['ema_13'] = df['Close'].ewm(span=13, adjust=False).mean()
-    df['ema_200'] = df['Close'].ewm(span=200, adjust=False).mean()
+    df['ema_50'] = df['Close'].ewm(span=50, adjust=False).mean()
     df['ema_660'] = df['Close'].ewm(span=660, adjust=False).mean()
+    
+    # Calclulo CCI:
     cci_20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
-#    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+    
+    #Calculo ESTOCASTICO:
+#   slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+
+    #Calculo ROC
     roc = ta.ROC(df['Close'], timeperiod=10) 
+    
+    # Calculo Bollinger:
     upperband, middleband, lowerband = ta.BBANDS(df['Close'],
                                                timeperiod=20,
                                                nbdevup=2,
                                                nbdevdn=2,
                                                matype=0)
-    
-    m = 3
-    # Calculamos los Canales de Keltner
-    atr = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=20)
-    upperband_kc = upperband + atr*m
-    lowerband_kc = lowerband - atr*m
-   
-     # Calcula el precio máximo y mínimo
-    #high_price = np.max(df['Close'])
-    #low_price = np.min(df['Close'])
-    
+       
     #noro strategy
-    #var = 0.75
-    #ma = ta.SMA(df['Close'], timeperiod=3)
-    #long = ma + ((ma / 100) *(-var))
-    #short = ma + ((ma / 100) *(var))
+    var = 0.5
+    ma = ta.SMA(df['Close'], timeperiod=3)
+    long = ma + ((ma / 100) *(-var))
+    short = ma + ((ma / 100) *(var))
        
     
+    # Entradas en cola:
     enter_high = (Close + High)/2
     enter_low = (Close + Low)/2
-
+    
     
     PORSHORT = {
     "name": "CORTO 3POR",
@@ -163,37 +167,38 @@ def indicator(symbol):
         "price": Close
         }
         }    
-     
+   
+   
 # KC strategy:
   if (Close > df['ema_660'][-2]):
-    if (Close_3 < lowerband_kc[-3]) and (Close > lowerband_kc[-2]) and (rsi[-2] < 30):
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_low,4)}") 
+    if (Close < long[-2]) and (rsi[-2] < 25):
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_low,6)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
       
   if (Close < df['ema_660'][-2]):
-   if (Close_3 > upperband_kc[-3]) and (Close < lowerband_kc[-2]) and (rsi[-2] > 70):
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_high,4)}")
+   if (Close > short[-2]) and (rsi[-2] > 75):
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_high,6)}")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
       requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
       
 # Tendencia:
   if (df['ema_13'][-2] < df['ema_660'][-2]) and (adx[-2] >= 20):
-    if (df['ema_200'][-3] < df['ema_13'][-3]) and (df['ema_200'][-2] > df['ema_13'][-2]) and (cci_20[-3] > cci_20[-2]):      
+    if (df['ema_50'][-3] < df['ema_13'][-3]) and (df['ema_50'][-2] > df['ema_13'][-2]) and (cci_20[-3] > cci_20[-2]):      
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
   
   if (df['ema_13'][-2] > df['ema_660'][-2]) and (adx[-2] >= 20):    
-    if (df['ema_200'][-3] > df['ema_13'][-3]) and (df['ema_200'][-2] < df['ema_13'][-2]) and (cci_20[-3] < cci_20[-2]): 
+    if (df['ema_50'][-3] > df['ema_13'][-3]) and (df['ema_50'][-2] < df['ema_13'][-2]) and (cci_20[-3] < cci_20[-2]): 
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha") 
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
          
 # Contra tendencia al 1%   
-  if (roc[-2] > 1) and (Close >= upperband[-2]) and (rsi[-2] >= 75): 
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Enter: {round(enter_high,4)}") 
+  if (roc[-2] >= 1) and (Close >= upperband[-2]) and (rsi[-2] >= 75) and (adx[-2] >= 40): 
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Enter: {round(enter_high,6)}") 
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
-  if (roc[-2] < -1) and (Close <= lowerband[-2]) and (rsi[-2] <= 25):
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Enter: {round(enter_low,4)}")
+  if (roc[-2] <= -1) and (Close <= lowerband[-2]) and (rsi[-2] <= 25) and (adx[-2] <= 20):
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Enter: {round(enter_low,6)}")
       requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
                
 while True:

@@ -71,8 +71,14 @@ def indicator(symbol):
                                                matype=0)
        
     #noro strategy
-    var = 0.65
-    ma = ta.SMA(df['Close'], timeperiod=3)
+    df['Open'] = df['Open'].astype(float)
+    df['High'] = df['High'].astype(float)
+    df['Low'] = df['Low'].astype(float)
+    df['Close'] = df['Close'].astype(float)
+    df['OHLC4'] = (df['Open'] + df['High'] + df['Low'] + df['Close']) / 4
+    
+    var = 0.75
+    ma = ta.SMA(df['OHLC4'] , timeperiod=3)
     long = ma + ((ma / 100) *(-var))
     short = ma + ((ma / 100) *(var))
        
@@ -197,11 +203,11 @@ def indicator(symbol):
 #      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
          
 # Contra tendencia al 1%   
-  if (roc[-2] >= 1) and (Close >= upperband[-2]) and (rsi[-2] >= 70) and (df['STD_5'][-2] > df['STD_5_promedio'][-2]):  
+  if (roc[-2] >= 1) and (Close >= upperband[-2]) and (rsi[-2] >= 75) and (df['STD_5'][-2] > df['STD_5_promedio'][-2]):  
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Enter: {round(enter_high,6)}") 
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
-  if (roc[-2] <= -1) and (Close <= lowerband[-2]) and (rsi[-2] <= 30) and (df['STD_5'][-2] > df['STD_5_promedio'][-2]):
+  if (roc[-2] <= -1) and (Close <= lowerband[-2]) and (rsi[-2] <= 25) and (df['STD_5'][-2] > df['STD_5_promedio'][-2]):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Enter: {round(enter_low,6)}")
       requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
                

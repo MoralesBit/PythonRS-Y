@@ -46,6 +46,9 @@ def indicator(symbol):
 #   diff_high = abs((High / Close -1)*100)
 #   diff_low = abs((Low / Close -1)*100)
 
+    df['STD_5'] = ta.STDDEV(df['Close'], timeperiod=5, nbdev=1)
+    df['STD_5_promedio'] = df['STD_5'].mean()
+
     #Calculo de EMAS:
     df['ema_13'] = df['Close'].ewm(span=13, adjust=False).mean()
     df['ema_50'] = df['Close'].ewm(span=50, adjust=False).mean()
@@ -77,6 +80,7 @@ def indicator(symbol):
     # Entradas en cola:
     enter_high = (Close + High)/2
     enter_low = (Close + Low)/2
+    
     
           
     PORSHORT = {
@@ -182,22 +186,22 @@ def indicator(symbol):
       requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
       
 # Tendencia:
-  if (df['ema_13'][-2] < df['ema_660'][-2]) and (adx[-2] >= 20):
-    if (df['ema_50'][-3] < df['ema_13'][-3]) and (df['ema_50'][-2] > df['ema_13'][-2]) and (cci_20[-3] > cci_20[-2]):      
-      Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha")
-      requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
+#  if (df['ema_13'][-2] < df['ema_660'][-2]) and (adx[-2] >= 20):
+#    if (df['ema_50'][-3] < df['ema_13'][-3]) and (df['ema_50'][-2] > df['ema_13'][-2]) and (cci_20[-3] > cci_20[-2]):      
+#      Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha")
+#      requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
   
-  if (df['ema_13'][-2] > df['ema_660'][-2]) and (adx[-2] >= 20):    
-    if (df['ema_50'][-3] > df['ema_13'][-3]) and (df['ema_50'][-2] < df['ema_13'][-2]) and (cci_20[-3] < cci_20[-2]): 
-      Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha") 
-      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
+#  if (df['ema_13'][-2] > df['ema_660'][-2]) and (adx[-2] >= 20):    
+#    if (df['ema_50'][-3] > df['ema_13'][-3]) and (df['ema_50'][-2] < df['ema_13'][-2]) and (cci_20[-3] < cci_20[-2]): 
+#      Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha") 
+#      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
          
 # Contra tendencia al 1%   
-  if (roc[-2] >= 1) and (Close >= upperband[-2]) and (rsi[-2] >= 70): 
+  if (roc[-2] >= 1) and (Close >= upperband[-2]) and (rsi[-2] >= 70) and (df['STD_5'][-2] > df['STD_5_promedio'][-2]):  
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Enter: {round(enter_high,6)}") 
       requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
          
-  if (roc[-2] <= -1) and (Close <= lowerband[-2]) and (rsi[-2] <= 30):
+  if (roc[-2] <= -1) and (Close <= lowerband[-2]) and (rsi[-2] <= 30) and (df['STD_5'][-2] > df['STD_5_promedio'][-2]):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Enter: {round(enter_low,6)}")
       requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
                

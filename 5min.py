@@ -33,6 +33,12 @@ def indicator(symbol):
     #Calculo RSI:
     rsi = ta.RSI(df["Close"], timeperiod=14)
     
+    # Calculo Bollinger:
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'],
+                                               timeperiod=20,
+                                               nbdevup=2,
+                                               nbdevdn=2,
+                                               matype=0)
     
     # Calculo de DIFF:
     Close = float(df['Close'][-2])
@@ -88,15 +94,14 @@ def indicator(symbol):
   }
 }
 
-
    
    
 # strategy:
-  if (diff[-2] > 0.5) and (rsi[-2] < 28) and (rsi[-1] > 32):
+  if (lowerband[-2:] > Close) and (diff[-2:] > 0.5) and (rsi[-2:] < 28) and (rsi[-1:] > 32):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(average_candle_size,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_low,6)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
       
-  if (diff[-2] > 0.5)  and (rsi[-2] > 72) and (rsi[-1] < 68):
+  if (upperband[-2:] < Close) and (diff[-2] > 0.5)  and (rsi[-2] > 72) and (rsi[-1] < 68):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(average_candle_size,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_high,6)}")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
       #requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 

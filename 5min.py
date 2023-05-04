@@ -33,43 +33,19 @@ def indicator(symbol):
     #Calculo RSI:
     rsi = ta.RSI(df["Close"], timeperiod=14)
     
-    #Calculo ADX
-    adx= ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
     
     # Calculo de DIFF:
     Close = float(df['Close'][-2])
-    Close_3 = float(df['Close'][-3])
     High = float(df['High'][-2])
     Low = float(df['Low'][-2])
     Open = float(df['Open'][-2])
     diff = abs((High / Low -1) * 100)
-#   diff_high = abs((High / Close -1)*100)
-#   diff_low = abs((Low / Close -1)*100)
+
 
     df['STD_5'] = ta.STDDEV(df['Close'], timeperiod=5, nbdev=1)
     df['STD_5_promedio'] = df['STD_5'].mean()
 
-    #Calculo de EMAS:
-    df['ema_13'] = df['Close'].ewm(span=13, adjust=False).mean()
-    df['ema_50'] = df['Close'].ewm(span=50, adjust=False).mean()
-    df['ema_660'] = df['Close'].ewm(span=660, adjust=False).mean()
-    
-    # Calclulo CCI:
-    cci_20 = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
-    
-    #Calculo ESTOCASTICO:
-#   slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
-
-    #Calculo ROC
-    roc = ta.ROC(df['Close'], timeperiod=10) 
-    
-    # Calculo Bollinger:
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'],
-                                               timeperiod=20,
-                                               nbdevup=2,
-                                               nbdevdn=2,
-                                               matype=0)
-       
+        
     #noro strategy
     df['Open'] = df['Open'].astype(float)
     df['High'] = df['High'].astype(float)
@@ -115,13 +91,13 @@ def indicator(symbol):
 
    
    
-# KC strategy:
-  if (average_candle_size > 0.20) and (rsi[-2] < 28) and (rsi[-1] > 32):
-      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_low,6)}") 
+# strategy:
+  if (diff[-2] > 0.5) and (rsi[-2] < 28) and (rsi[-1] > 32):
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(average_candle_size,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_low,6)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
       
-  if (average_candle_size > 0.20) and (rsi[-2] > 72) and (rsi[-1] < 68):
-      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_high,6)}")
+  if (diff[-2] > 0.5)  and (rsi[-2] > 72) and (rsi[-1] < 68):
+      Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(average_candle_size,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_high,6)}")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
       #requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
 

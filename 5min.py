@@ -30,6 +30,10 @@ def indicator(symbol):
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
     
+    #Calculo RSI:
+    rsi = ta.RSI(df["Close"], timeperiod=14)
+    
+    #BB
     df['upperband'], df['middleband'], df['lowerband'] = ta.BBANDS(df['Close'],
                                                timeperiod=20,
                                                nbdevup=2,
@@ -96,14 +100,14 @@ def indicator(symbol):
    
    
 # strategy:
-  if (diff > 0.5) and (df['BB'][-2] < 0) and (df['BB'][-1] > 0):
+  if (diff > 0.5) and (df['BB'][-2] < 0) and (df['BB'][-1] > 0) and (rsi[-1] <= 30):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(average_candle_size,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_low,6)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
       
-  if (diff > 0.5)  and (df['BB'][-2] > 1) and (df['BB'][-1] < 1):
+  if (diff > 0.5)  and (df['BB'][-2] > 1) and (df['BB'][-1] < 1) and (rsi[-1] >= 70):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(average_candle_size,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_high,6)}")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
-      #requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
+      requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
 
 
 while True:

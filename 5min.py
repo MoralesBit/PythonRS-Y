@@ -30,16 +30,12 @@ def indicator(symbol):
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
     
-    #Calculo RSI:
-    rsi = ta.RSI(df["Close"], timeperiod=14)
-    
-    # Calculo Bollinger:
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'],
+    df['upperband'], df['middleband'], df['lowerband'] = ta.BBANDS(df['Close'],
                                                timeperiod=20,
                                                nbdevup=2,
                                                nbdevdn=2,
                                                matype=0)
-    
+     
     # Calculo de DIFF:
     Close = float(df['Close'][-2])
     High = float(df['High'][-2])
@@ -58,9 +54,12 @@ def indicator(symbol):
     df['Low'] = df['Low'].astype(float)
     df['Close'] = df['Close'].astype(float)
     df['OHLC4'] = (df['Open'] + df['High'] + df['Low'] + df['Close']) / 4
+    
+    df['BB'] = (df['Close'] - df['lowerband']) / ( df['upperband'] - df['lowerband'])
+       
     candle_size = abs(df['Close'] - df['Open']) / df['Open'] * 100
     average_candle_size = np.mean(candle_size[-12:])
-    print(average_candle_size)
+    
     # Entradas en cola:
     enter_high = (Close + High)/2
     enter_low = (Close + Low)/2
@@ -97,11 +96,11 @@ def indicator(symbol):
    
    
 # strategy:
-  if (lowerband[-2:] > Close) and (diff > 0.5) and (rsi[-2:] < 28) and (rsi[-1:] > 32):
+  if (diff > 0.5) and (df['BB'][-2] < 0) and (df['BB'][-1] > 0):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(average_candle_size,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_low,6)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
       
-  if (upperband[-2:] < Close) and (diff > 0.5)  and (rsi[-2] > 72) and (rsi[-1] < 68):
+  if (diff > 0.5)  and (df['BB'][-2] > 1) and (df['BB'][-1] < 1):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(average_candle_size,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_high,6)}")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
       #requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 

@@ -82,9 +82,7 @@ def indicator(symbol):
     # Entradas en cola:
     enter_high = (Close + High)/2
     enter_low = (Close + Low)/2
-              
-    print(average_candle_size)
-    
+                 
     PICKERSHORT= {
   "name": "PICKER SHORT",
   "secret": "hgw3399vhh",
@@ -118,11 +116,11 @@ def indicator(symbol):
    
    
 # KC strategy:
-  if (rsi[-2] < 30) and (rsi[-1] > 30):
+  if (average_candle_size > 0.5) and (rsi[-2] < 28) and (rsi[-1] > 32):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_low,6)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
       
-  if (rsi[-2] > 70) and (rsi[-1] < 70):
+  if (average_candle_size > 0.5) and (rsi[-2] > 72) and (rsi[-1] < 68):
       Tb.telegram_canal_prueba(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_high,6)}")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
       #requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 

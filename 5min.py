@@ -100,7 +100,7 @@ def indicator(symbol):
 }
 
 
-  FISHINGSHORT = {
+    FISHINGSHORT = {
         "name": "FISHING SHORT",
         "secret": "azsdb9x719",
         "side": "sell",
@@ -110,7 +110,7 @@ def indicator(symbol):
         }
         }
         
-  FISHINGLONG = {
+    FISHINGLONG = {
         "name": "FISHING LONG",
         "secret": "0kivpja7tz89",
         "side": "buy",
@@ -121,6 +121,7 @@ def indicator(symbol):
         }   
    
    
+      
 # strategy Back:
   if (diff > 0.5) and (df['BB'][-2] < 0) and (df['BB'][-1] > 0) and (rsi[-1] >= 30):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Avg: % {round(average_candle_size,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_low,6)}") 
@@ -132,12 +133,12 @@ def indicator(symbol):
       requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
 
 # strategy Trend:
-  if (df['Close'][-2] < df['ema_660'][-2]):
+  if (Close < df['ema_660'][-2]):
     if df['BB'][-2] > 0.5 and df['BB'][-1] < 0.5 :      
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
   
-  if (df['Close'][-2] > df['ema_660'][-2]):
+  if (Close > df['ema_660'][-2]):
     if df['BB'][-2] < 0.5 and df['BB'][-1] > 0.5 :  
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha") 
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)

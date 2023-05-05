@@ -134,12 +134,12 @@ def indicator(symbol):
 
 # strategy Trend:
   if (Close < df['ema_660'][-2]):
-    if df['BB'][-2] > 0.5 and df['BB'][-1] < 0.5 :      
+    if (df['BB'][-2] > 0.5) and (df['BB'][-1] < 0.5) and (rsi[-2] >= 50):      
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
   
   if (Close > df['ema_660'][-2]):
-    if df['BB'][-2] < 0.5 and df['BB'][-1] > 0.5 :  
+    if (df['BB'][-2] < 0.5) and (df['BB'][-1] > 0.5) and (rsi[-2] <= 50):  
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha") 
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
 

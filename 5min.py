@@ -100,11 +100,11 @@ def indicator(symbol):
    
    
 # strategy:
-  if (diff > 0.5) and (df['BB'][-2] < 0) and (df['BB'][-1] > 0) and (rsi[-1] <= 30):
+  if (diff > 0.5) and (df['BB'][-2] < 0) and (df['BB'][-1] > 0) and (rsi[-1] >= 30):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Avg: % {round(average_candle_size,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_low,6)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
       
-  if (diff > 0.5)  and (df['BB'][-2] > 1) and (df['BB'][-1] < 1) and (rsi[-1] >= 70):
+  if (diff > 0.5)  and (df['BB'][-2] > 1) and (df['BB'][-1] < 1) and (rsi[-1] <= 70):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Avg: % {round(average_candle_size,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_high,6)}")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
       requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 

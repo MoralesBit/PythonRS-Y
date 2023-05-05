@@ -76,7 +76,7 @@ def indicator(symbol):
   "side": "sell",
   "symbol": symbol,
   "open": {
-    "price": Close
+    "price": enter_high
   }
 }
     PICKERLONG = {
@@ -85,7 +85,7 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol,
   "open": {
-    "price": Close
+    "price": enter_low
   }
 }
     

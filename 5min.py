@@ -67,8 +67,8 @@ def indicator(symbol):
     average_candle_size = np.mean(candle_size[-12:])
     
     # Entradas en cola:
-    enter_high = (Close + High)/2
-    enter_low = (Close + Low)/2
+    enter_high = Close + Close*abs(average_candle_size/100)
+    enter_low = Close - Close*abs(average_candle_size/100)
                  
     PICKERSHORT= {
   "name": "PICKER SHORT",

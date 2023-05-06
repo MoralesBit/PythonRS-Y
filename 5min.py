@@ -30,6 +30,10 @@ def indicator(symbol):
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
     
+    roc = ta.ROC(df['Close'], timeperiod=10)
+    
+    adx= ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+    
     df['ema_660'] = df['Close'].ewm(span=660, adjust=False).mean()
     
     #Calculo RSI:
@@ -123,22 +127,22 @@ def indicator(symbol):
    
       
 # strategy Back:
-  if (diff > 0.5) and (df['BB'][-2] < 0) and (df['BB'][-1] > 0) and (40 > rsi[-1] >= 30) and (rsi[-2] < rsi[-1]):
+  if (roc[-2] >= 2.5) and (df['BB'][-2] < 0) and (df['BB'][-1] > 0) and (40 > rsi[-1] >= 30) and (rsi[-2] < rsi[-1]):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Avg: % {round(average_candle_size,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_low,6)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
       
-  if (diff > 0.5)  and (df['BB'][-2] > 1) and (df['BB'][-1] < 1) and (60 < rsi[-1] <= 70) and (rsi[-2] > rsi[-1]):
+  if (roc[-2] >= 2.5)  and (df['BB'][-2] > 1) and (df['BB'][-1] < 1) and (60 < rsi[-1] <= 70) and (rsi[-2] > rsi[-1]):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Avg: % {round(average_candle_size,2)} \n💵 Precio: {Close}\n📍 Picker: {round(enter_high,6)}")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
       requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
 
 # strategy Trend:
-  if (Close < df['ema_660'][-2]):
+  if (Close < df['ema_660'][-2]) and (adx[-2] > 20):
     if (df['BB'][-2] > 0.5) and (df['BB'][-1] < 0.5) and (rsi[-2] >= 50):      
       Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha")
       requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
   
-  if (Close > df['ema_660'][-2]):
+  if (Close > df['ema_660'][-2]) and (adx[-2] > 20):
     if (df['BB'][-2] < 0.5) and (df['BB'][-1] > 0.5) and (rsi[-2] <= 50):  
       Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha") 
       requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)

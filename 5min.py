@@ -137,15 +137,15 @@ def indicator(symbol):
       requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
 
 # strategy Trend:
-  if (Close < df['ema_660'][-2]) and (adx[-2] > 20):
-    if (df['BB'][-2] >= 1):      
-      Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha")
-      requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
+#  if (Close < df['ema_660'][-2]) and (adx[-2] > 20):
+#    if (df['BB'][-2] >= 1):      
+#      Tb.telegram_send_message(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha")
+#      requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
   
-  if (Close > df['ema_660'][-2]) and (adx[-2] > 20):
-    if (df['BB'][-2] < 0):  
-      Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha") 
-      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
+#  if (Close > df['ema_660'][-2]) and (adx[-2] > 20):
+#    if (df['BB'][-2] < 0):  
+#      Tb.telegram_send_message(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n💵 Precio: {Close}\n🎣 Fishing Pisha") 
+#      requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
 
 
 while True:

@@ -102,11 +102,11 @@ def indicator(symbol):
 }
    
   print(df['diff'][-2])
-  if (df['Close'][-2] < lowerband[-2]) and (df['diff'][-2] > 3) and (imbalance > 0.2):
+  if (df['Close'][-2] < lowerband[-2]) and (df['diff'][-2] > 3) and (imbalance > 0.55):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(df['enter_low'][-2],6)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
       
-  if (df['Close'][-2] > upperband[-2]) and (df['diff'][-2] > 3) and (imbalance < -0.2):
+  if (df['Close'][-2] > upperband[-2]) and (df['diff'][-2] > 3) and (imbalance < -0.55):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(df['enter_high'][-2],6)}")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
       requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 

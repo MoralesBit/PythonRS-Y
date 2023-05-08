@@ -21,7 +21,7 @@ symbols = [
 
 def indicator(symbol):
   
-  kline = client.futures_historical_klines(symbol, "5m", "24 hours ago UTC+1",limit=500)
+  kline = client.futures_historical_klines(symbol, "5m", "2 days ago UTC+1",limit=1000)
   df = pd.DataFrame(kline)
   
   if not df.empty:
@@ -51,7 +51,7 @@ def indicator(symbol):
   "side": "sell",
   "symbol": symbol,
   "open": {
-    "price": df['Open'][-2]
+    "price": df['open'][-2]
   }
 }
     PICKERLONG = {
@@ -60,18 +60,20 @@ def indicator(symbol):
   "side": "buy",
   "symbol": symbol,
   "open": {
-    "price": df['Open'][-2]
+    "price": df['open'][-2]
   }
 }
     
 # KC strategy:
+  if (df['close'][-3] > df['upperband'][-3]) and (df['diff'][-3] >= 2) and (df['low'][-2] < df['upperband'][-2]):
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}")
+      requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
+      
   if  (df['close'][-3] < df['lowerband'][-3]) and (df['diff'][-3] >= 2) and (df['high'][-2] > df['lowerband'][-2]): 
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
       
-  if (df['close'][-3] > df['upperband'][-3]) and (df['diff'][-3] >= 2) and (df['low'][-2] < df['upperband'][-2]):
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['0pen'][-2],6)}")
-      requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
+
    
       
                

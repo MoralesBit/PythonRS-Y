@@ -43,7 +43,7 @@ def indicator(symbol):
     
     df['BB'] = (df['close'] - df['lowerband']) / (df['upperband'] - df['lowerband'])
         
-    diff = abs((df['high'] / df['low'] -1) * 100)      
+    df['diff'] = abs((df['high'] / df['low'] -1) * 100)      
    
     PICKERSHORT= {
   "name": "PICKER SHORT",
@@ -65,12 +65,12 @@ def indicator(symbol):
 }
     
 # KC strategy:
-  if  (df['close'][-3] < df['lowerband'][-3]) and (diff[-3] >= 2) and (df['high'][-2] > df['lowerband'][-2]): 
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(diff[-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}") 
+  if  (df['close'][-3] < df['lowerband'][-3]) and (df['diff'][-3] >= 2) and (df['high'][-2] > df['lowerband'][-2]): 
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}") 
       requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
       
-  if (df['close'][-3] > df['upperband'][-3]) and (diff[-3] >= 2) and (df['low'][-2] < df['upperband'][-2]):
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(diff[-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['0pen'][-2],6)}")
+  if (df['close'][-3] > df['upperband'][-3]) and (df['diff'][-3] >= 2) and (df['low'][-2] < df['upperband'][-2]):
+      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['0pen'][-2],6)}")
       requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
    
       

@@ -71,45 +71,35 @@ def indicator(symbol):
     else:
           imbalance = 0.0     
           
-    
-  PICKERSHORT= {
-  "name": "PICKER SHORT",
-  "secret": "hgw3399vhh",
-  "side": "sell",
-  "symbol": symbol,
-  "open": {
+
+  PORSHORT = {
+    "name": "CORTO 3POR",
+    "secret": "ao2cgree8fp",
+    "side": "sell",
+    "symbol": symbol,
+    "open": {
     "price": df['enter_high'][-2] 
-  }
-}
-  PICKERLONG = {
-  "name": "PICKER LONG",
-  "secret": "xjth0i3qgb",
-  "side": "buy",
-  "symbol": symbol,
-  "open": {
+    }
+    }
+  PORLONG = {
+    "name": "LARGO 3POR",
+    "secret": "nwh2tbpay1r",
+    "side": "buy",
+    "symbol": symbol,
+    "open": {
     "price": df['enter_low'][-2]
-  }
-}
-    
-  CARLOSSHORT = {
-  "name": "Hook 200276",
-  "secret": "gwbzsussxu5",
-  "side": "sell",
-  "symbol": symbol,
-  "open": {
-    "price":  df['enter_high'][-2] 
-  }
-}
-   
+    }
+    }
+         
   print(df['diff'][-2])
   if (df['Close'][-2] < lowerband[-2]) and (df['diff'][-2] > 3) and (imbalance > 0.55):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(df['enter_low'][-2],6)}") 
-      requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG)
+      requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
       
   if (df['Close'][-2] > upperband[-2]) and (df['diff'][-2] > 3) and (imbalance < -0.55):
       Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(df['enter_high'][-2],6)}")
-      requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)
-      requests.post('https://hook.finandy.com/DRt05cAn8UjMWv5bqVUK', json=CARLOSSHORT) 
+      requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
+      
 
                
 while True:

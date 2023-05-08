@@ -21,7 +21,7 @@ symbols = [
 
 def indicator(symbol):
   
-  kline = client.futures_historical_klines(symbol, "5m", "24 hours ago UTC+1",limit=1000)
+  kline = client.futures_historical_klines(symbol, "5m", "24 hours ago UTC+1",limit=500)
   df = pd.DataFrame(kline)
   
   if not df.empty:

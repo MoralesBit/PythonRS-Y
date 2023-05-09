@@ -89,7 +89,7 @@ def run_strategy():
     }
     }
    
-              requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PORSHORT)    
+              requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)    
             elif df.iloc[-2]['Close'] < df.iloc[-2]['lowerband'] and df.iloc[-2]['diff'] >= 2 and imbalance > 0.55:
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(imbalance,6)}") 
               PORLONG = {
@@ -101,7 +101,7 @@ def run_strategy():
     "price": df.iloc[-1]['Close']
     }
     }
-              requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PORLONG) 
+              requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
         except Exception as e:
             print(f"Error en el símbolo {symbol}: {e}")
 

@@ -1,4 +1,3 @@
-import datetime
 import time
 import requests
 import numpy as np
@@ -35,17 +34,13 @@ def calculate_indicators(symbol):
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     df['BB'] = (df['Close'] - df['lowerband']) / (df['upperband'] - df['lowerband'])
     df['diff'] = abs((df['High'] / df['Low'] - 1) * 100)
-    
-   
+       
     return df.iloc[-3:]
-
 
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
     symbols = get_trading_symbols()
-       
-        
-
+    
     for symbol in symbols:
         print(symbol)
         
@@ -55,7 +50,9 @@ def run_strategy():
                 continue
               
             if df.iloc[-3]['Close'] > df.iloc[-3]['upperband'] and df.iloc[-2]['Close'] < df.iloc[-2]['upperband'] and df.iloc[-3]['diff'] >= 2:
+             
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}")
+            
               PICKERSHORT= {
   "name": "PICKER SHORT",
   "secret": "hgw3399vhh",
@@ -67,8 +64,11 @@ def run_strategy():
 }
    
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
+         
             elif df.iloc[-3]['Close'] < df.iloc[-3]['lowerband'] and df.iloc[-2]['Close'] > df.iloc[-2]['lowerband'] and df.iloc[-3]['diff'] >= 2:
+            
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}") 
+            
               PICKERLONG = {
   "name": "PICKER LONG",
   "secret": "xjth0i3qgb",
@@ -79,7 +79,9 @@ def run_strategy():
   }
 }
               requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
+        
         except Exception as e:
+          
             print(f"Error en el símbolo {symbol}: {e}")
 
 while True:

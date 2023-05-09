@@ -78,7 +78,9 @@ def run_strategy():
             imbalance = calculate_imbalance(symbol)
             
             if df.iloc[-2]['Close'] > df.iloc[-2]['upperband'] and df.iloc[-2]['diff'] >= 2 and imbalance < -0.55:
+                
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(imbalance,6)}")
+             
               PORSHORT = {
     "name": "CORTO 3POR",
     "secret": "ao2cgree8fp",
@@ -91,7 +93,9 @@ def run_strategy():
    
               requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)    
             elif df.iloc[-2]['Close'] < df.iloc[-2]['lowerband'] and df.iloc[-2]['diff'] >= 2 and imbalance > 0.55:
+                
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(imbalance,6)}") 
+              
               PORLONG = {
     "name": "LARGO 3POR",
     "secret": "nwh2tbpay1r",

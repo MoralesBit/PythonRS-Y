@@ -35,8 +35,8 @@ def calculate_indicators(symbol):
     df['BB'] = (df['Close'] - df['lowerband']) / (df['upperband'] - df['lowerband'])
     df['diff'] = abs((df['High'] / df['Low'] - 1) * 100)
        
-    return df.iloc[-3:]
-
+    return 
+  
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
     symbols = get_trading_symbols()
@@ -49,8 +49,8 @@ def run_strategy():
             if df is None:
                 continue
               
-            if df.iloc[-3]['Close'] > df.iloc[-3]['upperband'] and df.iloc[-2]['Close'] < df.iloc[-2]['upperband'] and df.iloc[-3]['diff'] >= 2:
-             
+            #if df.iloc[-3]['Close'] > df.iloc[-3]['upperband'] and df.iloc[-2]['Close'] < df.iloc[-2]['upperband'] and df.iloc[-3]['diff'] >= 2:
+            if df['Close'][-3] > ['upperband'][-3] and df['Close'][-2] < ['upperband'][-2] and df['diff'][-3] >= 2:  
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}")
             
               PICKERSHORT= {
@@ -65,8 +65,8 @@ def run_strategy():
    
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
-            elif df.iloc[-3]['Close'] < df.iloc[-3]['lowerband'] and df.iloc[-2]['Close'] > df.iloc[-2]['lowerband'] and df.iloc[-3]['diff'] >= 2:
-            
+            #elif df.iloc[-3]['Close'] < df.iloc[-3]['lowerband'] and df.iloc[-2]['Close'] > df.iloc[-2]['lowerband'] and df.iloc[-3]['diff'] >= 2:
+            if df['Close'][-3] < ['lowerband'][-3] and df['Close'][-2] > ['lowerband'][-2] and df['diff'][-3] >= 2: 
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}") 
             
               PICKERLONG = {

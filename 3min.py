@@ -54,27 +54,28 @@ def run_strategy():
             if df is None:
                 continue
               #Imbalance
-               
-               
-            depth = 10
-
-            response = requests.get(f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}').json()
-            if 'bids' in response:
-                bid_sum = sum([float(bid[1]) for bid in response['bids']])
-            else:
-                bid_sum = 0.0
-
-            if 'asks' in response:
-                ask_sum = sum([float(ask[1]) for ask in response['asks']])
-            else:
-                ask_sum = 0.0
-
-            if bid_sum + ask_sum > 0:
-                imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
-            else:
-                imbalance = 0.0   
-                
             
+            def calculate_imbalance(symbol, depth=20):
+                """
+                    Calcula el desequilibrio para un símbolo dado utilizando el volumen acumulado en el libro de órdenes.
+                """
+                order_book = client.futures_order_book(symbol=symbol, limit=depth)
+                bids = order_book['bids']
+                asks = order_book['asks']
+
+                bid_volume = sum([float(bid[1]) for bid in bids])
+                ask_volume = sum([float(ask[1]) for ask in asks])
+
+                total_volume = bid_volume + ask_volume
+
+                if total_volume > 0:
+                    imbalance = (ask_volume - bid_volume) / total_volume
+                else:
+                    imbalance = 0.0
+
+                return imbalance
+            
+            imbalance = calculate_imbalance(symbol)
             
             if df.iloc[-2]['Close'] > df.iloc[-2]['upperband'] and df.iloc[-2]['diff'] >= 2 and imbalance < -0.55:
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(imbalance,6)}")

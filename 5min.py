@@ -51,7 +51,7 @@ def run_strategy():
               
             #if df.iloc[-3]['Close'] > df.iloc[-3]['upperband'] and df.iloc[-2]['Close'] < df.iloc[-2]['upperband'] and df.iloc[-3]['diff'] >= 2:
             if df['Close'][-3] > ['upperband'][-3] and df['Close'][-2] < ['upperband'][-2] and df['diff'][-3] >= 2:  
-              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}")
+              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(df['Open'][-2],6)}")
             
               PICKERSHORT= {
   "name": "PICKER SHORT",
@@ -67,7 +67,7 @@ def run_strategy():
          
             #elif df.iloc[-3]['Close'] < df.iloc[-3]['lowerband'] and df.iloc[-2]['Close'] > df.iloc[-2]['lowerband'] and df.iloc[-3]['diff'] >= 2:
             if df['Close'][-3] < ['lowerband'][-3] and df['Close'][-2] > ['lowerband'][-2] and df['diff'][-3] >= 2: 
-              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}") 
+              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(df['Open'][-2],6)}") 
             
               PICKERLONG = {
   "name": "PICKER LONG",

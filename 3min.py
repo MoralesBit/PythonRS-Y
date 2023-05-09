@@ -35,9 +35,10 @@ def calculate_indicators(symbol):
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     df['BB'] = (df['Close'] - df['lowerband']) / (df['upperband'] - df['lowerband'])
     df['diff'] = abs((df['High'] / df['Low'] - 1) * 100)
-     
-   
-    return df.iloc[-3:]
+    rsi = ta.RSI(df['Close'], timeperiod=14)
+    df['rsi'] = rsi   
+    
+    return df[-3:]
 
 
 def run_strategy():
@@ -82,14 +83,14 @@ def run_strategy():
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(imbalance,6)}")
              
               PORSHORT = {
-    "name": "CORTO 3POR",
-    "secret": "ao2cgree8fp",
-    "side": "sell",
-    "symbol": symbol,
-    "open": {
-    "price": df.iloc[-1]['Close']
-    }
-    }
+                "name": "CORTO 3POR",
+                "secret": "ao2cgree8fp",
+                "side": "sell",
+                "symbol": symbol,
+                "open": {
+                "price": df.iloc[-1]['Close']
+                }
+                }
    
               requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)    
             elif df.iloc[-2]['Close'] < df.iloc[-2]['lowerband'] and df.iloc[-2]['diff'] >= 2 and imbalance > 0.55:
@@ -97,14 +98,14 @@ def run_strategy():
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(imbalance,6)}") 
               
               PORLONG = {
-    "name": "LARGO 3POR",
-    "secret": "nwh2tbpay1r",
-    "side": "buy",
-    "symbol": symbol,
-    "open": {
-    "price": df.iloc[-1]['Close']
-    }
-    }
+                "name": "LARGO 3POR",
+                "secret": "nwh2tbpay1r",
+                "side": "buy",
+                "symbol": symbol,
+                "open": {
+                "price": df.iloc[-1]['Close']
+                }
+                }
               requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
         except Exception as e:
             print(f"Error en el símbolo {symbol}: {e}")

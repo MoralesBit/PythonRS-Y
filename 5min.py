@@ -62,7 +62,7 @@ def run_strategy():
   "side": "sell",
   "symbol": symbol,
   "open": {
-    "price": df['open'][-2]
+    "price": df.iloc[-1]['Close'] 
   }
 }
    
@@ -75,7 +75,7 @@ def run_strategy():
   "side": "buy",
   "symbol": symbol,
   "open": {
-    "price": df['open'][-2]
+    "price": df.iloc[-1]['Close'] 
   }
 }
               requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 

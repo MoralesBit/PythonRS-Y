@@ -1,112 +1,111 @@
-from binance.client import Client
-import pandas as pd
-import talib as ta
-import Telegram_bot as Tb
-import  schedule as schedule
-import time as ti
+import datetime
+import time
 import requests
 import numpy as np
+import pandas as pd
+import talib as ta
+from binance.client import Client
+import Telegram_bot as Tb
 
 Pkey = ''
 Skey = ''
-
 client = Client(api_key=Pkey, api_secret=Skey)
 
-futures_info = client.futures_exchange_info()
+def get_trading_symbols():
+    """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
+    futures_info = client.futures_exchange_info()
+    symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
+    return symbols
 
-symbols = [
-    symbol['symbol'] for symbol in futures_info['symbols']
-    if symbol['status'] == "TRADING"
-  ]
-
-def indicator(symbol):
-  
-  kline = client.futures_historical_klines(symbol, "3m", "24 hours ago UTC+1",limit=500)
-  df = pd.DataFrame(kline)
-  
-  if not df.empty:
-    df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close',
-      'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
-    df['Date'] = pd.to_datetime(df['Date'], unit='ms')
-    df = df.set_index('Date')
+def calculate_indicators(symbol):
+    """Calcula los indicadores de Bollinger para un símbolo y devuelve las últimas velas"""
+    klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_3MINUTE, limit=1000)
+    df = pd.DataFrame(klines)
+    if df.empty:
+        return None
+    df.columns = ['Open time', 'Open', 'High', 'Low', 'Close', 'Volume', 'Close time', 'Quote asset volume',
+                  'Number of trades', 'Taker buy base asset volume', 'Taker buy quote asset volume', 'Ignore']
+    df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
+    df = df.set_index('Open time')
     
-    #Calculo RSI:
-    rsi = ta.RSI(df["Close"], timeperiod=14)
-        
-    # Calculo Bollinger:
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'],
-                                               timeperiod=20,
-                                               nbdevup=2,
-                                               nbdevdn=2,
-                                               matype=0)
-       
-    #noro strategy
-    df['Open'] = df['Open'].astype(float)
-    df['High'] = df['High'].astype(float)
-    df['Low'] = df['Low'].astype(float)
-    df['Close'] = df['Close'].astype(float)
-    df['OHLC4'] = (df['Open'] + df['High'] + df['Low'] + df['Close']) / 4
-    
-    df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-    
-    df['enter_high'] = (df['Close'] +  df['High'] )/2
-    df['enter_low'] = (df['Close']  + df['Low'])/2
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+    df['upperband'] = upperband
+    df['middleband'] = middleband
+    df['lowerband'] = lowerband
+    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
+    df['BB'] = (df['Close'] - df['lowerband']) / (df['upperband'] - df['lowerband'])
+    df['diff'] = abs((df['High'] / df['Low'] - 1) * 100)
      
-      #Imbalance
-    depth = 10
+   
+    return df.iloc[-3:]
 
-    response = requests.get(f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}').json()
-    if 'bids' in response:
-          bid_sum = sum([float(bid[1]) for bid in response['bids']])
-    else:
-          bid_sum = 0.0
 
-    if 'asks' in response:
-         ask_sum = sum([float(ask[1]) for ask in response['asks']])
-    else:
-         ask_sum = 0.0
+def run_strategy():
+    """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
+    symbols = get_trading_symbols()
+       
+        
 
-    if bid_sum + ask_sum > 0:
-          imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
-    else:
-          imbalance = 0.0     
-          
+    for symbol in symbols:
+        print(symbol)
+        
+        try:
+            df = calculate_indicators(symbol)
+            if df is None:
+                continue
+              #Imbalance
+               
+               
+            depth = 10
 
-  PORSHORT = {
+            response = requests.get(f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}').json()
+            if 'bids' in response:
+                bid_sum = sum([float(bid[1]) for bid in response['bids']])
+            else:
+                bid_sum = 0.0
+
+            if 'asks' in response:
+                ask_sum = sum([float(ask[1]) for ask in response['asks']])
+            else:
+                ask_sum = 0.0
+
+            if bid_sum + ask_sum > 0:
+                imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
+            else:
+                imbalance = 0.0   
+                
+            print(imbalance)
+            
+            if df.iloc[-2]['Close'] > df.iloc[-2]['upperband'] and df.iloc[-2]['diff'] >= 2 and imbalance < -0.55:
+              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}")
+              PORSHORT = {
     "name": "CORTO 3POR",
     "secret": "ao2cgree8fp",
     "side": "sell",
     "symbol": symbol,
     "open": {
-    "price": df['enter_high'][-2] 
+    "price": df.iloc[-1]['Close']
     }
     }
-  PORLONG = {
+   
+              requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PORSHORT)    
+            elif df.iloc[-2]['Close'] < df.iloc[-2]['lowerband'] and df.iloc[-2]['diff'] >= 2 and imbalance > 0.55:
+              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}") 
+              PORLONG = {
     "name": "LARGO 3POR",
     "secret": "nwh2tbpay1r",
     "side": "buy",
     "symbol": symbol,
     "open": {
-    "price": df['enter_low'][-2]
+    "price": df.iloc[-1]['Close']
     }
     }
-         
-  print(df['diff'][-2])
-  if (df['Close'][-2] < lowerband[-2]) and (df['diff'][-2] > 3) and (imbalance > 0.55):
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(df['enter_low'][-2],6)}") 
-      requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)
-      
-  if (df['Close'][-2] > upperband[-2]) and (df['diff'][-2] > 3) and (imbalance < -0.55):
-      Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(df['enter_high'][-2],6)}")
-      requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT) 
-      
+              requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PORLONG) 
+        except Exception as e:
+            print(f"Error en el símbolo {symbol}: {e}")
 
-               
 while True:
-  current_time = ti.time()
-  seconds_to_wait = 180 - current_time % 180
-  ti.sleep(seconds_to_wait)   
-  
-  for symbol in symbols:
-      indicator(symbol)
-      print(symbol)
+    current_time = time.time()
+    seconds_to_wait = 180 - current_time % 180
+    time.sleep(seconds_to_wait)    
+    run_strategy()

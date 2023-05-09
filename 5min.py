@@ -43,8 +43,20 @@ def calculate_indicators(symbol):
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
     symbols = get_trading_symbols()
-    
-    PICKERSHORT= {
+       
+        
+
+    for symbol in symbols:
+        print(symbol)
+        
+        try:
+            df = calculate_indicators(symbol)
+            if df is None:
+                continue
+              
+            if df.iloc[-1]['Close'] > df.iloc[-1]['upperband'] and df.iloc[-2]['Close'] < df.iloc[-2]['upperband'] and df.iloc[-3]['diff'] >= 2:
+              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}")
+              PICKERSHORT= {
   "name": "PICKER SHORT",
   "secret": "hgw3399vhh",
   "side": "sell",
@@ -53,7 +65,11 @@ def run_strategy():
     "price": df['open'][-2]
   }
 }
-    PICKERLONG = {
+   
+              requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
+            elif df.iloc[-1]['Close'] < df.iloc[-1]['lowerband'] and df.iloc[-2]['Close'] > df.iloc[-2]['lowerband'] and df.iloc[-3]['diff'] >= 2:
+              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}") 
+              PICKERLONG = {
   "name": "PICKER LONG",
   "secret": "xjth0i3qgb",
   "side": "buy",
@@ -62,18 +78,6 @@ def run_strategy():
     "price": df['open'][-2]
   }
 }
-    for symbol in symbols:
-        print(symbol)
-        
-        try:
-            df = calculate_indicators(symbol)
-            if df is None:
-                continue
-            if df.iloc[-1]['Close'] > df.iloc[-1]['upperband'] and df.iloc[-2]['Close'] < df.iloc[-2]['upperband'] and df.iloc[-3]['diff'] >= 2:
-              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}")
-              requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
-            elif df.iloc[-1]['Close'] < df.iloc[-1]['lowerband'] and df.iloc[-2]['Close'] > df.iloc[-2]['lowerband'] and df.iloc[-3]['diff'] >= 2:
-              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['close'][-2]}\n📍 Picker: {round(df['open'][-2],6)}") 
               requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
         except Exception as e:
             print(f"Error en el símbolo {symbol}: {e}")
@@ -81,6 +85,5 @@ def run_strategy():
 while True:
     current_time = time.time()
     seconds_to_wait = 300 - current_time % 300
-    time.sleep(seconds_to_wait)
-    
+    time.sleep(seconds_to_wait)    
     run_strategy()

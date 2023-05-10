@@ -56,31 +56,30 @@ def run_strategy():
                 continue
               #Imbalance
             
-            def calculate_imbalance(symbol, depth=20):
-                """
-                    Calcula el desequilibrio para un símbolo dado utilizando el volumen acumulado en el libro de órdenes.
-                """
+            def calculate_distance(symbol, depth=20):
+                ticker = client.get_ticker(symbol=symbol)
+                current_price = float(ticker['lastPrice'])
+
                 order_book = client.futures_order_book(symbol=symbol, limit=depth)
                 bids = order_book['bids']
                 asks = order_book['asks']
 
-                bid_volume = sum([float(bid[1]) for bid in bids])
-                ask_volume = sum([float(ask[1]) for ask in asks])
+                best_bid = float(bids[0][0])
+                best_ask = float(asks[0][0])
 
-                total_volume = bid_volume + ask_volume
+                distance_to_bid = current_price - best_bid
+                distance_to_ask = best_ask - current_price
 
-                if total_volume > 0:
-                    imbalance = (ask_volume - bid_volume) / total_volume
-                else:
-                    imbalance = 0.0
-
-                return imbalance
-            
-            imbalance = calculate_imbalance(symbol)
-            
-            if (df.iloc[-2]['Close'] > df.iloc[-2]['upperband']) and (df.iloc[-2]['diff'] >= 1) and (imbalance < -0.35):
+                return distance_to_bid, distance_to_ask
+   
+   
+            bid_distance, ask_distance = calculate_distance(symbol, depth=20)
                 
-              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(df.iloc[-2]['diff'],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(imbalance,6)}")
+                       
+            if abs(bid_distance) < abs(ask_distance):
+             if (df.iloc[-2]['Close'] > df.iloc[-2]['upperband']) and (df.iloc[-2]['diff'] >= 1):
+                
+              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(distance_to_bid,6)}")
              
               PORSHORT = {
                 "name": "CORTO 3POR",
@@ -93,9 +92,11 @@ def run_strategy():
                 }
    
               requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)    
-            if (df.iloc[-2]['Close'] < df.iloc[-2]['lowerband']) and (df.iloc[-2]['diff'] >= 1) and (imbalance > 0.35):
+              
+            if abs(bid_distance) < abs(ask_distance):  
+             if (df.iloc[-2]['Close'] < df.iloc[-2]['lowerband']) and (df.iloc[-2]['diff'] >= 1):
                 
-              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(df.iloc[-2]['diff'],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(imbalance,6)}") 
+              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(distance_to_ask,6)}") 
               
               PORLONG = {
                 "name": "LARGO 3POR",

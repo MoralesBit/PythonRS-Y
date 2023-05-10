@@ -72,7 +72,7 @@ def run_strategy():
    
             bid_distance, ask_distance = calculate_distance(symbol, depth=20)  
             
-            if abs(bid_distance) < abs(ask_distance):             
+            if abs(ask_distance) < abs(bid_distance):             
           
              if (df['Close'][-3] > df['upperband'][-3]) and (df['Low'][-2] < df['upperband'][-2]) and (df['diff'][-3] >= 1): 
                   

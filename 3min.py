@@ -76,7 +76,7 @@ def run_strategy():
             bid_distance, ask_distance = calculate_distance(symbol, depth=20)
                 
                       
-            if abs(bid_distance) < abs(ask_distance):
+            if abs(ask_distance) < abs(ask_distance):
              if (df.iloc[-2]['Close'] > df.iloc[-2]['upperband']) and (df.iloc[-2]['diff'] >= 1) and (df['rsi'][-2] > 70):
                 
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(bid_distance,6)}")

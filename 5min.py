@@ -35,7 +35,8 @@ def calculate_indicators(symbol):
     df['BB'] = (df['Close'] - df['lowerband']) / (df['upperband'] - df['lowerband'])
     df['diff'] = abs((df['High'] / df['Low'] - 1) * 100)
     rsi = ta.RSI(df['Close'], timeperiod=14)
-    df['rsi'] = rsi   
+    df['rsi'] = rsi 
+    
        
     return df[-3:]
   
@@ -50,9 +51,31 @@ def run_strategy():
             df = calculate_indicators(symbol)
             if df is None:
                 continue
-                       
-            #if df.iloc[-3]['Close'] > df.iloc[-3]['upperband'] and df.iloc[-2]['Close'] < df.iloc[-2]['upperband'] and df.iloc[-3]['diff'] >= 2:
-            if (df['Close'][-3] > df['upperband'][-3]) and (df['Low'][-2] < df['upperband'][-2]) and (df['diff'][-3] >= 1) and (df['rsi'][-3] >= 80):  
+                #Distance
+            
+            def calculate_distance(symbol, depth=20):
+                
+                current_price = df.iloc[-1]['Close']
+
+                order_book = client.futures_order_book(symbol=symbol, limit=depth)
+                bids = order_book['bids']
+                asks = order_book['asks']
+
+                best_bid = float(bids[0][0])
+                best_ask = float(asks[0][0])
+
+                distance_to_bid = current_price - best_bid
+                distance_to_ask = best_ask - current_price
+
+                return distance_to_bid, distance_to_ask
+   
+   
+            bid_distance, ask_distance = calculate_distance(symbol, depth=20)  
+            
+            if abs(bid_distance) < abs(ask_distance):             
+          
+             if (df['Close'][-3] > df['upperband'][-3]) and (df['Low'][-2] < df['upperband'][-2]) and (df['diff'][-3] >= 1): 
+                  
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker")
             
               PICKERSHORT= {
@@ -67,8 +90,10 @@ def run_strategy():
    
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
-            #elif df.iloc[-3]['Close'] < df.iloc[-3]['lowerband'] and df.iloc[-2]['Close'] > df.iloc[-2]['lowerband'] and df.iloc[-3]['diff'] >= 2:
-            if (df['Close'][-3] < df['lowerband'][-3]) and (df['High'][-2] > df['lowerband'][-2]) and (df['diff'][-3] >= 1) and (df['rsi'][-3] <= 20): 
+            if abs(bid_distance) < abs(ask_distance):  
+                
+             if (df['Close'][-3] < df['lowerband'][-3]) and (df['High'][-2] > df['lowerband'][-2]) and (df['diff'][-3] >= 1): 
+                 
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker") 
             
               PICKERLONG = {

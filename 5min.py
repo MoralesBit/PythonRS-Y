@@ -36,7 +36,8 @@ def calculate_indicators(symbol):
     df['diff'] = abs((df['High'] / df['Low'] - 1) * 100)
     rsi = ta.RSI(df['Close'], timeperiod=14)
     df['rsi'] = rsi 
-    
+    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+    df['slowk'] = slowk
        
     return df[-3:]
   
@@ -74,7 +75,7 @@ def run_strategy():
             
             if abs(ask_distance) < abs(bid_distance):             
           
-             if (df['Close'][-3] > df['upperband'][-3]) and (df['Low'][-2] < df['upperband'][-2]) and (df['diff'][-3] >= 1) and (df['rsi'][-3] > 70): 
+             if (df['Close'][-3] > df['upperband'][-3]) and (df['Low'][-2] < df['upperband'][-2]) and (df['diff'][-3] >= 1) and (df['slowk'][-2] > 80): 
                   
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker")
             
@@ -92,7 +93,7 @@ def run_strategy():
          
             if abs(bid_distance) < abs(ask_distance):  
                 
-             if (df['Close'][-3] < df['lowerband'][-3]) and (df['High'][-2] > df['lowerband'][-2]) and (df['diff'][-3] >= 1) and (df['rsi'][-3] < 30): 
+             if (df['Close'][-3] < df['lowerband'][-3]) and (df['High'][-2] > df['lowerband'][-2]) and (df['diff'][-3] >= 1) and (df['slowk'][-2] < 20): 
                  
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker") 
             

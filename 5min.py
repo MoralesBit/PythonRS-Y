@@ -52,7 +52,7 @@ def run_strategy():
                 continue
                        
             #if df.iloc[-3]['Close'] > df.iloc[-3]['upperband'] and df.iloc[-2]['Close'] < df.iloc[-2]['upperband'] and df.iloc[-3]['diff'] >= 2:
-            if (df['Close'][-3] > df['upperband'][-3]) and (df['Low'][-2] < df['upperband'][-2]) and (df['diff'][-3] >= 1.25):  
+            if (df['Close'][-3] > df['upperband'][-3]) and (df['Low'][-2] < df['upperband'][-2]) and (df['diff'][-3] >= 1) and (df['rsi'][-3] >= 70):  
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(df['Open'][-2],6)}")
             
               PICKERSHORT= {
@@ -61,14 +61,14 @@ def run_strategy():
                 "side": "sell",
                 "symbol": symbol,
                 "open": {
-                "price": float(df['Close'][-2])
+                "price": float(df['Close'][-1])
                 }
                 }
    
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
             #elif df.iloc[-3]['Close'] < df.iloc[-3]['lowerband'] and df.iloc[-2]['Close'] > df.iloc[-2]['lowerband'] and df.iloc[-3]['diff'] >= 2:
-            if (df['Close'][-3] < df['lowerband'][-3]) and (df['High'][-2] > df['lowerband'][-2]) and (df['diff'][-3] >= 1.25): 
+            if (df['Close'][-3] < df['lowerband'][-3]) and (df['High'][-2] > df['lowerband'][-2]) and (df['diff'][-3] >= 1) and (df['rsi'][-3] <= 30): 
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(df['Open'][-2],6)}") 
             
               PICKERLONG = {
@@ -77,7 +77,7 @@ def run_strategy():
                "side": "buy",
                "symbol": symbol,
                "open": {
-               "price": float(df['Close'][-2]) 
+               "price": float(df['Close'][-1]) 
               }
               }
               requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 

@@ -59,7 +59,7 @@ def run_strategy():
                 continue
               #Imbalance
             
-            def calculate_distance(symbol, depth=20):
+            def calculate_distance(symbol, depth=50):
                 
                 current_price = df.iloc[-1]['Close']
 
@@ -78,9 +78,8 @@ def run_strategy():
    
             bid_distance, ask_distance, best_ask, best_bid = calculate_distance(symbol, depth=20)
                 
-                               
-            if abs(ask_distance) < abs(bid_distance):
-             if (df.iloc[-2]['Close'] > df.iloc[-2]['upperband']) and (df.iloc[-2]['diff'] >= 1) and (df['rsi'][-2] > 70) and (df['slowk'][-2] <= df['slowd'][-2]):
+                          
+            if (df.iloc[-2]['Close'] > df.iloc[-2]['upperband']) and (df.iloc[-2]['diff'] >= 1) and (df['rsi'][-2] > 70) and (df['slowk'][-2] <= df['slowd'][-2]):
                 
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(best_ask,6)}")
              
@@ -95,8 +94,8 @@ def run_strategy():
                 }
    
               requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)           
-            if abs(bid_distance) < abs(ask_distance):  
-             if (df.iloc[-2]['Close'] < df.iloc[-2]['lowerband']) and (df.iloc[-2]['diff'] >= 1) and (df['rsi'][-2] < 30) and (df['slowk'][-2] >= df['slowk'][-2]):
+             
+            if (df.iloc[-2]['Close'] < df.iloc[-2]['lowerband']) and (df.iloc[-2]['diff'] >= 1) and (df['rsi'][-2] < 30) and (df['slowk'][-2] >= df['slowk'][-2]):
                     
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(best_bid,6)}") 
               

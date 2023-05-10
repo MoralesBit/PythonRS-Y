@@ -57,9 +57,9 @@ def run_strategy():
                        
             if (float(df['slowk'][-3]) > float(df['slowd'][-3])) and (float(df['slowk'][-2]) < float(df['slowd'][-2])):           
           
-             if (float(df['Close'][-3]) > float(df['upperband'][-3])) and (float(df['Close'][-2]) < float(df['upperband'][-2])) and (df['diff'][-3] >= 1): 
+             if (float(df['Close'][-3]) > float(df['upperband'][-3])) and (float(df['Close'][-2]) < float(df['upperband'][-2])) and (float(df['diff'][-3]) >= 1): 
                   
-              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker")
+              Tb.telegram_canal_3por(f"🔴 {symbol}\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker")
             
               PICKERSHORT= {
                 "name": "PICKER SHORT",
@@ -75,9 +75,9 @@ def run_strategy():
          
             if (float(df['slowk'][-3]) < float(df['slowd'][-3])) and (float(df['slowk'][-2]) > float(df['slowd'][-2])):    
                 
-             if (float(df['Close'][-3]) < float(df['lowerband'][-3])) and (float(df['Close'][-2]) > float(df['lowerband'][-2])) and (df['diff'][-3] >= 1): 
+             if (float(df['Close'][-3]) < float(df['lowerband'][-3])) and (float(df['Close'][-2]) > float(df['lowerband'][-2])) and (float(df['diff'][-3]) >= 1): 
                  
-              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker") 
+              Tb.telegram_canal_3por(f"🟢 {symbol}\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker") 
             
               PICKERLONG = {
                "name": "PICKER LONG",
@@ -94,9 +94,9 @@ def run_strategy():
             
             if (float(df['slowk'][-3]) < float(df['slowd'][-3])) and (float(df['slowk'][-2]) < float(df['slowd'][-2])):    
                 
-             if (float(df['Close'][-3]) < float(df['lowerband'][-3])) and (float(df['Close'][-2]) < float(df['lowerband'][-2])) and (df['diff'][-3] >= 1): 
+             if (float(df['Close'][-3]) < float(df['lowerband'][-3])) and (float(df['Close'][-2]) < float(df['lowerband'][-2])) and (float(df['diff'][-3]) >= 1): 
                  
-              Tb.telegram_canal_prueba(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha") 
+              Tb.telegram_canal_prueba(f"🔴 {symbol}\n⏳ 5 min\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha") 
             
               FISHINGSHORT = {
                 "name": "FISHING SHORT",
@@ -112,9 +112,9 @@ def run_strategy():
               
             if (float(df['slowk'][-3]) > float(df['slowd'][-3])) and (float(df['slowk'][-2]) > float(df['slowd'][-2])):           
           
-             if (float(df['Close'][-3]) > float(df['upperband'][-3])) and (float(df['Close'][-2]) > float(df['upperband'][-2])) and (df['diff'][-3] >= 1): 
+             if (float(df['Close'][-3]) > float(df['upperband'][-3])) and (float(df['Close'][-2]) > float(df['upperband'][-2])) and (float(df['diff'][-3]) >= 1): 
                   
-              Tb.telegram_canal_prueba(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha")            
+              Tb.telegram_canal_prueba(f"🟢 {symbol}\n⏳ 5 min\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha")            
               
               FISHINGLONG = {
                 "name": "FISHING LONG",

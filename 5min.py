@@ -53,7 +53,7 @@ def run_strategy():
             df = calculate_indicators(symbol)
             if df is None:
                 continue
-            # CONTRATENDENCIA:
+            # CONTRATENDENCIAs:
                        
             if (float(df['slowk'][-3]) > float(df['slowd'][-3])) and (float(df['slowk'][-2]) < float(df['slowd'][-2])):           
           

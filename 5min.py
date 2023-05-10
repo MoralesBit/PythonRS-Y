@@ -55,9 +55,9 @@ def run_strategy():
                 continue
             # CONTRATENDENCIA:
                        
-            if (df['slowk'][-3] > df['slowd'][-3]) and (df['slowk'][-2] < df['slowd'][-2]):           
+            if (float(df['slowk'][-3]) > float(df['slowd'][-3])) and (float(df['slowk'][-2]) < float(df['slowd'][-2])):           
           
-             if (float(df['Close'][-3]) > df['upperband'][-3]) and (float(df['Low'][-2]) < df['upperband'][-2]) and (df['diff'][-3] >= 1): 
+             if (float(df['Close'][-3]) > float(df['upperband'][-3])) and (float(df['Low'][-2]) < float(df['upperband'][-2])) and (df['diff'][-3] >= 1): 
                   
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker")
             
@@ -73,9 +73,9 @@ def run_strategy():
    
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
-            if (df['slowk'][-3] < df['slowd'][-3]) and (df['slowk'][-2] > df['slowd'][-2]):    
+            if (float(df['slowk'][-3]) < float(df['slowd'][-3])) and (float(df['slowk'][-2]) > float(df['slowd'][-2])):    
                 
-             if (float(df['Close'][-3]) < df['lowerband'][-3]) and (float(df['High'][-2]) > df['lowerband'][-2]) and (df['diff'][-3] >= 1): 
+             if (float(df['Close'][-3]) < float(df['lowerband'][-3])) and (float(df['High'][-2]) > float(df['lowerband'][-2])) and (df['diff'][-3] >= 1): 
                  
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker") 
             
@@ -92,9 +92,9 @@ def run_strategy():
             
             #FISHING PISHA:
             
-            if (df['slowk'][-3] < df['slowd'][-3]) and (df['slowk'][-2] < df['slowd'][-2]):    
+            if (float(df['slowk'][-3]) < float(df['slowd'][-3])) and (float(df['slowk'][-2]) < float(df['slowd'][-2])):    
                 
-             if (float(df['Close'][-3]) < df['lowerband'][-3]) and (float(df['High'][-2]) < df['lowerband'][-2]) and (df['diff'][-3] >= 1): 
+             if (float(df['Close'][-3]) < float(df['lowerband'][-3])) and (float(df['High'][-2]) < float(df['lowerband'][-2])) and (df['diff'][-3] >= 1): 
                  
               Tb.telegram_canal_prueba(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha") 
             
@@ -110,9 +110,9 @@ def run_strategy():
               requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
             
               
-            if (df['slowk'][-3] > df['slowd'][-3]) and (df['slowk'][-2] > df['slowd'][-2]):           
+            if (float(df['slowk'][-3]) > float(df['slowd'][-3])) and (float(df['slowk'][-2]) > float(df['slowd'][-2])):           
           
-             if (float(df['Close'][-3]) > df['upperband'][-3]) and (float(df['Low'][-2]) > df['upperband'][-2]) and (df['diff'][-3] >= 1): 
+             if (float(df['Close'][-3]) > float(df['upperband'][-3])) and (float(df['Low'][-2]) > float(df['upperband'][-2])) and (df['diff'][-3] >= 1): 
                   
               Tb.telegram_canal_prueba(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha")            
               

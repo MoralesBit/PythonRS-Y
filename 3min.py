@@ -73,16 +73,16 @@ def run_strategy():
                 distance_to_bid = current_price - best_bid
                 distance_to_ask = best_ask - current_price
 
-                return distance_to_bid, distance_to_ask
+                return distance_to_bid, distance_to_ask, best_ask, best_bid
    
    
-            bid_distance, ask_distance = calculate_distance(symbol, depth=20)
+            bid_distance, ask_distance, best_ask, best_bid = calculate_distance(symbol, depth=20)
                 
-                      
-            if abs(ask_distance) < abs(ask_distance):
+                               
+            if abs(ask_distance) < abs(bid_distance):
              if (df.iloc[-2]['Close'] > df.iloc[-2]['upperband']) and (df.iloc[-2]['diff'] >= 1) and (df['rsi'][-2] > 70) and (df['slowk'][-2] <= df['slowd'][-2]):
                 
-              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(bid_distance,6)}")
+              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(best_ask,6)}")
              
               PORSHORT = {
                 "name": "CORTO 3POR",
@@ -98,7 +98,7 @@ def run_strategy():
             if abs(bid_distance) < abs(ask_distance):  
              if (df.iloc[-2]['Close'] < df.iloc[-2]['lowerband']) and (df.iloc[-2]['diff'] >= 1) and (df['rsi'][-2] < 30) and (df['slowk'][-2] >= df['slowk'][-2]):
                     
-              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(ask_distance,6)}") 
+              Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(best_bid,6)}") 
               
               PORLONG = {
                 "name": "LARGO 3POR",

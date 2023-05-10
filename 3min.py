@@ -36,7 +36,9 @@ def calculate_indicators(symbol):
     df['BB'] = (df['Close'] - df['lowerband']) / (df['upperband'] - df['lowerband'])
     df['diff'] = abs((df['High'] / df['Low'] - 1) * 100)
     rsi = ta.RSI(df['Close'], timeperiod=14)
-    df['rsi'] = rsi   
+    df['rsi'] = rsi 
+    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+    slowk, slowd = df[['slowk', 'slowd', 'Low', 'Close']] 
     
     return df[-3:]
 
@@ -77,7 +79,7 @@ def run_strategy():
                 
                       
             if abs(ask_distance) < abs(ask_distance):
-             if (df.iloc[-2]['Close'] > df.iloc[-2]['upperband']) and (df.iloc[-2]['diff'] >= 1) and (df['rsi'][-2] > 70):
+             if (df.iloc[-2]['Close'] > df.iloc[-2]['upperband']) and (df.iloc[-2]['diff'] >= 1) and (df['rsi'][-2] > 70) and (df['slowk'][-2] > 70):
                 
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(bid_distance,6)}")
              
@@ -91,11 +93,10 @@ def run_strategy():
                 }
                 }
    
-              requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)    
-              
+              requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)           
             if abs(bid_distance) < abs(ask_distance):  
-             if (df.iloc[-2]['Close'] < df.iloc[-2]['lowerband']) and (df.iloc[-2]['diff'] >= 1) and (df['rsi'][-2] < 30):
-                
+             if (df.iloc[-2]['Close'] < df.iloc[-2]['lowerband']) and (df.iloc[-2]['diff'] >= 1) and (df['rsi'][-2] < 30) and (df['slowk'][-2] < 20):
+                    
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 3 min \n🔝 Cambio: % {round(df['diff'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker: {round(ask_distance,6)}") 
               
               PORLONG = {

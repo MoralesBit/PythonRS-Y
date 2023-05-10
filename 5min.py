@@ -53,27 +53,8 @@ def run_strategy():
             df = calculate_indicators(symbol)
             if df is None:
                 continue
-                #Distance
-            
-            #def calculate_distance(symbol, depth=20):
-                
-            #    current_price = df.iloc[-1]['Close']
-
-            #    order_book = client.futures_order_book(symbol=symbol, limit=depth)
-            #    bids = order_book['bids']
-            #    asks = order_book['asks']
-
-            #    best_bid = float(bids[0][0])
-            #    best_ask = float(asks[0][0])
-
-            #    distance_to_bid = current_price - best_bid
-            #    distance_to_ask = best_ask - current_price
-
-            #    return distance_to_bid, distance_to_ask
-   
-   
-            #bid_distance, ask_distance = calculate_distance(symbol, depth=20)  
-            
+            # CONTRATENDENCIA:
+                       
             if (df['slowk'][-3] > df['slowd'][-3]) and (df['slowk'][-2] < df['slowd'][-2]):           
           
              if (df['Close'][-3] > df['upperband'][-3]) and (df['Low'][-2] < df['upperband'][-2]) and (df['diff'][-3] >= 1): 
@@ -108,8 +89,44 @@ def run_strategy():
               }
               }
               requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
-              
             
+            #FISHING PISHA:
+            
+            if (df['slowk'][-3] < df['slowd'][-3]) and (df['slowk'][-2] < df['slowd'][-2]):    
+                
+             if (df['Close'][-3] < df['lowerband'][-3]) and (df['High'][-2] < df['lowerband'][-2]) and (df['diff'][-3] >= 1): 
+                 
+              Tb.telegram_canal_prueba(f"🎣 {symbol}\n🔴 SHORT\n⏳ 5 min\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha") 
+            
+              FISHINGSHORT = {
+                "name": "FISHING SHORT",
+                "secret": "azsdb9x719",
+                "side": "sell",
+                "symbol": symbol,
+                "open": {
+                "price": float(df['Close'][-1])
+                }
+                }
+              requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
+            
+              
+            if (df['slowk'][-3] > df['slowd'][-3]) and (df['slowk'][-2] > df['slowd'][-2]):           
+          
+             if (df['Close'][-3] > df['upperband'][-3]) and (df['Low'][-2] > df['upperband'][-2]) and (df['diff'][-3] >= 1): 
+                  
+              Tb.telegram_canal_prueba(f"🎣 {symbol}\n🟢 LONG\n⏳ 5 min\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha")            
+              
+              FISHINGLONG = {
+                "name": "FISHING LONG",
+                "secret": "0kivpja7tz89",
+                "side": "buy",
+                "symbol": symbol,
+                "open": {
+                "price": float(df['Close'][-1])
+                }
+                }
+   
+              requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)     
                 
         except Exception as e:
           

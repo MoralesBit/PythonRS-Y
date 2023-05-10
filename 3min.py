@@ -57,8 +57,8 @@ def run_strategy():
               #Imbalance
             
             def calculate_distance(symbol, depth=20):
-                ticker = client.get_ticker(symbol=symbol)
-                current_price = float(ticker['lastPrice'])
+                
+                current_price = df.iloc[-1]['Close']
 
                 order_book = client.futures_order_book(symbol=symbol, limit=depth)
                 bids = order_book['bids']
@@ -75,7 +75,7 @@ def run_strategy():
    
             bid_distance, ask_distance = calculate_distance(symbol, depth=20)
                 
-                       
+                      
             if abs(bid_distance) < abs(ask_distance):
              if (df.iloc[-2]['Close'] > df.iloc[-2]['upperband']) and (df.iloc[-2]['diff'] >= 1):
                 

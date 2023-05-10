@@ -74,7 +74,7 @@ def run_strategy():
             
             if abs(ask_distance) < abs(bid_distance):             
           
-             if (df['Close'][-3] > df['upperband'][-3]) and (df['Low'][-2] < df['upperband'][-2]) and (df['diff'][-3] >= 1): 
+             if (df['Close'][-3] > df['upperband'][-3]) and (df['Low'][-2] < df['upperband'][-2]) and (df['diff'][-3] >= 1) and (df['rsi'][-3] > 70): 
                   
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🔴 SHORT\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker")
             
@@ -92,7 +92,7 @@ def run_strategy():
          
             if abs(bid_distance) < abs(ask_distance):  
                 
-             if (df['Close'][-3] < df['lowerband'][-3]) and (df['High'][-2] > df['lowerband'][-2]) and (df['diff'][-3] >= 1): 
+             if (df['Close'][-3] < df['lowerband'][-3]) and (df['High'][-2] > df['lowerband'][-2]) and (df['diff'][-3] >= 1) and (df['rsi'][-3] < 30): 
                  
               Tb.telegram_canal_3por(f"⚡️ {symbol}\n🟢 LONG\n⏳ 5 min \n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker") 
             

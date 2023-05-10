@@ -57,7 +57,7 @@ def run_strategy():
                        
             if (float(df['slowk'][-3]) > float(df['slowd'][-3])) and (float(df['slowk'][-2]) < float(df['slowd'][-2])):           
           
-             if (float(df['Close'][-3]) > float(df['upperband'][-3])) and (float(df['Close'][-2]) < float(df['upperband'][-2])) and (float(df['diff'][-3]) >= 1): 
+             if (float(df['Close'][-3]) > float(df['upperband'][-3])) and (float(df['Close'][-2]) < float(df['upperband'][-2])) and (float(df['diff'][-3]) >= 1) and (df['rsi'][-2] > 70): 
                   
               Tb.telegram_canal_3por(f"🔴 {symbol}\n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ⏳ 5 min")
             
@@ -75,7 +75,7 @@ def run_strategy():
          
             if (float(df['slowk'][-3]) < float(df['slowd'][-3])) and (float(df['slowk'][-2]) > float(df['slowd'][-2])):    
                 
-             if (float(df['Close'][-3]) < float(df['lowerband'][-3])) and (float(df['Close'][-2]) > float(df['lowerband'][-2])) and (float(df['diff'][-3]) >= 1): 
+             if (float(df['Close'][-3]) < float(df['lowerband'][-3])) and (float(df['Close'][-2]) > float(df['lowerband'][-2])) and (float(df['diff'][-3]) >= 1) and (df['rsi'][-2] < 30): 
                  
               Tb.telegram_canal_3por(f"🟢 {symbol}\n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ⏳ 5 min") 
             

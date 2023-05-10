@@ -38,7 +38,7 @@ def calculate_indicators(symbol):
     rsi = ta.RSI(df['Close'], timeperiod=14)
     df['rsi'] = rsi 
     slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
-    slowk, slowd = df[['slowk', 'slowd', 'Low', 'Close']] 
+    df['slowk'] = slowk
     
     return df[-3:]
 

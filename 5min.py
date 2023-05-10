@@ -55,24 +55,24 @@ def run_strategy():
                 continue
                 #Distance
             
-            def calculate_distance(symbol, depth=20):
+            #def calculate_distance(symbol, depth=20):
                 
-                current_price = df.iloc[-1]['Close']
+            #    current_price = df.iloc[-1]['Close']
 
-                order_book = client.futures_order_book(symbol=symbol, limit=depth)
-                bids = order_book['bids']
-                asks = order_book['asks']
+            #    order_book = client.futures_order_book(symbol=symbol, limit=depth)
+            #    bids = order_book['bids']
+            #    asks = order_book['asks']
 
-                best_bid = float(bids[0][0])
-                best_ask = float(asks[0][0])
+            #    best_bid = float(bids[0][0])
+            #    best_ask = float(asks[0][0])
 
-                distance_to_bid = current_price - best_bid
-                distance_to_ask = best_ask - current_price
+            #    distance_to_bid = current_price - best_bid
+            #    distance_to_ask = best_ask - current_price
 
-                return distance_to_bid, distance_to_ask
+            #    return distance_to_bid, distance_to_ask
    
    
-            bid_distance, ask_distance = calculate_distance(symbol, depth=20)  
+            #bid_distance, ask_distance = calculate_distance(symbol, depth=20)  
             
             if (df['slowk'][-3] > df['slowd'][-3]) and (df['slowk'][-2] < df['slowd'][-2]):           
           
@@ -108,7 +108,9 @@ def run_strategy():
               }
               }
               requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
-        
+              
+            
+                
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

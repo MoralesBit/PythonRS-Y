@@ -58,39 +58,41 @@ def run_strategy():
             # CONTRATENDENCIAs:
                        
             #if (float(df['slowk'][-3]) > float(df['slowd'][-3])) and (float(df['slowk'][-2]) < float(df['slowd'][-2])):           
-          
-            # if (float(df['Close'][-3]) > float(df['upperband'][-3])) and (float(df['Close'][-2]) < float(df['upperband'][-2])) and (float(df['diff'][-3]) >= 1) and (df['rsi'][-2] > 70): 
+            if (60 < df['rsi'][-2]) and (df['rsi'][-3] > df['rsi'][-2]): 
+                
+             if (float(df['Close'][-3]) > float(df['upperband'][-3])) and (float(df['diff'][-3]) >= 1) and (df['adx'][-3] < df['adx'][-2]) and (df['adx'][-2] > 40): 
                   
-            #  Tb.telegram_canal_3por(f"🔴 {symbol}\n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
+              Tb.telegram_canal_3por(f"🔴 {symbol}\n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
             
-            #  PICKERSHORT= {
-            #    "name": "PICKER SHORT",
-            #    "secret": "hgw3399vhh",
-            #    "side": "sell",
-            #    "symbol": symbol,
-            #    "open": {
-            #    "price": float(df['Close'][-1])
-            #    }
-            #    }
+              PICKERSHORT= {
+                "name": "PICKER SHORT",
+                "secret": "hgw3399vhh",
+                "side": "sell",
+                "symbol": symbol,
+                "open": {
+                "price": float(df['Close'][-1])
+                }
+                }
    
-            #  requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
+              requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
             #if (float(df['slowk'][-3]) < float(df['slowd'][-3])) and (float(df['slowk'][-2]) > float(df['slowd'][-2])):    
-                
-            # if (float(df['Close'][-3]) < float(df['lowerband'][-3])) and (float(df['Close'][-2]) > float(df['lowerband'][-2])) and (float(df['diff'][-3]) >= 1) and (df['rsi'][-2] < 30): 
+            if (40 < df['rsi'][-2]) and (df['rsi'][-3] > df['rsi'][-2]): 
+                    
+             if (float(df['Close'][-3]) < float(df['lowerband'][-3])) and (float(df['diff'][-3]) >= 1) and (df['adx'][-3] < df['adx'][-2]) and (df['adx'][-2] > 40): 
                  
-            #  Tb.telegram_canal_3por(f"🟢 {symbol}\n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min") 
+              Tb.telegram_canal_3por(f"🟢 {symbol}\n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min") 
             
-            #  PICKERLONG = {
-            #   "name": "PICKER LONG",
-            #   "secret": "xjth0i3qgb",
-            #   "side": "buy",
-            #   "symbol": symbol,
-            #   "open": {
-            #   "price": float(df['Close'][-1]) 
-            #  }
-            #  }
-            #  requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
+              PICKERLONG = {
+               "name": "PICKER LONG",
+               "secret": "xjth0i3qgb",
+               "side": "buy",
+               "symbol": symbol,
+               "open": {
+               "price": float(df['Close'][-1]) 
+              }
+              }
+              requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
             
             #FISHING PISHA:
             

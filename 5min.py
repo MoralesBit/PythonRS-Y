@@ -58,7 +58,7 @@ def run_strategy():
             # CONTRATENDENCIAs:
                        
             #if (float(df['slowk'][-3]) > float(df['slowd'][-3])) and (float(df['slowk'][-2]) < float(df['slowd'][-2])):           
-            if (60 < df['rsi'][-2]) and (df['rsi'][-3] > df['rsi'][-2]): 
+            if (60 > df['rsi'][-2]) and (df['rsi'][-3] > df['rsi'][-2]): 
                 
              if (float(df['Close'][-3]) > float(df['upperband'][-3])) and (float(df['diff'][-3]) >= 1) and (df['adx'][-3] < df['adx'][-2]) and (df['adx'][-2] > 40): 
                   

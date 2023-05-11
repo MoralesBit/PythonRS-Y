@@ -99,7 +99,7 @@ def run_strategy():
             #if (float(df['slowk'][-3]) < float(df['slowd'][-3])) and (float(df['slowk'][-2]) < float(df['slowd'][-2])):    
             if (40 < df['rsi'][-2] < 20) and (df['rsi'][-3] > df['rsi'][-2]):   
                   
-             if (float(df['Close'][-3]) < float(df['lowerband'][-3])) and (float(df['diff'][-3]) >= 1) and (df['adx'][-3] < df['adx'][-2]) and (20 < df['adx'][-2] < 40): 
+             if (float(df['Close'][-3]) < float(df['lowerband'][-3])) and (float(df['diff'][-3]) >= 1) and (df['adx'][-3] < df['adx'][-2]) and (df['adx'][-2] < 40): 
                  
               Tb.telegram_canal_prueba(f"🔴 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
@@ -118,7 +118,7 @@ def run_strategy():
             #if (float(df['slowk'][-3]) > float(df['slowd'][-3])) and (float(df['slowk'][-2]) > float(df['slowd'][-2])):           
             if (60 < df['rsi'][-2] < 80) and (df['rsi'][-3] < df['rsi'][-2]): 
                 
-             if (float(df['Close'][-3]) > float(df['upperband'][-3])) and (float(df['diff'][-3]) >= 1) and (df['adx'][-3] < df['adx'][-2]) and (20 < df['adx'][-2] < 40): 
+             if (float(df['Close'][-3]) > float(df['upperband'][-3])) and (float(df['diff'][-3]) >= 1) and (df['adx'][-3] < df['adx'][-2]) and (df['adx'][-2] < 40): 
                   
               Tb.telegram_canal_prueba(f"🟢 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               

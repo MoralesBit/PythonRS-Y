@@ -14,8 +14,10 @@ def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
     symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
+      
     return symbols
 
+   
 def calculate_indicators(symbol):
     """Calcula los indicadores de Bollinger para un símbolo y devuelve las últimas velas"""
     klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE, limit=1000)
@@ -43,22 +45,35 @@ def calculate_indicators(symbol):
     roc = ta.ROC(df['Close'], timeperiod=6)
     df['roc'] = roc
     
-       
+     
+    
     return df[-3:]
   
+def get_last_funding_rate(symbol):
+  # Obtener el historial de tasas de financiamiento
+    funding_history = client.futures_funding_rate(symbol=symbol)
+
+    # Imprimir las tasas de financiamiento
+    for funding_info in funding_history:
+      ff = float(funding_info['fundingRate'])*100
+      
+    return ff
+    
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
     symbols = get_trading_symbols()
-    
+       
     for symbol in symbols:
+        ff = get_last_funding_rate(symbol)
         print(symbol)
-        
-                
+        print(ff)
+                       
         try:
             df = calculate_indicators(symbol)
+            
             if df is None:
                 continue
-            # CONTRATENDENCIAs:
+            # CONTRATENDENCIAs:         
             
             if (df['rsi'][-2] > 70) and (df['roc'][-2] > 3):     
                     
@@ -96,7 +111,7 @@ def run_strategy():
               requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
             
             #FISHING PISHA:
-            if float(df['Close'][-2]) <= (df['ema_50'][-2]): 
+            if float(df['Close'][-2]) <= (df['ema_50'][-2]) and (ff > 0): 
             
               if (df['rsi'][-3] > 31) and (df['rsi'][-2] <= 29) and (df['adx'][-3] < df['adx'][-2]):   
                  
@@ -114,7 +129,7 @@ def run_strategy():
                 requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
             
               
-            if float(df['Close'][-2]) >= (df['ema_50'][-2]): 
+            if float(df['Close'][-2]) >= (df['ema_50'][-2]) and (ff < 0): 
             
               if (df['rsi'][-3] < 69) and (df['rsi'][-2] >= 71) and (df['adx'][-3] < df['adx'][-2]): 
                    

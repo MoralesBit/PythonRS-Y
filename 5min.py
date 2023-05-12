@@ -36,9 +36,6 @@ def calculate_indicators(symbol):
     df['diff'] = abs((df['High'] / df['Low'] - 1) * 100)
     rsi = ta.RSI(df['Close'], timeperiod=14)
     df['rsi'] = rsi 
-    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
-    df['slowk'] = slowk
-    df['slowd'] = slowd
     adx= ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
     df['adx'] = adx
     ema_50 = df['Close'].ewm(span=50, adjust=False).mean()
@@ -99,7 +96,7 @@ def run_strategy():
               requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
             
             #FISHING PISHA:
-            if float(df['Close'][-3]) <= (df['ema_50'][-2]): 
+            if float(df['Close'][-2]) <= (df['ema_50'][-2]): 
             
               if (df['rsi'][-3] > 31) and (df['rsi'][-2] <= 29) and (df['adx'][-3] < df['adx'][-2]):   
                  
@@ -117,7 +114,7 @@ def run_strategy():
                 requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
             
               
-            if float(df['Close'][-3]) >= (df['ema_50'][-2]): 
+            if float(df['Close'][-2]) >= (df['ema_50'][-2]): 
             
               if (df['rsi'][-3] < 69) and (df['rsi'][-2] >= 71) and (df['adx'][-3] < df['adx'][-2]): 
                    

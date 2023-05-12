@@ -48,16 +48,22 @@ def calculate_indicators(symbol):
      
     
     return df[-3:]
-  
-def get_last_funding_rate(symbol):
-  # Obtener el historial de tasas de financiamiento
-    funding_history = client.futures_funding_rate(symbol=symbol)
 
-    # Imprimir las tasas de financiamiento
-    for funding_info in funding_history:
-      ff = float(funding_info['fundingRate'])*100
-      
-    return ff
+def get_last_funding_rate(symbol):
+    try:
+        # Obtener el historial de tasas de financiamiento
+        funding_history = client.futures_funding_rate(symbol=symbol)
+
+        # Obtener la última tasa de financiamiento
+        ff = None
+        for funding_info in funding_history:
+            ff = float(funding_info['fundingRate']) * 100
+        # Devolver la última tasa de financiamiento
+        return ff
+
+    except Exception as e:
+        print(f"Error en el símbolo {symbol}: {e}")
+        return None
     
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
@@ -66,8 +72,7 @@ def run_strategy():
     for symbol in symbols:
         ff = get_last_funding_rate(symbol)
         print(symbol)
-        print(ff)
-                       
+                               
         try:
             df = calculate_indicators(symbol)
             

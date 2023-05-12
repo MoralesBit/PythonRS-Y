@@ -110,7 +110,7 @@ def run_strategy():
                "side": "buy",
                "symbol": symbol,
                "open": {
-               "price": float(df['Close'][-1]) 
+               "price": float(df['Close'][-2]) 
               }
               }
               requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
@@ -120,7 +120,7 @@ def run_strategy():
             
               if (df['rsi'][-3] > 31) and (df['rsi'][-2] <= 29) and (df['adx'][-3] < df['adx'][-2]):   
                  
-                Tb.telegram_canal_prueba(f"🔴 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
+                Tb.telegram_send_message(f"🔴 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
                 FISHINGSHORT = {
                 "name": "FISHING SHORT",
@@ -138,7 +138,7 @@ def run_strategy():
             
               if (df['rsi'][-3] < 69) and (df['rsi'][-2] >= 71) and (df['adx'][-3] < df['adx'][-2]): 
                    
-                Tb.telegram_canal_prueba(f"🟢 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
+                Tb.telegram_send_message(f"🟢 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               
                 FISHINGLONG = {
                 "name": "FISHING LONG",
@@ -146,7 +146,7 @@ def run_strategy():
                 "side": "buy",
                 "symbol": symbol,
                 "open": {
-                "price": float(df['Close'][-1])
+                "price": float(df['Close'][-2])
                 }
                 }
    

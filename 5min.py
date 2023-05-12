@@ -101,11 +101,11 @@ def run_strategy():
             #FISHING PISHA:
             if float(df['Close'][-3]) <= (df['ema_50'][-2]): 
             
-              if (df['rsi'][-3] > 30) and (df['rsi'][-2] <= 30):   
+              if (df['rsi'][-3] > 31) and (df['rsi'][-2] <= 29):   
                  
                 Tb.telegram_canal_prueba(f"🔴 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
-              FISHINGSHORT = {
+                FISHINGSHORT = {
                 "name": "FISHING SHORT",
                 "secret": "azsdb9x719",
                 "side": "sell",
@@ -114,12 +114,12 @@ def run_strategy():
                 "price": float(df['Close'][-1])
                 }
                 }
-              requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
+                requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
             
               
             if float(df['Close'][-3]) >= (df['ema_50'][-2]): 
             
-              if (df['rsi'][-3] < 70) and (df['rsi'][-2] >= 70): 
+              if (df['rsi'][-3] < 69) and (df['rsi'][-2] >= 71): 
                    
                 Tb.telegram_canal_prueba(f"🟢 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               

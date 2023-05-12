@@ -82,7 +82,7 @@ def run_strategy():
             
             if (df['rsi'][-2] > 70) and (df['roc'][-2] > 3):     
                     
-             if (df['rsi'][-3] < df['rsi'][-2] > df['rsi'][-1]): 
+             if (df['rsi'][-4] < df['rsi'][-3] > df['rsi'][-2]): 
  
               Tb.telegram_canal_3por(f"🔴 {symbol}\n🔝 Cambio: % {round(df['roc'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
             
@@ -100,7 +100,7 @@ def run_strategy():
          
             if (df['rsi'][-2] < 30) and (df['roc'][-2] < -3):           
               
-             if (df['rsi'][-3] > df['rsi'][-2] < df['rsi'][-1]): 
+             if (df['rsi'][-4] > df['rsi'][-3] < df['rsi'][-2]): 
                
               Tb.telegram_canal_3por(f"🟢 {symbol}\n🔝 Cambio: % {round(df['roc'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min") 
             

@@ -118,7 +118,7 @@ def run_strategy():
             #FISHING PISHA:
             if float(df['Close'][-2]) <= (df['ema_50'][-2]) and (ff > 0): 
             
-              if (df['rsi'][-3] > 31) and (df['rsi'][-2] <= 29) and (df['adx'][-3] < df['adx'][-2]):   
+             if (df['rsi'][-3] > 31) and (df['rsi'][-2] <= 29) and (df['adx'][-3] < df['adx'][-2]):   
                  
                 Tb.telegram_send_message(f"🔴 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
@@ -136,7 +136,7 @@ def run_strategy():
               
             if float(df['Close'][-2]) >= (df['ema_50'][-2]) and (ff < 0): 
             
-              if (df['rsi'][-3] < 69) and (df['rsi'][-2] >= 71) and (df['adx'][-3] < df['adx'][-2]): 
+             if (df['rsi'][-3] < 69) and (df['rsi'][-2] >= 71) and (df['adx'][-3] < df['adx'][-2]): 
                    
                 Tb.telegram_send_message(f"🟢 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               

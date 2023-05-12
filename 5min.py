@@ -120,7 +120,7 @@ def run_strategy():
                    
                 Tb.telegram_canal_prueba(f"🟢 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               
-              FISHINGLONG = {
+                FISHINGLONG = {
                 "name": "FISHING LONG",
                 "secret": "0kivpja7tz89",
                 "side": "buy",
@@ -130,7 +130,7 @@ def run_strategy():
                 }
                 }
    
-              requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)     
+                requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)     
                 
         except Exception as e:
           

@@ -41,6 +41,11 @@ def calculate_indicators(symbol):
     df['slowd'] = slowd
     adx= ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
     df['adx'] = adx
+    ema_50 = df['Close'].ewm(span=50, adjust=False).mean()
+    df['ema_50'] = ema_50
+    roc = ta.ROC(df['Close'], timeperiod=6)
+    df['roc'] = roc
+    
        
     return df[-3:]
   
@@ -50,19 +55,19 @@ def run_strategy():
     
     for symbol in symbols:
         print(symbol)
+        
                 
         try:
             df = calculate_indicators(symbol)
             if df is None:
                 continue
             # CONTRATENDENCIAs:
-                       
-            #if (float(df['slowk'][-3]) > float(df['slowd'][-3])) and (float(df['slowk'][-2]) < float(df['slowd'][-2])):           
-            if (60 > df['rsi'][-2]) and (df['rsi'][-3] > df['rsi'][-2]): 
-                
-             if (float(df['Close'][-3]) > float(df['upperband'][-3])) and (float(df['diff'][-3]) >= 1) and (df['adx'][-3] < df['adx'][-2]) and (df['adx'][-2] > 40): 
-                  
-              Tb.telegram_canal_3por(f"🔴 {symbol}\n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
+            
+            if (df['rsi'][-2] > 70) and (df['roc'][-2] > 3):     
+                    
+             if (df['rsi'][-3] < df['rsi'][-2] > df['rsi'][-1]): 
+ 
+              Tb.telegram_canal_3por(f"🔴 {symbol}\n🔝 Cambio: % {round(df['roc'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
             
               PICKERSHORT= {
                 "name": "PICKER SHORT",
@@ -76,12 +81,11 @@ def run_strategy():
    
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
-            #if (float(df['slowk'][-3]) < float(df['slowd'][-3])) and (float(df['slowk'][-2]) > float(df['slowd'][-2])):    
-            if (40 < df['rsi'][-2]) and (df['rsi'][-3] > df['rsi'][-2]): 
-                    
-             if (float(df['Close'][-3]) < float(df['lowerband'][-3])) and (float(df['diff'][-3]) >= 1) and (df['adx'][-3] < df['adx'][-2]) and (df['adx'][-2] > 40): 
-                 
-              Tb.telegram_canal_3por(f"🟢 {symbol}\n🔝 Cambio: % {round(df['diff'][-3],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min") 
+            if (df['rsi'][-2] < 30) and (df['roc'][-2] < -3):           
+              
+             if (df['rsi'][-3] > df['rsi'][-2] < df['rsi'][-1]): 
+               
+              Tb.telegram_canal_3por(f"🟢 {symbol}\n🔝 Cambio: % {round(df['roc'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min") 
             
               PICKERLONG = {
                "name": "PICKER LONG",
@@ -95,13 +99,11 @@ def run_strategy():
               requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
             
             #FISHING PISHA:
+            if float(df['Close'][-3]) <= (df['ema_50'][-2]): 
             
-            #if (float(df['slowk'][-3]) < float(df['slowd'][-3])) and (float(df['slowk'][-2]) < float(df['slowd'][-2])):    
-            if (40 < df['rsi'][-2] < 20) and (df['rsi'][-3] > df['rsi'][-2]):   
-                  
-             if (float(df['Close'][-3]) < float(df['lowerband'][-3])) and (float(df['diff'][-3]) >= 1) and (df['adx'][-3] < df['adx'][-2]) and (df['adx'][-2] < 40): 
+              if (df['rsi'][-3] > 30) and (df['rsi'][-2] <= 30):   
                  
-              Tb.telegram_canal_prueba(f"🔴 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
+                Tb.telegram_canal_prueba(f"🔴 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
               FISHINGSHORT = {
                 "name": "FISHING SHORT",
@@ -115,12 +117,11 @@ def run_strategy():
               requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
             
               
-            #if (float(df['slowk'][-3]) > float(df['slowd'][-3])) and (float(df['slowk'][-2]) > float(df['slowd'][-2])):           
-            if (60 < df['rsi'][-2] < 80) and (df['rsi'][-3] < df['rsi'][-2]): 
-                
-             if (float(df['Close'][-3]) > float(df['upperband'][-3])) and (float(df['diff'][-3]) >= 1) and (df['adx'][-3] < df['adx'][-2]) and (df['adx'][-2] < 40): 
-                  
-              Tb.telegram_canal_prueba(f"🟢 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
+            if float(df['Close'][-3]) >= (df['ema_50'][-2]): 
+            
+              if (df['rsi'][-3] < 70) and (df['rsi'][-2] >= 70): 
+                   
+                Tb.telegram_canal_prueba(f"🟢 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               
               FISHINGLONG = {
                 "name": "FISHING LONG",

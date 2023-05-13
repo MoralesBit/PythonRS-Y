@@ -45,9 +45,10 @@ def calculate_indicators(symbol):
     roc = ta.ROC(df['Close'], timeperiod=6)
     df['roc'] = roc
     
-     
-    
+
     return df[-3:]
+    
+    
 
 def get_last_funding_rate(symbol):
     try:
@@ -76,13 +77,14 @@ def run_strategy():
         try:
             df = calculate_indicators(symbol)
             
+                   
             if df is None:
                 continue
             # CONTRATENDENCIAs:         
             
-            if (df['rsi'][-2] > 70) and (df['roc'][-2] > 3):     
-                    
-             if (df['rsi'][-4] < df['rsi'][-3] > df['rsi'][-2]): 
+            if (ff > 0): 
+            
+             if (df['rsi'][-3] > 71) and (df['rsi'][-2] <= 69) and (df['adx'][-3] > df['adx'][-2]): 
  
               Tb.telegram_canal_3por(f"🔴 {symbol}\n🔝 Cambio: % {round(df['roc'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
             
@@ -98,9 +100,9 @@ def run_strategy():
    
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
-            if (df['rsi'][-2] < 30) and (df['roc'][-2] < -3):           
-              
-             if (df['rsi'][-4] > df['rsi'][-3] < df['rsi'][-2]): 
+            if (ff < 0): 
+            
+             if (df['rsi'][-3] < 29) and (df['rsi'][-2] >= 31) and (df['adx'][-3] > df['adx'][-2]):  
                
               Tb.telegram_canal_3por(f"🟢 {symbol}\n🔝 Cambio: % {round(df['roc'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min") 
             
@@ -116,9 +118,11 @@ def run_strategy():
               requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
             
             #FISHING PISHA:
-            if float(df['Close'][-2]) <= (df['ema_50'][-2]) and (ff > 0): 
+           
+                
+            if float(df['Close'][-2]) <= (df['ema_50'][-2]) and (ff > 0.05): 
             
-             if (df['rsi'][-3] > 41) and (df['rsi'][-2] <= 39) and (df['adx'][-3] < df['adx'][-2]):   
+              if (df['rsi'][-3] > 41) and (df['rsi'][-2] <= 39) and (df['adx'][-3] < df['adx'][-2]):   
                  
                 Tb.telegram_send_message(f"🔴 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
@@ -134,9 +138,10 @@ def run_strategy():
                 requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
             
               
-            if float(df['Close'][-2]) >= (df['ema_50'][-2]) and (ff < 0): 
+                
+            if float(df['Close'][-2]) >= (df['ema_50'][-2]) and (ff < -0.05): 
             
-             if (df['rsi'][-3] < 59) and (df['rsi'][-2] >= 61) and (df['adx'][-3] < df['adx'][-2]): 
+              if (df['rsi'][-3] < 59) and (df['rsi'][-2] >= 61) and (df['adx'][-3] < df['adx'][-2]): 
                    
                 Tb.telegram_send_message(f"🟢 {symbol}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               

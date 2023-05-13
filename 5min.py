@@ -43,8 +43,10 @@ def calculate_indicators(symbol):
     
     roc = ta.ROC(df['Close'], timeperiod=6)
     df['roc'] = roc
-   
-
+    
+    cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
+    df['cci'] = cci
+    
     return df[-3:]
     
     
@@ -82,7 +84,7 @@ def run_strategy():
                 continue
             # CONTRATENDENCIAs:         
           
-            if (ff < 0): 
+            if (ff > 0): 
             
              if (df['rsi'][-3] > 71) and (df['rsi'][-2] <= 69) and (df['adx'][-3] > df['adx'][-2]): 
  
@@ -100,7 +102,7 @@ def run_strategy():
    
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
-            if (ff > 0):  
+            if (ff < 0):  
             
              if (df['rsi'][-3] < 29) and (df['rsi'][-2] >= 31) and (df['adx'][-3] > df['adx'][-2]):  
                
@@ -120,9 +122,9 @@ def run_strategy():
             #FISHING PISHA:
            
                 
-            if float(df['Close'][-2]) <= (df['ema_50'][-2]) and (ff >= 0.05): 
-            
-              if (df['rsi'][-3] > 41) and (df['rsi'][-2] <= 39) and (df['adx'][-3] < df['adx'][-2]) :   
+            if (ff > 0): 
+                            
+             if (df['rsi'][-3] > 41) and (df['rsi'][-2] <= 39) and (df['adx'][-3] < df['adx'][-2]) :   
                  
                 Tb.telegram_send_message(f"🔴 {symbol} ({round(ff,3)}) \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             

@@ -141,7 +141,7 @@ def run_strategy():
             
               
                 
-            if float(df['Close'][-2]) >= (df['ema_50'][-2]) and (ff <= -0.05): 
+            if (ff < -0): 
             
               if (df['rsi'][-3] < 59) and (df['rsi'][-2] >= 61) and (df['adx'][-3] < df['adx'][-2]):  
                    

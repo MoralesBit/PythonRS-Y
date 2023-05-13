@@ -84,7 +84,7 @@ def run_strategy():
                 continue
             # CONTRATENDENCIAs:         
           
-            if (ff > 0): 
+            if (ff < 0): 
             
              if (df['rsi'][-3] > 71) and (df['rsi'][-2] <= 69) and (df['adx'][-3] > df['adx'][-2]): 
  
@@ -102,7 +102,7 @@ def run_strategy():
    
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
-            if (ff < 0):  
+            if (ff > 0):  
             
              if (df['rsi'][-3] < 29) and (df['rsi'][-2] >= 31) and (df['adx'][-3] > df['adx'][-2]):  
                
@@ -141,7 +141,7 @@ def run_strategy():
             
               
                 
-            if (ff < -0): 
+            if (ff < 0): 
             
               if (df['rsi'][-3] < 59) and (df['rsi'][-2] >= 61) and (df['adx'][-3] < df['adx'][-2]):  
                    

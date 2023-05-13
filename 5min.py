@@ -58,7 +58,8 @@ def get_last_funding_rate(symbol):
         # Obtener la última tasa de financiamiento
         ff = None
         for funding_info in funding_history:
-            ff = float(funding_info['fundingRate']) * 100
+            ff_back = float(funding_info[0]['fundingRate']) * 100
+            ff_new = float(funding_info[1]['fundingRate']) * 100
         # Devolver la última tasa de financiamiento
         return ff
 
@@ -71,9 +72,14 @@ def run_strategy():
     symbols = get_trading_symbols()
        
     for symbol in symbols:
-        ff = get_last_funding_rate(symbol)
+        ff_back = get_last_funding_rate(symbol)
+        ff_new = get_last_funding_rate(symbol)
+        
         print(symbol)
-                               
+        print(ff_back)  
+        print(ff_new)          
+        
+                     
         try:
             df = calculate_indicators(symbol)
             
@@ -82,7 +88,7 @@ def run_strategy():
                 continue
             # CONTRATENDENCIAs:         
             
-            if (ff > 0): 
+            if (ff_back > ff_new): 
             
              if (df['rsi'][-3] > 71) and (df['rsi'][-2] <= 69) and (df['adx'][-3] > df['adx'][-2]): 
  
@@ -100,7 +106,7 @@ def run_strategy():
    
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
-            if (ff < 0): 
+            if (ff_back < ff_new):  
             
              if (df['rsi'][-3] < 29) and (df['rsi'][-2] >= 31) and (df['adx'][-3] > df['adx'][-2]):  
                
@@ -120,7 +126,7 @@ def run_strategy():
             #FISHING PISHA:
            
                 
-            if float(df['Close'][-2]) <= (df['ema_50'][-2]) and (ff >= 0.01): 
+            if float(df['Close'][-2]) <= (df['ema_50'][-2]) and (ff_new > ff_back >= 0.01): 
             
               if (df['rsi'][-3] > 41) and (df['rsi'][-2] <= 39) and (df['adx'][-3] < df['adx'][-2]):   
                  
@@ -139,7 +145,7 @@ def run_strategy():
             
               
                 
-            if float(df['Close'][-2]) >= (df['ema_50'][-2]) and (ff <= -0.01): 
+            if float(df['Close'][-2]) >= (df['ema_50'][-2]) and (ff_new < ff_back <= -0.01):
             
               if (df['rsi'][-3] < 59) and (df['rsi'][-2] >= 61) and (df['adx'][-3] < df['adx'][-2]): 
                    

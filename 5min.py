@@ -89,11 +89,11 @@ def run_strategy():
                 continue
             # CONTRATENDENCIAs:         
             
-            if (ff > 0) and (df['macd'][-2] <  df['macd_signal'][-2]): 
+            if (ff < 0) and (df['macd'][-2] <  df['macd_signal'][-2]): 
             
              if (df['rsi'][-3] > 71) and (df['rsi'][-2] <= 69) and (df['adx'][-3] > df['adx'][-2]): 
  
-              Tb.telegram_canal_3por(f"🔴 {symbol}\n🔝 Cambio: % {round(df['roc'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
+              Tb.telegram_canal_3por(f"🔴 {symbol} ({round(ff,3)})\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
             
               PICKERSHORT= {
                 "name": "PICKER SHORT",
@@ -107,11 +107,11 @@ def run_strategy():
    
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
-            if (ff < 0) and (df['macd'][-2] >  df['macd_signal'][-2]):  
+            if (ff > 0) and (df['macd'][-2] >  df['macd_signal'][-2]):  
             
              if (df['rsi'][-3] < 29) and (df['rsi'][-2] >= 31) and (df['adx'][-3] > df['adx'][-2]):  
                
-              Tb.telegram_canal_3por(f"🟢 {symbol}\n🔝 Cambio: % {round(df['roc'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min") 
+              Tb.telegram_canal_3por(f"🟢 {symbol} ({round(ff,3)})\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min") 
             
               PICKERLONG = {
                "name": "PICKER LONG",

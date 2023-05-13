@@ -29,12 +29,12 @@ def calculate_indicators(symbol):
     df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
     df = df.set_index('Open time')
     
-    #upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
-    #df['upperband'] = upperband
-    #df['middleband'] = middleband
-    #df['lowerband'] = lowerband
-    #df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
-    #df['BB'] = (df['Close'] - df['lowerband']) / (df['upperband'] - df['lowerband'])
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+    df['upperband'] = upperband
+    df['middleband'] = middleband
+    df['lowerband'] = lowerband
+    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
+    df['BB'] = (df['Close'] - df['lowerband']) / (df['upperband'] - df['lowerband'])
     df['diff'] = abs((df['High'] / df['Low'] - 1) * 100)
     rsi = ta.RSI(df['Close'], timeperiod=14)
     df['rsi'] = rsi 
@@ -42,6 +42,8 @@ def calculate_indicators(symbol):
     df['adx'] = adx
     ema_50 = df['Close'].ewm(span=50, adjust=False).mean()
     df['ema_50'] = ema_50
+    roc = ta.ROC(df['Close'], timeperiod=6)
+    df['roc'] = roc
     macd, signal, hist = ta.MACD(df['Close'], 
                                     fastperiod=12, 
                                     slowperiod=26, 
@@ -50,7 +52,6 @@ def calculate_indicators(symbol):
     df['macd'] = macd
     df['macd_signal'] = signal
     df['macd_hist'] = hist
-    
 
     return df[-3:]
     
@@ -88,9 +89,9 @@ def run_strategy():
                 continue
             # CONTRATENDENCIAs:         
             
-            if (ff > 0): 
+            if (ff > 0) and (df['macd'][-2] <  df['macd_signal'][-2]): 
             
-             if (df['rsi'][-3] > 71) and (df['rsi'][-2] <= 69) and (df['adx'][-3] > df['adx'][-2]) and (df['macd'][-2] < df['macd_hist'][-2]): 
+             if (df['rsi'][-3] > 71) and (df['rsi'][-2] <= 69) and (df['adx'][-3] > df['adx'][-2]): 
  
               Tb.telegram_canal_3por(f"🔴 {symbol}\n🔝 Cambio: % {round(df['roc'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
             
@@ -106,9 +107,9 @@ def run_strategy():
    
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
-            if (ff < 0): 
+            if (ff < 0) and (df['macd'][-2] >  df['macd_signal'][-2]):  
             
-             if (df['rsi'][-3] < 29) and (df['rsi'][-2] >= 31) and (df['adx'][-3] > df['adx'][-2]) and (df['macd'][-2] > df['macd_hist'][-2]):   
+             if (df['rsi'][-3] < 29) and (df['rsi'][-2] >= 31) and (df['adx'][-3] > df['adx'][-2]):  
                
               Tb.telegram_canal_3por(f"🟢 {symbol}\n🔝 Cambio: % {round(df['roc'][-2],2)} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min") 
             
@@ -126,11 +127,11 @@ def run_strategy():
             #FISHING PISHA:
            
                 
-            if float(df['Close'][-2]) <= (df['ema_50'][-2]) and (ff >= 0.01) and (df['macd'][-2] < df['macd_hist'][-2]): 
+            if float(df['Close'][-2]) <= (df['ema_50'][-2]) and (ff >= 0.01): 
             
-              if (df['rsi'][-3] > 41) and (df['rsi'][-2] <= 39) and (df['adx'][-3] < df['adx'][-2]):   
+              if (df['rsi'][-3] > 41) and (df['rsi'][-2] <= 39) and (df['adx'][-3] < df['adx'][-2]) and (df['macd'][-2] < df['macd_signal'][-2]):   
                  
-                Tb.telegram_send_message(f"🔴 {symbol} ({round(ff,3)})\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
+                Tb.telegram_send_message(f"🔴 {symbol} ({round(ff,3)}) \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
                 FISHINGSHORT = {
                 "name": "FISHING SHORT",
@@ -145,11 +146,11 @@ def run_strategy():
             
               
                 
-            if float(df['Close'][-2]) >= (df['ema_50'][-2]) and (ff <= -0.01) and (df['macd'][-2] > df['macd_hist'][-2]):   
+            if float(df['Close'][-2]) >= (df['ema_50'][-2]) and (ff <= -0.01): 
             
-              if (df['rsi'][-3] < 59) and (df['rsi'][-2] >= 61) and (df['adx'][-3] < df['adx'][-2]): 
+              if (df['rsi'][-3] < 59) and (df['rsi'][-2] >= 61) and (df['adx'][-3] < df['adx'][-2]) and (df['macd'][-2] >  df['macd_signal'][-2]):  
                    
-                Tb.telegram_send_message(f"🟢 {symbol} ({(round(ff,3))})\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
+                Tb.telegram_send_message(f"🟢 {symbol} ({round(ff,3)}) \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               
                 FISHINGLONG = {
                 "name": "FISHING LONG",

@@ -47,7 +47,16 @@ def calculate_indicators(symbol):
     cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
     df['cci'] = cci
     
-    return df[-3:]
+    # Obtener el libro de órdenes actual
+    order_book = client.get_order_book(symbol=symbol)
+
+        
+    # Obtener el sentimiento del mercado
+    total_bid_amount = sum([float(bid[1]) for bid in order_book['bids']])
+    total_ask_amount = sum([float(ask[1]) for ask in order_book['asks']])
+    market_sentiment = (total_bid_amount - total_ask_amount) / (total_bid_amount + total_ask_amount)
+    
+    return df[-3:], market_sentiment
     
     
 
@@ -69,7 +78,7 @@ def get_last_funding_rate(symbol):
     
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
-    symbols = get_trading_symbols()
+    symbols, market_sentiment = get_trading_symbols()
        
     for symbol in symbols:
         ff = get_last_funding_rate(symbol)
@@ -88,7 +97,7 @@ def run_strategy():
             
              if (df['rsi'][-3] > 71) and (df['rsi'][-2] <= 69) and (df['adx'][-3] > df['adx'][-2]): 
  
-              Tb.telegram_canal_3por(f"🔴 {symbol} ({round(ff,3)})\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
+              Tb.telegram_canal_3por(f"🔴 {symbol} ({round(ff,3)}) - {market_sentiment} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
             
               PICKERSHORT= {
                 "name": "PICKER SHORT",
@@ -106,7 +115,7 @@ def run_strategy():
             
              if (df['rsi'][-3] < 29) and (df['rsi'][-2] >= 31) and (df['adx'][-3] > df['adx'][-2]):  
                
-              Tb.telegram_canal_3por(f"🟢 {symbol} ({round(ff,3)})\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min") 
+              Tb.telegram_canal_3por(f"🟢 {symbol} ({round(ff,3)}) - {market_sentiment} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min") 
             
               PICKERLONG = {
                "name": "PICKER LONG",
@@ -126,7 +135,7 @@ def run_strategy():
                             
              if (df['rsi'][-3] > 41) and (df['rsi'][-2] <= 39) and (df['adx'][-3] < df['adx'][-2]) :   
                  
-                Tb.telegram_send_message(f"🔴 {symbol} ({round(ff,3)}) \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
+                Tb.telegram_send_message(f"🔴 {symbol} ({round(ff,3)}) - {market_sentiment} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
                 FISHINGSHORT = {
                 "name": "FISHING SHORT",
@@ -145,7 +154,7 @@ def run_strategy():
             
               if (df['rsi'][-3] < 59) and (df['rsi'][-2] >= 61) and (df['adx'][-3] < df['adx'][-2]):  
                    
-                Tb.telegram_send_message(f"🟢 {symbol} ({round(ff,3)}) \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
+                Tb.telegram_send_message(f"🟢 {symbol} ({round(ff,3)})- {market_sentiment} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               
                 FISHINGLONG = {
                 "name": "FISHING LONG",

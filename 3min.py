@@ -112,7 +112,7 @@ def run_strategy():
             #
                 
             if (df['rsi'][-2] > 70) and (df['diff'][-2] > 1):  
-                if market_sentiment <= 0.3:
+                if market_sentiment <= 0.1:
                     Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min ▫️ {round(df['ask_resistance'][-2],4)} ")
             
                     
@@ -132,7 +132,7 @@ def run_strategy():
             #if df['market_sentiment'][-2] >= (var):
                 
             if (df['rsi'][-3] < 30) and (df['diff'][-2] > 1):    
-                if market_sentiment >= -0.3:
+                if market_sentiment >= -0.1:
                     Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min ▫️ {round(df['bid_support'][-2],4)} ") 
             
                     PORLONG = {

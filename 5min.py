@@ -117,7 +117,7 @@ def run_strategy():
             #
                 
             if (df['rsi'][-2] > 70) and (df['diff'][-2] > 2):  
-                if df['market_sentiment'][-1] <= 0:
+                if float(df['market_sentiment'][-1]) <= 0:
                     Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['ask_resistance'][-2],4)} ")
             
                     PICKERSHORT= {
@@ -136,7 +136,7 @@ def run_strategy():
             #if df['market_sentiment'][-2] >= (var):
                 
             if (df['rsi'][-3] < 30) and (df['diff'][-2] > 2):    
-                if df['market_sentiment'][-1] >= 0:
+                if float(df['market_sentiment'][-1]) >= 0:
                     Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['bid_support'][-2],4)} ") 
             
                     PICKERLONG = {

@@ -106,7 +106,7 @@ def run_strategy():
        
     for symbol in symbols:
         ff = get_last_funding_rate(symbol)
-        var = 0.15
+        var = 0.3
         print(symbol)
                                
         try:

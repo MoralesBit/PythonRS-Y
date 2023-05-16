@@ -35,12 +35,7 @@ def calculate_indicators(symbol):
     diff = abs((df['High'] / df['Low'] -1) * 100)
     
     df['diff'] = diff
-    
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
-    df['upperband'] = upperband
-    df['middleband'] = middleband
-    df['lowerband'] = lowerband
-      
+         
     rsi = ta.RSI(df['Close'], timeperiod=14)
     df['rsi'] = rsi 
     
@@ -107,20 +102,21 @@ def run_strategy():
     for symbol in symbols:
         ff = get_last_funding_rate(symbol)
         var = 0.3
+        
+        
         print(symbol)
                                
         try:
             df = calculate_indicators(symbol)
-            
-                   
+            upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+                              
             if df is None:
                 continue
             # CONTRATENDENCIAs:         
-          
-             
-            if df['market_sentiment'][-2] <= -(var):
+                      
+            #if df['market_sentiment'][-2] <= -(var):
                 
-                if (df['rsi'][-2] > 70) and (df['diff'][-2] > 2):  
+            if (df['rsi'][-2] > 70) and (df['diff'][-2] > 2):  
  
                     Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['ask_resistance'][-2],4)} ")
             
@@ -137,9 +133,9 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
             
-            if df['market_sentiment'][-2] >= (var):
+            #if df['market_sentiment'][-2] >= (var):
                 
-                if (df['rsi'][-3] < 30) and (df['diff'][-2] > 2):    
+            if (df['rsi'][-3] < 30) and (df['diff'][-2] > 2):    
                
                     Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['bid_support'][-2],4)} ") 
             
@@ -155,9 +151,8 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
             
             #FISHING PISHA:
-           
-                
-            if float(df['Close'][-2]) >= (df['upperband'][-2]):
+                          
+            if float(df['Close'][-2]) >= upperband[-2]:
                 if (float(df['Close'][-2]) <= df['ema_300'][-2]):
                      
                  
@@ -175,8 +170,8 @@ def run_strategy():
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
             
               
-                
-            if float(df['Close'][-2]) <= (df['lowerband'][-2]):
+            
+            if float(df['Close'][-2]) <= lowerband[-2]:
                 if (float(df['Close'][-2]) >= df['ema_300'][-2]):
                         
                    

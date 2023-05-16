@@ -32,7 +32,7 @@ def calculate_indicators(symbol):
     
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     
-    diff = abs((df['high'] / df['low'] -1) * 100)
+    diff = abs((df['High'] / df['Low'] -1) * 100)
     
     df['diff'] = diff
     

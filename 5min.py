@@ -118,7 +118,7 @@ def run_strategy():
             # CONTRATENDENCIAs:         
           
              
-            if float(df['market_sentiment'][-2]) <= -(var):
+            if df['market_sentiment'][-2] <= -(var):
                                          
              if (df['rsi'][-2] > 70) and (df['diff'][-2] > 2):  
  
@@ -137,7 +137,7 @@ def run_strategy():
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
             
-            if float(df['market_sentiment'][-2]) >= (var):  
+            if df['market_sentiment'][-2] >= (var):  
             
              if (df['rsi'][-3] < 30) and (df['diff'][-2] > 2):    
                
@@ -157,7 +157,7 @@ def run_strategy():
             #FISHING PISHA:
            
                 
-            if (float(df['Close'][-2]) >= float(df['upperband'][-2])):      
+            if (df['Close'][-2]) >= float(df['upperband'][-2]):      
                                    
              if df['market_sentiment'][-2] <= -(var) and (float(df['Close'][-2]) <= df['ema_300'][-2]):   
                  
@@ -176,7 +176,7 @@ def run_strategy():
             
               
                 
-            if (float(df['Close'][-2]) <= float(df['lowerband'][-2])):  
+            if (df['Close'][-2]) <= float(df['lowerband'][-2]):  
             
              if df['market_sentiment'][-2] >= (var) and (float(df['Close'][-2]) >= df['ema_300'][-2]):    
                    

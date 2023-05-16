@@ -96,14 +96,15 @@ def run_strategy():
     for symbol in symbols:
         ff = get_last_funding_rate(symbol)
         var = 0.3
-        market_sentiment = float(df['market_sentiment'][-1])
+       
         
         print(symbol)
                                
         try:
             df = calculate_indicators(symbol)
             upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
-                              
+            market_sentiment = float(df['market_sentiment'][-1])                  
+            
             if df is None:
                 continue
             # CONTRATENDENCIAs:         

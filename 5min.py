@@ -137,7 +137,7 @@ def run_strategy():
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
             
-            if float(df['market_sentiment'][-2]) >0 (var):  
+            if float(df['market_sentiment'][-2]) > (var):  
             
              if (df['rsi'][-3] < 30) and (df['diff'][-2] > 2):    
                
@@ -159,7 +159,7 @@ def run_strategy():
                 
             if float(df['market_sentiment'][-2]) <= (-var):      
                                    
-             if (float(df['Close'][-2]) >= df['upperband'][-2]) and (float(df['Close'][-2]) <= df['ema_300'][-2]):   
+             if (float(df['Close'][-2]) >= float(df['upperband'][-2])) and (float(df['Close'][-2]) <= df['ema_300'][-2]):   
                  
                 Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['ask_resistance'][-2],2)} ") 
             
@@ -178,7 +178,7 @@ def run_strategy():
                 
             if float(df['market_sentiment'][-2]) >= (var):  
             
-              if (float(df['Close'][-2]) <= df['lowerband'][-2]) and (float(df['Close'][-2]) >= df['ema_300'][-2]):    
+              if (float(df['Close'][-2]) <= float(df['lowerband'][-2])) and (float(df['Close'][-2]) >= df['ema_300'][-2]):    
                    
                 Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['bid_support'][-2],2)}")            
               

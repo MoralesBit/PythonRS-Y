@@ -106,7 +106,7 @@ def run_strategy():
        
     for symbol in symbols:
         ff = get_last_funding_rate(symbol)
-        var = 0
+        var = 0.25
         print(symbol)
                                
         try:
@@ -119,12 +119,12 @@ def run_strategy():
           
              
             if df['market_sentiment'][-2] <= -(var):
-                                         
-             if (df['rsi'][-2] > 70) and (df['diff'][-2] > 2):  
+                
+                if (df['rsi'][-2] > 70) and (df['diff'][-2] > 2):  
  
-              Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['ask_resistance'][-2],4)} ")
+                    Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['ask_resistance'][-2],4)} ")
             
-              PICKERSHORT= {
+                    PICKERSHORT= {
                 "name": "PICKER SHORT",
                 "secret": "hgw3399vhh",
                 "side": "sell",
@@ -134,16 +134,16 @@ def run_strategy():
                 }
                 }
    
-              requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
+                    requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
             
-            if df['market_sentiment'][-2] >= (var):  
-            
-             if (df['rsi'][-3] < 30) and (df['diff'][-2] > 2):    
+            if df['market_sentiment'][-2] >= (var):
+                
+                if (df['rsi'][-3] < 30) and (df['diff'][-2] > 2):    
                
-              Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['bid_support'][-2],4)} ") 
+                    Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['bid_support'][-2],4)} ") 
             
-              PICKERLONG = {
+                    PICKERLONG = {
                "name": "PICKER LONG",
                "secret": "xjth0i3qgb",
                "side": "buy",
@@ -152,18 +152,18 @@ def run_strategy():
                "price": float(df['Close'][-2]) 
               }
               }
-              requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
+                requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
             
             #FISHING PISHA:
            
                 
-            if (df['Close'][-2]) >= float(df['upperband'][-2]):      
-                                   
-             if df['market_sentiment'][-2] <= -(var) and (float(df['Close'][-2]) <= df['ema_300'][-2]):   
+            if (df['Close'][-2]) >= float(df['upperband'][-2]):
+                if (float(df['Close'][-2]) <= df['ema_300'][-2]):
+                    if df['market_sentiment'][-2] <= -(var):   
                  
-                Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['ask_resistance'][-2],4)} ") 
+                        Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['ask_resistance'][-2],4)} ") 
             
-                FISHINGSHORT = {
+                        FISHINGSHORT = {
                 "name": "FISHING SHORT",
                 "secret": "azsdb9x719",
                 "side": "sell",
@@ -172,17 +172,17 @@ def run_strategy():
                 "price": float(df['Close'][-1])
                 }
                 }
-                requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
+                        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
             
               
                 
-            if (df['Close'][-2]) <= float(df['lowerband'][-2]):  
-            
-             if df['market_sentiment'][-2] >= (var) and (float(df['Close'][-2]) >= df['ema_300'][-2]):    
+            if (df['Close'][-2]) <= float(df['lowerband'][-2]):
+                if (float(df['Close'][-2]) >= df['ema_300'][-2]):
+                    if df['market_sentiment'][-2] >= (var) :      
                    
-                Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['bid_support'][-2],4)}")            
+                        Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['bid_support'][-2],4)}")            
               
-                FISHINGLONG = {
+                        FISHINGLONG = {
                 "name": "FISHING LONG",
                 "secret": "0kivpja7tz89",
                 "side": "buy",
@@ -192,7 +192,7 @@ def run_strategy():
                 }
                 }
    
-                requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)     
+                    requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)     
                 
         except Exception as e:
           

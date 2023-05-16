@@ -31,6 +31,15 @@ def calculate_indicators(symbol):
     df = df.set_index('Open time')
     
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
+    
+    diff = abs((df['high'] / df['low'] -1) * 100)
+    
+    df['diff'] = diff
+    
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+    df['upperband'] = upperband
+    df['middleband'] = middleband
+    df['lowerband'] = lowerband
       
     rsi = ta.RSI(df['Close'], timeperiod=14)
     df['rsi'] = rsi 
@@ -38,8 +47,8 @@ def calculate_indicators(symbol):
     adx= ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
     df['adx'] = adx
     
-    ema_50 = df['Close'].ewm(span=50, adjust=False).mean()
-    df['ema_50'] = ema_50
+    ema_300 = df['Close'].ewm(span=300, adjust=False).mean()
+    df['ema_300'] = ema_300
     
     roc = ta.ROC(df['Close'], timeperiod=6)
     df['roc'] = roc
@@ -95,10 +104,11 @@ def run_strategy():
             # CONTRATENDENCIAs:         
           
              
-            if df['market_sentiment'][-2] < -0.3:                         
-             if (df['rsi'][-3] > 71) and (df['rsi'][-2] <= 69) and (df['adx'][-3] < df['adx'][-2]) :  
+            if float(df['market_sentiment'][-2]) < -0.3:
+                                         
+             if (df['rsi'][-2] > 70) and (df['diff'][-2] > 2):  
  
-              Tb.telegram_canal_3por(f"🔴 {symbol} ({round(ff,3)}) ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
+              Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
             
               PICKERSHORT= {
                 "name": "PICKER SHORT",
@@ -113,11 +123,11 @@ def run_strategy():
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
             
-            if df['market_sentiment'][-2] > 0.3:  
+            if float(df['market_sentiment'][-2]) > 0.3:  
             
-             if (df['rsi'][-3] < 19) and (df['rsi'][-2] >= 21) and (df['adx'][-3] < df['adx'][-2]):    
+             if (df['rsi'][-3] < 30) and (df['diff'][-2] > 2):    
                
-              Tb.telegram_canal_3por(f"🟢 {symbol} ({round(ff,3)}) ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min") 
+              Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min") 
             
               PICKERLONG = {
                "name": "PICKER LONG",
@@ -133,10 +143,11 @@ def run_strategy():
             #FISHING PISHA:
            
                 
-            if df['market_sentiment'][-2] < -0.3:                         
-             if (df['rsi'][-3] > 51) and (df['rsi'][-2] <= 49) and (df['adx'][-3] < df['adx'][-2]) :   
+            if float(df['market_sentiment'][-2]) < -0.3:      
+                                   
+             if (df['Close'][-2] >= df['upperband'][-2]) and (df['Close'][-2] <= df['ema_300'][-2]):   
                  
-                Tb.telegram_send_message(f"🔴 {symbol} ({round(ff,3)}) - {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
+                Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
                 FISHINGSHORT = {
                 "name": "FISHING SHORT",
@@ -151,11 +162,11 @@ def run_strategy():
             
               
                 
-            if df['market_sentiment'][-2] > 0.3:  
+            if float(df['market_sentiment'][-2]) > 0.3:  
             
-              if (df['rsi'][-3] < 49) and (df['rsi'][-2] >= 51) and (df['adx'][-3] < df['adx'][-2]):  
+              if (df['Close'][-2] <= df['lowerband'][-2]) and (df['Close'][-2] >= df['ema_300'][-2]):    
                    
-                Tb.telegram_send_message(f"🟢 {symbol} ({round(ff,3)}) - {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
+                Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               
                 FISHINGLONG = {
                 "name": "FISHING LONG",

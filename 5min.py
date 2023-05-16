@@ -106,7 +106,7 @@ def run_strategy():
        
     for symbol in symbols:
         ff = get_last_funding_rate(symbol)
-        var = 0.25
+        var = 0.3
         print(symbol)
                                
         try:
@@ -159,7 +159,7 @@ def run_strategy():
                 
             if float(df['Close'][-2]) >= (df['upperband'][-2]):
                 if (float(df['Close'][-2]) <= df['ema_300'][-2]):
-                    if df['market_sentiment'][-2] <= -(var):   
+                     
                  
                         Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['ask_resistance'][-2],4)} ") 
             
@@ -178,7 +178,7 @@ def run_strategy():
                 
             if float(df['Close'][-2]) <= (df['lowerband'][-2]):
                 if (float(df['Close'][-2]) >= df['ema_300'][-2]):
-                    if df['market_sentiment'][-2] >= (var) :      
+                        
                    
                         Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['bid_support'][-2],4)}")            
               

@@ -66,6 +66,20 @@ def calculate_indicators(symbol):
     market_sentiment = (total_bid_amount - total_ask_amount) / (total_bid_amount + total_ask_amount)
     df['market_sentiment'] = market_sentiment
     
+    # Obtener la posible dirección del precio
+    bid_prices = np.array([float(bid[0]) for bid in order_book['bids']])
+    ask_prices = np.array([float(ask[0]) for ask in order_book['asks']])
+    bid_volumes = np.array([float(bid[1]) for bid in order_book['bids']])
+    ask_volumes = np.array([float(ask[1]) for ask in order_book['asks']])
+    bid_cumulative_volumes = np.cumsum(bid_volumes)
+    ask_cumulative_volumes = np.cumsum(ask_volumes)
+
+    bid_support = np.where(bid_cumulative_volumes > np.max(bid_cumulative_volumes)*0.8)[0][0]
+    ask_resistance = np.where(ask_cumulative_volumes > np.max(ask_cumulative_volumes)*0.8)[0][0]
+
+    print(f"Nivel de soporte: {bid_prices[bid_support]}")
+    print(f"Nivel de resistencia: {ask_prices[ask_resistance]}")
+    
     return df[-3:]
     
     
@@ -145,7 +159,7 @@ def run_strategy():
                 
             if float(df['market_sentiment'][-2]) < -0.3:      
                                    
-             if (df['Close'][-2] >= df['upperband'][-2]) and (df['Close'][-2] <= df['ema_300'][-2]):   
+             if (float(df['Close'][-2]) >= df['upperband'][-2]) and (float(df['Close'][-2]) <= df['ema_300'][-2]):   
                  
                 Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
@@ -164,7 +178,7 @@ def run_strategy():
                 
             if float(df['market_sentiment'][-2]) > 0.3:  
             
-              if (df['Close'][-2] <= df['lowerband'][-2]) and (df['Close'][-2] >= df['ema_300'][-2]):    
+              if (float(df['Close'][-2]) <= df['lowerband'][-2]) and (float(df['Close'][-2]) >= df['ema_300'][-2]):    
                    
                 Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               

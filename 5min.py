@@ -157,7 +157,7 @@ def run_strategy():
             #FISHING PISHA:
            
                 
-            if (df['Close'][-2]) >= float(df['upperband'][-2]):
+            if float(df['Close'][-2]) >= float(df['upperband'][-2]):
                 if (float(df['Close'][-2]) <= df['ema_300'][-2]):
                     if df['market_sentiment'][-2] <= -(var):   
                  
@@ -176,7 +176,7 @@ def run_strategy():
             
               
                 
-            if (df['Close'][-2]) <= float(df['lowerband'][-2]):
+            if float(df['Close'][-2]) <= float(df['lowerband'][-2]):
                 if (float(df['Close'][-2]) >= df['ema_300'][-2]):
                     if df['market_sentiment'][-2] >= (var) :      
                    

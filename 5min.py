@@ -77,8 +77,8 @@ def calculate_indicators(symbol):
     bid_support = np.where(bid_cumulative_volumes > np.max(bid_cumulative_volumes)*0.35)[0][0]
     ask_resistance = np.where(ask_cumulative_volumes > np.max(ask_cumulative_volumes)*0.35)[0][0]
 
-    df['bid_support'] = bid_support 
-    df['ask_resistance'] = ask_resistance 
+    df['bid_support'] = bid_prices[bid_support]
+    df['ask_resistance'] = ask_prices[ask_resistance] 
       
     return df[-3:]
     
@@ -106,7 +106,7 @@ def run_strategy():
        
     for symbol in symbols:
         ff = get_last_funding_rate(symbol)
-      
+        var = 0.3
         print(symbol)
                                
         try:
@@ -118,7 +118,7 @@ def run_strategy():
             # CONTRATENDENCIAs:         
           
              
-            if float(df['market_sentiment'][-2]) < -0.3:
+            if float(df['market_sentiment'][-2]) < (-var):
                                          
              if (df['rsi'][-2] > 70) and (df['diff'][-2] > 2):  
  
@@ -137,7 +137,7 @@ def run_strategy():
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
             
-            if float(df['market_sentiment'][-2]) > 0.3:  
+            if float(df['market_sentiment'][-2]) > (var):  
             
              if (df['rsi'][-3] < 30) and (df['diff'][-2] > 2):    
                
@@ -157,7 +157,7 @@ def run_strategy():
             #FISHING PISHA:
            
                 
-            if float(df['market_sentiment'][-2]) < -0.3:      
+            if float(df['market_sentiment'][-2]) <= (-var):      
                                    
              if (float(df['Close'][-2]) >= df['upperband'][-2]) and (float(df['Close'][-2]) <= df['ema_300'][-2]):   
                  
@@ -176,7 +176,7 @@ def run_strategy():
             
               
                 
-            if float(df['market_sentiment'][-2]) > 0.3:  
+            if float(df['market_sentiment'][-2]) >= (var):  
             
               if (float(df['Close'][-2]) <= df['lowerband'][-2]) and (float(df['Close'][-2]) >= df['ema_300'][-2]):    
                    

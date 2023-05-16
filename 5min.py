@@ -125,14 +125,14 @@ def run_strategy():
                     Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['ask_resistance'][-2],4)} ")
             
                     PICKERSHORT= {
-                "name": "PICKER SHORT",
-                "secret": "hgw3399vhh",
-                "side": "sell",
-                "symbol": symbol,
-                "open": {
-                "price": float(df['Close'][-1])
-                }
-                }
+                    "name": "PICKER SHORT",
+                    "secret": "hgw3399vhh",
+                    "side": "sell",
+                    "symbol": symbol,
+                    "open": {
+                    "price": float(df['Close'][-1])
+                    }
+                    }
    
                     requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
@@ -144,15 +144,15 @@ def run_strategy():
                     Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['bid_support'][-2],4)} ") 
             
                     PICKERLONG = {
-               "name": "PICKER LONG",
-               "secret": "xjth0i3qgb",
-               "side": "buy",
-               "symbol": symbol,
-               "open": {
-               "price": float(df['Close'][-2]) 
-              }
-              }
-                requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
+                    "name": "PICKER LONG",
+                    "secret": "xjth0i3qgb",
+                    "side": "buy",
+                    "symbol": symbol,
+                    "open": {
+                    "price": float(df['Close'][-2]) 
+                    }
+                    }
+                    requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
             
             #FISHING PISHA:
            
@@ -164,14 +164,14 @@ def run_strategy():
                         Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['ask_resistance'][-2],4)} ") 
             
                         FISHINGSHORT = {
-                "name": "FISHING SHORT",
-                "secret": "azsdb9x719",
-                "side": "sell",
-                "symbol": symbol,
-                "open": {
-                "price": float(df['Close'][-1])
-                }
-                }
+                            "name": "FISHING SHORT",
+                            "secret": "azsdb9x719",
+                            "side": "sell",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-1])
+                            }
+                            }
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
             
               
@@ -183,16 +183,16 @@ def run_strategy():
                         Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['bid_support'][-2],4)}")            
               
                         FISHINGLONG = {
-                "name": "FISHING LONG",
-                "secret": "0kivpja7tz89",
-                "side": "buy",
-                "symbol": symbol,
-                "open": {
-                "price": float(df['Close'][-2])
-                }
-                }
+                            "name": "FISHING LONG",
+                            "secret": "0kivpja7tz89",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
    
-                    requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)     
+                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)     
                 
         except Exception as e:
           
@@ -201,5 +201,5 @@ def run_strategy():
 while True:
     current_time = time.time()
     seconds_to_wait = 300 - current_time % 300
-    time.sleep(seconds_to_wait)    
+    #time.sleep(seconds_to_wait)    
     run_strategy()

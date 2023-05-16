@@ -96,7 +96,7 @@ def run_strategy():
     for symbol in symbols:
         ff = get_last_funding_rate(symbol)
         var = 0.3
-        
+        market_sentiment = float(df['market_sentiment'][-1])
         
         print(symbol)
                                
@@ -111,7 +111,7 @@ def run_strategy():
             #
                 
             if (df['rsi'][-2] > 70) and (df['diff'][-2] > 2):  
-                if float(df['market_sentiment'][-1]) <= 0:
+                if market_sentiment <= 0.3:
                     Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min ▫️ {round(df['ask_resistance'][-2],4)} ")
             
                     
@@ -131,7 +131,7 @@ def run_strategy():
             #if df['market_sentiment'][-2] >= (var):
                 
             if (df['rsi'][-3] < 30) and (df['diff'][-2] > 2):    
-                if float(df['market_sentiment'][-1] >= 0):
+                if market_sentiment >= -0.3:
                     Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min ▫️ {round(df['bid_support'][-2],4)} ") 
             
                     PORLONG = {
@@ -152,6 +152,6 @@ def run_strategy():
 
 while True:
     current_time = time.time()
-    seconds_to_wait = 300 - current_time % 300
+    seconds_to_wait = 180 - current_time % 180
     time.sleep(seconds_to_wait)    
     run_strategy()

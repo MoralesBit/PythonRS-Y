@@ -74,8 +74,8 @@ def calculate_indicators(symbol):
     bid_cumulative_volumes = np.cumsum(bid_volumes)
     ask_cumulative_volumes = np.cumsum(ask_volumes)
 
-    bid_support = np.where(bid_cumulative_volumes > np.max(bid_cumulative_volumes)*0.35)[0][0]
-    ask_resistance = np.where(ask_cumulative_volumes > np.max(ask_cumulative_volumes)*0.35)[0][0]
+    bid_support = np.where(bid_cumulative_volumes > np.max(bid_cumulative_volumes)*0.15)[0][0]
+    ask_resistance = np.where(ask_cumulative_volumes > np.max(ask_cumulative_volumes)*0.15)[0][0]
 
     df['bid_support'] = bid_prices[bid_support]
     df['ask_resistance'] = ask_prices[ask_resistance] 
@@ -118,7 +118,7 @@ def run_strategy():
             # CONTRATENDENCIAs:         
           
              
-            if float(df['market_sentiment'][-2]) < (-var):
+            if float(df['market_sentiment'][-2]) <= (-var):
                                          
              if (df['rsi'][-2] > 70) and (df['diff'][-2] > 2):  
  
@@ -137,7 +137,7 @@ def run_strategy():
               requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
          
             
-            if float(df['market_sentiment'][-2]) > (var):  
+            if float(df['market_sentiment'][-2]) >0 (var):  
             
              if (df['rsi'][-3] < 30) and (df['diff'][-2] > 2):    
                

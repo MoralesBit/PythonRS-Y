@@ -74,6 +74,17 @@ def calculate_indicators(symbol):
 
     df['bid_support'] = bid_prices[bid_support]
     df['ask_resistance'] = ask_prices[ask_resistance] 
+    
+    # Calcular el Weighted Bid Ratio
+    total_bid_amount = sum([float(bid[1]) for bid in order_book['bids']])
+    weighted_bid_ratio = sum([float(bid[0]) * float(bid[1]) for bid in order_book['bids']]) / total_bid_amount
+    df['weighted_bid_ratio'] = weighted_bid_ratio
+    
+    # Calcular el Weighted Ask Ratio
+    total_ask_amount = sum([float(ask[1]) for ask in order_book['asks']])
+    weighted_ask_ratio = sum([float(ask[0]) * float(ask[1]) for ask in order_book['asks']]) / total_ask_amount
+    df['weighted_ask_ratio'] = weighted_ask_ratio
+    
       
     return df[-3:]
     
@@ -120,7 +131,7 @@ def run_strategy():
                 
             if (df['rsi'][-3] > df['rsi'][-2] > 70):  
                 if market_sentiment_2 <= -0.3:
-                    Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['ask_resistance'][-2],4)} ")
+                    Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['weighted_ask_ratio'][-2],4)} ")
             
                     PICKERSHORT= {
                     "name": "PICKER SHORT",
@@ -139,7 +150,7 @@ def run_strategy():
                 
             if (df['rsi'][-3] < df['rsi'][-2] < 30):    
                 if market_sentiment_2 >= 0.3:
-                    Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['bid_support'][-2],4)} ") 
+                    Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)} ") 
             
                     PICKERLONG = {
                     "name": "PICKER LONG",
@@ -155,9 +166,9 @@ def run_strategy():
             #FISHING PISHA:
                           
             if (float(df['Close'][-2]) <= df['ema_300'][-2]):
-                if market_sentiment_2 < market_sentiment_3 < -0.4 :    
+                if (-0.4) > market_sentiment_3 > market_sentiment_2:    
                  
-                        Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['ask_resistance'][-2],4)} ") 
+                        Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_ask_ratio'][-2],4)} ") 
             
                         FISHINGSHORT = {
                             "name": "FISHING SHORT",
@@ -173,9 +184,9 @@ def run_strategy():
               
             
             if (float(df['Close'][-2]) >= df['ema_300'][-2]):
-                if market_sentiment_2 > market_sentiment_3 > 0.4:         
+                if (0.4) < market_sentiment_3 < market_sentiment_2:         
                    
-                        Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['bid_support'][-2],4)}")            
+                        Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)}")            
               
                         FISHINGLONG = {
                             "name": "FISHING LONG",

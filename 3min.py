@@ -104,7 +104,7 @@ def run_strategy():
             df = calculate_indicators(symbol)
             upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
             market_sentiment_3 = float(df['market_sentiment'][-3])                  
-                   market_sentiment_2 = float(df['market_sentiment'][-2]) 
+            market_sentiment_2 = float(df['market_sentiment'][-2]) 
 
             if df is None:
                 continue

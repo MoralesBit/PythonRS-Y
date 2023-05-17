@@ -186,7 +186,7 @@ def run_strategy():
             
             if (float(df['Close'][-2]) >= df['ema_300'][-2]):
                 if (0.4) < market_sentiment_2:         
-                   
+                   if (df['rsi'][-3] < df['rsi'][-2] < 50):
                         Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)}")            
               
                         FISHINGLONG = {

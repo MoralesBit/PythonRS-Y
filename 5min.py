@@ -109,7 +109,7 @@ def run_strategy():
         try:
             df = calculate_indicators(symbol)
             upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
-            market_sentiment = float(df['market_sentiment'][-1])
+            market_sentiment = float(df['market_sentiment'][-2])
                               
             if df is None:
                 continue
@@ -117,7 +117,7 @@ def run_strategy():
                       
             #
                 
-            if (df['rsi'][-2] > 70) and (df['diff'][-2] > 2):  
+            if (df['rsi'][-3] > df['rsi'][-2] > 70):  
                 if market_sentiment <= -0.3:
                     Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['ask_resistance'][-2],4)} ")
             
@@ -127,7 +127,7 @@ def run_strategy():
                     "side": "sell",
                     "symbol": symbol,
                     "open": {
-                    "price": float(df['Close'][-1])
+                    "price": float(df['Close'][-2])
                     }
                     }
    
@@ -136,7 +136,7 @@ def run_strategy():
             
             #if df['market_sentiment'][-2] >= (var):
                 
-            if (df['rsi'][-3] < 30) and (df['diff'][-2] > 2):    
+            if (df['rsi'][-3] < df['rsi'][-2] < 30):    
                 if market_sentiment >= 0.3:
                     Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['bid_support'][-2],4)} ") 
             
@@ -153,9 +153,8 @@ def run_strategy():
             
             #FISHING PISHA:
                           
-            if float(df['Close'][-2]) >= upperband[-2]:
-                if (float(df['Close'][-2]) <= df['ema_300'][-2]):
-                    if market_sentiment < -0.1:    
+            if (float(df['Close'][-2]) <= df['ema_300'][-2]):
+                if market_sentiment < -0.4:    
                  
                         Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['ask_resistance'][-2],4)} ") 
             
@@ -172,9 +171,8 @@ def run_strategy():
             
               
             
-            if float(df['Close'][-2]) <= lowerband[-2]:
-                if (float(df['Close'][-2]) >= df['ema_300'][-2]):
-                    if market_sentiment > 0.1:         
+            if (float(df['Close'][-2]) >= df['ema_300'][-2]):
+                if market_sentiment > 0.4:         
                    
                         Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['bid_support'][-2],4)}")            
               

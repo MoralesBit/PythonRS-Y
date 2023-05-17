@@ -103,8 +103,9 @@ def run_strategy():
         try:
             df = calculate_indicators(symbol)
             upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
-            market_sentiment = float(df['market_sentiment'][-1])                  
-            
+            market_sentiment_3 = float(df['market_sentiment'][-3])                  
+                   market_sentiment_2 = float(df['market_sentiment'][-2]) 
+
             if df is None:
                 continue
             # CONTRATENDENCIAs:         
@@ -112,7 +113,7 @@ def run_strategy():
             #
                 
             if (df['rsi'][-2] > 70) and (df['diff'][-2] > 1):  
-                if market_sentiment <= -0.2:
+                if market_sentiment_3 > market_sentiment_2:
                     Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min ▫️ {round(df['ask_resistance'][-2],4)} ")
             
                     
@@ -131,8 +132,8 @@ def run_strategy():
             
             #if df['market_sentiment'][-2] >= (var):
                 
-            if (df['rsi'][-3] < 30) and (df['diff'][-2] > 1):    
-                if market_sentiment >= 0.2:
+            if (df['rsi'][-2] < 30) and (df['diff'][-2] > 1):    
+                  if market_sentiment_3 < market_sentiment_2:
                     Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min ▫️ {round(df['bid_support'][-2],4)} ") 
             
                     PORLONG = {

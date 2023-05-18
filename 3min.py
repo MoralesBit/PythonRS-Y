@@ -114,7 +114,7 @@ def run_strategy():
                 
             if (df['rsi'][-2] > 70) and (upperband[-2] < float(df['Close'][-2])):  
                 if -0.4 < market_sentiment_2:
-                    Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min ▫️ {round(df['ask_resistance'][-2],4)} ")
+                    Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min ▫️ {round(df['ask_resistance'][-2],4)} ")
             
                     
                     PORSHORT = {
@@ -134,7 +134,7 @@ def run_strategy():
                 
             if (df['rsi'][-2] < 30) and (lowerband[-2] > float(df['Close'][-2])):    
                   if 0.4 < market_sentiment_2:
-                    Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min ▫️ {round(df['bid_support'][-2],4)} ") 
+                    Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min ▫️ {round(df['bid_support'][-2],4)} ") 
             
                     PORLONG = {
                     "name": "LARGO 3POR",

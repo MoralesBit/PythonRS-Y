@@ -19,14 +19,20 @@ def get_trading_symbols():
 
 def get_last_funding_rate(symbol):
     """Obtiene la última tasa de financiamiento para un símbolo en Binance"""
+
     url = "https://fapi.binance.com/fapi/v1/fundingRate"
     params = {'symbol': symbol}
     response = requests.get(url, params=params)
+
     if response.status_code == 200:
         data = response.json()
-        last_funding_rate = float(data[-1]['fundingRate'])*100
-        prev_funding_rate = float(data[-2]['fundingRate'])*100
-        return last_funding_rate, prev_funding_rate
+        if data:
+            last_funding_rate = float(data[-1]['fundingRate']) * 100
+            prev_funding_rate = float(data[-2]['fundingRate']) * 100
+            return last_funding_rate, prev_funding_rate
+        else:
+            print("La lista de datos está vacía.")
+            return None
     else:
         print("Error al obtener la tasa de financiamiento. Código de estado:", response.status_code)
         return None

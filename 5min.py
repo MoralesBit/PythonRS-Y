@@ -165,45 +165,9 @@ def run_strategy():
             
             #FISHING PISHA:
                           
-            if prev_funding_rate > last_funding_rate > 0:
-                if  market_sentiment_2 < (-0.4):    
-                  if (df['rsi'][-3] > df['rsi'][-2] < 50):
-                 
-                        Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_ask_ratio'][-2],4)} ") 
-            
-                        FISHINGSHORT = {
-                            "name": "FISHING SHORT",
-                            "secret": "azsdb9x719",
-                            "side": "sell",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-1])
-                            }
-                            }
-                        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-            
-              
-            
-            if prev_funding_rate < last_funding_rate > 0:
-                if market_sentiment_2 > (0.4):         
-                    if (df['rsi'][-3] < df['rsi'][-2] > 50):
-                        Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)}")            
-              
-                        FISHINGLONG = {
-                            "name": "FISHING LONG",
-                            "secret": "0kivpja7tz89",
-                            "side": "buy",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2])
-                            }
-                            }
-   
-                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)     
-        
             if prev_funding_rate > last_funding_rate < 0:
-                if market_sentiment_2 < (-0.4):    
-                    if (df['rsi'][-3] > df['rsi'][-2] < 50):
+                if  market_sentiment_2 < (-0.4):    
+                  if (df['rsi'][-3] > df['rsi'][-2] > 50):
                  
                         Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_ask_ratio'][-2],4)} ") 
             
@@ -221,8 +185,44 @@ def run_strategy():
               
             
             if prev_funding_rate < last_funding_rate < 0:
+                if market_sentiment_2 > (0.4):         
+                    if (df['rsi'][-3] < df['rsi'][-2] < 50):
+                        Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)}")            
+              
+                        FISHINGLONG = {
+                            "name": "FISHING LONG",
+                            "secret": "0kivpja7tz89",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
+   
+                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)     
+        
+            if prev_funding_rate > last_funding_rate > 0:
+                if market_sentiment_2 < (-0.4):    
+                    if (df['rsi'][-3] > df['rsi'][-2] > 50):
+                 
+                        Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_ask_ratio'][-2],4)} ") 
+            
+                        FISHINGSHORT = {
+                            "name": "FISHING SHORT",
+                            "secret": "azsdb9x719",
+                            "side": "sell",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-1])
+                            }
+                            }
+                        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
+            
+              
+            
+            if prev_funding_rate < last_funding_rate > 0:
                 if  market_sentiment_2 > (0.4) :         
-                    if (df['rsi'][-3] < df['rsi'][-2] > 50):
+                    if (df['rsi'][-3] < df['rsi'][-2] < 50):
                         
                         Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)}")            
               

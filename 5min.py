@@ -17,7 +17,20 @@ def get_trading_symbols():
       
     return symbols
 
-   
+def get_last_funding_rate(symbol):
+    """Obtiene la última tasa de financiamiento para un símbolo en Binance"""
+    url = "https://fapi.binance.com/fapi/v1/fundingRate"
+    params = {'symbol': symbol}
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+        data = response.json()
+        last_funding_rate = float(data[-1]['fundingRate'])*100
+        prev_funding_rate = float(data[-2]['fundingRate'])*100
+        return last_funding_rate, prev_funding_rate
+    else:
+        print("Error al obtener la tasa de financiamiento. Código de estado:", response.status_code)
+        return None
+             
 def calculate_indicators(symbol):
     """Calcula los indicadores de Bollinger para un símbolo y devuelve las últimas velas"""
     klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE, limit=1000)
@@ -84,52 +97,31 @@ def calculate_indicators(symbol):
     total_ask_amount = sum([float(ask[1]) for ask in order_book['asks']])
     weighted_ask_ratio = sum([float(ask[0]) * float(ask[1]) for ask in order_book['asks']]) / total_ask_amount
     df['weighted_ask_ratio'] = weighted_ask_ratio
-    
+       
       
     return df[-3:]
-    
-    
-
-def get_last_funding_rate(symbol):
-    try:
-        # Obtener el historial de tasas de financiamiento
-        funding_history = client.futures_funding_rate(symbol=symbol)
-
-        # Obtener la última tasa de financiamiento
-        ff = None
-        for funding_info in funding_history:
-            ff = float(funding_info['fundingRate']) * 100
-        # Devolver la última tasa de financiamiento
-        return ff
-
-    except Exception as e:
-        print(f"Error en el símbolo {symbol}: {e}")
-        return None
+     
     
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
     symbols = get_trading_symbols()
-       
+    
     for symbol in symbols:
-        ff = get_last_funding_rate(symbol)
-        var = 0.3
-        
+          
+        last_funding_rate, prev_funding_rate = get_last_funding_rate(symbol)
         
         print(symbol)
-                               
+                                       
         try:
             df = calculate_indicators(symbol)
-            upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
-            market_sentiment_3 = float(df['market_sentiment'][-3])                  
+                   
             market_sentiment_2 = float(df['market_sentiment'][-2]) 
                               
             if df is None:
                 continue
             # CONTRATENDENCIAs:         
-                      
-            #
-                
-            if (df['rsi'][-3] > df['rsi'][-2] > 70):  
+         
+            if (df['rsi'][-3] > df['rsi'][-2] > 80):  
                 if market_sentiment_2 <= -0.3:
                     Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['weighted_ask_ratio'][-2],4)} ")
             
@@ -148,7 +140,7 @@ def run_strategy():
             
             #if df['market_sentiment'][-2] >= (var):
                 
-            if (df['rsi'][-3] < df['rsi'][-2] < 30):    
+            if (df['rsi'][-3] < df['rsi'][-2] < 20):    
                 if market_sentiment_2 >= 0.3:
                     Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)} ") 
             
@@ -165,7 +157,7 @@ def run_strategy():
             
             #FISHING PISHA:
                           
-            if ff > 0:
+            if prev_funding_rate > last_funding_rate < 0:
                 if (-0.4) > market_sentiment_2:    
                   if (df['rsi'][-3] > df['rsi'][-2] > 50):
                  
@@ -184,7 +176,8 @@ def run_strategy():
             
               
             
-            if ff < 0:
+            if prev_funding_rate < last_funding_rate < 0:
+                
                 if (0.4) < market_sentiment_2:         
                    if (df['rsi'][-3] < df['rsi'][-2] < 50):
                         Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)}")            
@@ -200,7 +193,44 @@ def run_strategy():
                             }
    
                         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)     
+        
+            if prev_funding_rate < last_funding_rate > 0:
+                if (-0.4) > market_sentiment_2:    
+                    if (df['rsi'][-3] > df['rsi'][-2] > 50):
+                 
+                        Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_ask_ratio'][-2],4)} ") 
+            
+                        FISHINGSHORT = {
+                            "name": "FISHING SHORT",
+                            "secret": "azsdb9x719",
+                            "side": "sell",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-1])
+                            }
+                            }
+                        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
+            
+              
+            
+            if prev_funding_rate > last_funding_rate > 0:
                 
+                if (0.4) < market_sentiment_2:         
+                   if (df['rsi'][-3] < df['rsi'][-2] < 50):
+                        Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)}")            
+              
+                        FISHINGLONG = {
+                            "name": "FISHING LONG",
+                            "secret": "0kivpja7tz89",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
+   
+                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)  
+                                
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

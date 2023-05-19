@@ -117,6 +117,8 @@ def run_strategy():
         last_funding_rate, prev_funding_rate = get_last_funding_rate(symbol)
         
         print(symbol)
+        print(last_funding_rate)
+        print(prev_funding_rate)
                                        
         try:
             df = calculate_indicators(symbol)
@@ -165,7 +167,7 @@ def run_strategy():
                           
             if prev_funding_rate > last_funding_rate < 0:
                 if (-0.4) > market_sentiment_2:    
-                  if (df['rsi'][-3] > df['rsi'][-2] > 50):
+                  if (df['rsi'][-3] > df['rsi'][-2] < 50):
                  
                         Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_ask_ratio'][-2],4)} ") 
             
@@ -185,7 +187,7 @@ def run_strategy():
             if prev_funding_rate < last_funding_rate < 0:
                 
                 if (0.4) < market_sentiment_2:         
-                   if (df['rsi'][-3] < df['rsi'][-2] < 50):
+                   if (df['rsi'][-3] < df['rsi'][-2] > 50):
                         Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)}")            
               
                         FISHINGLONG = {
@@ -202,7 +204,7 @@ def run_strategy():
         
             if prev_funding_rate < last_funding_rate > 0:
                 if (-0.4) > market_sentiment_2:    
-                    if (df['rsi'][-3] > df['rsi'][-2] > 50):
+                    if (df['rsi'][-3] > df['rsi'][-2] < 50):
                  
                         Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_ask_ratio'][-2],4)} ") 
             
@@ -222,7 +224,7 @@ def run_strategy():
             if prev_funding_rate > last_funding_rate > 0:
                 
                 if (0.4) < market_sentiment_2:         
-                   if (df['rsi'][-3] < df['rsi'][-2] < 50):
+                   if (df['rsi'][-3] < df['rsi'][-2] > 50):
                         Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)}")            
               
                         FISHINGLONG = {

@@ -27,8 +27,8 @@ def get_last_funding_rate(symbol):
     if response.status_code == 200:
         data = response.json()
         if data:
-            last_funding_rate = float(data[-1]['fundingRate']) * 100
-            prev_funding_rate = float(data[-2]['fundingRate']) * 100
+            last_funding_rate = float(data[-2]['fundingRate']) * 100
+            prev_funding_rate = float(data[-3]['fundingRate']) * 100
             return last_funding_rate, prev_funding_rate
         else:
             print("La lista de datos está vacía.")
@@ -122,15 +122,15 @@ def run_strategy():
                                        
         try:
             df = calculate_indicators(symbol)
-                   
+            upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)       
             market_sentiment_2 = float(df['market_sentiment'][-2]) 
                               
             if df is None:
                 continue
             # CONTRATENDENCIAs:         
          
-            if (df['rsi'][-3] > df['rsi'][-2] > 80):  
-                if market_sentiment_2 <= -0.3:
+            if (df['rsi'][-3] > df['rsi'][-2] > 70):  
+                if market_sentiment_2 <= -0.5:
                     Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['weighted_ask_ratio'][-2],4)} ")
             
                     PICKERSHORT= {
@@ -148,8 +148,8 @@ def run_strategy():
             
             #if df['market_sentiment'][-2] >= (var):
                 
-            if (df['rsi'][-3] < df['rsi'][-2] < 20):    
-                if market_sentiment_2 >= 0.3:
+            if (df['rsi'][-3] < df['rsi'][-2] < 30):    
+                if market_sentiment_2 >= 0.5:
                     Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)} ") 
             
                     PICKERLONG = {
@@ -165,9 +165,9 @@ def run_strategy():
             
             #FISHING PISHA:
                           
-            if prev_funding_rate > last_funding_rate < 0:
-                if  market_sentiment_2 < (-0.4):    
-                  if (df['rsi'][-3] > df['rsi'][-2] > 50):
+            if prev_funding_rate > last_funding_rate > 0:
+                if  market_sentiment_2 < 0:    
+                  if (df['rsi'][-2] > 45) and (middleband[-2] <= float(df['Close'][-2])):
                  
                         Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_ask_ratio'][-2],4)} ") 
             
@@ -186,7 +186,7 @@ def run_strategy():
             
             if prev_funding_rate < last_funding_rate < 0:
                 if market_sentiment_2 > (0.4):         
-                    if (df['rsi'][-3] < df['rsi'][-2] < 50):
+                    if df['rsi'][-2] < 55 and (middleband[-2] >= float(df['Close'][-2])):
                         Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)}")            
               
                         FISHINGLONG = {
@@ -201,43 +201,7 @@ def run_strategy():
    
                         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)     
         
-            if prev_funding_rate > last_funding_rate > 0:
-                if market_sentiment_2 < (-0.4):    
-                    if (df['rsi'][-3] > df['rsi'][-2] > 50):
-                 
-                        Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_ask_ratio'][-2],4)} ") 
             
-                        FISHINGSHORT = {
-                            "name": "FISHING SHORT",
-                            "secret": "azsdb9x719",
-                            "side": "sell",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-1])
-                            }
-                            }
-                        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-            
-              
-            
-            if prev_funding_rate < last_funding_rate > 0:
-                if  market_sentiment_2 > (0.4) :         
-                    if (df['rsi'][-3] < df['rsi'][-2] < 50):
-                        
-                        Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)}")            
-              
-                        FISHINGLONG = {
-                            "name": "FISHING LONG",
-                            "secret": "0kivpja7tz89",
-                            "side": "buy",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2])
-                            }
-                            }
-   
-                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)  
-                                
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

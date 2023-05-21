@@ -163,7 +163,7 @@ def run_strategy():
             
             #FISHING PISHA:
                           
-            if prev_funding_rate > last_funding_rate > 0:
+            if prev_funding_rate < last_funding_rate > 0:
                 if  market_sentiment_2 < 0:    
                   if (df['rsi'][-2] > 45) and (middleband[-2] <= float(df['Close'][-2])):
                  

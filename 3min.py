@@ -113,7 +113,7 @@ def run_strategy():
             #
                 
             if (df['rsi'][-2] > 70) and (upperband[-2] <= float(df['Close'][-2])):  
-                if 0 > market_sentiment_2:
+               
                     Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                     
                     PORSHORT = {
@@ -132,7 +132,7 @@ def run_strategy():
             #if df['market_sentiment'][-2] >= (var):
                 
             if (df['rsi'][-2] < 30) and (lowerband[-2] >= float(df['Close'][-2])):    
-                  if 0 < market_sentiment_2:
+                 
                     Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                                 
                     PORLONG = {

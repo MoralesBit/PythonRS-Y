@@ -117,9 +117,7 @@ def run_strategy():
         last_funding_rate, prev_funding_rate = get_last_funding_rate(symbol)
         
         print(symbol)
-        print(last_funding_rate)
-        print(prev_funding_rate)
-                                       
+              
         try:
             df = calculate_indicators(symbol)
             upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)       

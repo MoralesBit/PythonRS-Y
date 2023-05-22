@@ -117,7 +117,7 @@ def run_strategy():
         last_funding_rate, prev_funding_rate = get_last_funding_rate(symbol)
         
         print(symbol)
-              
+       
         try:
             df = calculate_indicators(symbol)
             upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)       
@@ -163,9 +163,8 @@ def run_strategy():
             
             #FISHING PISHA:
                           
-            if prev_funding_rate < last_funding_rate > 0:
-                if  market_sentiment_2 < 0:    
-                  if (df['rsi'][-2] > 45) and (middleband[-2] <= float(df['Close'][-2])):
+            if prev_funding_rate > last_funding_rate > 0:
+                if (df['rsi'][-2] > 45) and (middleband[-2] <= float(df['Close'][-2])):
                  
                         Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_ask_ratio'][-2],4)} ") 
             
@@ -182,9 +181,8 @@ def run_strategy():
             
               
             
-            if prev_funding_rate > last_funding_rate < 0:
-                if market_sentiment_2 > 0:         
-                    if df['rsi'][-2] < 55 and (middleband[-2] >= float(df['Close'][-2])):
+            if prev_funding_rate < last_funding_rate < 0:
+                if df['rsi'][-2] < 55 and (middleband[-2] >= float(df['Close'][-2])):
                         Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)}")            
               
                         FISHINGLONG = {

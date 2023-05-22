@@ -104,7 +104,9 @@ def run_strategy():
                 continue
             # CONTRATENDENCIAs:         
              
-            if (df['diff'][-3] >= 1) and (df['ema_3'][-2] <= float(df['Close'][-2])) :   
+            if (df['diff'][-3] >= 1) and (df['ema_3'][-2] <= float(df['Close'][-2])):
+                if (df['rsi'][-3] > df['rsi'][-2]):
+                       
                     Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                     
                     PORSHORT = {
@@ -121,7 +123,7 @@ def run_strategy():
 
                 
             if (df['diff'][-3] >= 1) and (df['ema_3'][-2] >= float(df['Close'][-2])) :    
-                  
+                 if (df['rsi'][-3] < df['rsi'][-2]):  
                     Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                                 
                     PORLONG = {

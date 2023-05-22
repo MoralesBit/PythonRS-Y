@@ -39,8 +39,8 @@ def calculate_indicators(symbol):
     rsi = ta.RSI(df['Close'], timeperiod=14)
     df['rsi'] = rsi 
            
-    ema_300 = df['Close'].ewm(span=300, adjust=False).mean()
-    df['ema_300'] = ema_300
+    ema_3 = df['Close'].ewm(span=3, adjust=False).mean()
+    df['ema_3'] = ema_3
     
     roc = ta.ROC(df['Close'], timeperiod=6)
     df['roc'] = roc
@@ -71,8 +71,6 @@ def calculate_indicators(symbol):
       
     return df[-3:]
     
-    
-
 def get_last_funding_rate(symbol):
     try:
         # Obtener el historial de tasas de financiamiento
@@ -95,26 +93,19 @@ def run_strategy():
        
     for symbol in symbols:
         ff = get_last_funding_rate(symbol)
-        var = 0.3
-       
-        
+               
         print(symbol)
                                
         try:
             df = calculate_indicators(symbol)
             upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
-                             
-            market_sentiment_2 = float(df['market_sentiment'][-2]) 
-
+           
             if df is None:
                 continue
             # CONTRATENDENCIAs:         
-                      
-            #
-                
-            if (df['rsi'][-2] > 70) and (upperband[-2] < float(df['Close'][-2])):  
-                if 0.005 < ff:
-                    Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
+             
+            if (df['diff'][-3] >= 1) and (df['ema_3'][-2] <= float(df['Close'][-2])) :   
+                    Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                     
                     PORSHORT = {
                     "name": "CORTO 3POR",
@@ -127,13 +118,11 @@ def run_strategy():
                     }
    
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)    
-         
-            
-            #if df['market_sentiment'][-2] >= (var):
+
                 
-            if (df['rsi'][-2] < 30) and (lowerband[-2] > float(df['Close'][-2])):    
-                  if -0.005 > ff:
-                    Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
+            if (df['diff'][-3] >= 1) and (df['ema_3'][-2] >= float(df['Close'][-2])) :    
+                  
+                    Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                                 
                     PORLONG = {
                     "name": "LARGO 3POR",

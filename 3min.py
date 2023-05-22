@@ -104,10 +104,10 @@ def run_strategy():
                 continue
             # CONTRATENDENCIAs:         
              
-            if (df['diff'][-3] >= 1) and (df['ema_3'][-2] <= float(df['Close'][-2])):
+            if (df['diff'][-3] >= 1) and (df['ema_3'][-2] <= float(df['Close'][-2])) and (float(df['Close'][-3] >= upperband[-3])):
                 if (df['rsi'][-3] > df['rsi'][-2]):
                        
-                    Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
+                    Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                     
                     PORSHORT = {
                     "name": "CORTO 3POR",
@@ -122,9 +122,9 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)    
 
                 
-            if (df['diff'][-3] >= 1) and (df['ema_3'][-2] >= float(df['Close'][-2])) :    
+            if (df['diff'][-3] >= 1) and (df['ema_3'][-2] >= float(df['Close'][-2])) and (float(df['Close'][-3] <= lowerband[-3])):    
                  if (df['rsi'][-3] < df['rsi'][-2]):  
-                    Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
+                    Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                                 
                     PORLONG = {
                     "name": "LARGO 3POR",

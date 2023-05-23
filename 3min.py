@@ -91,11 +91,12 @@ def run_strategy():
         ff = get_last_funding_rate(symbol)
                
         print(symbol)
+        print(df['slowk'][-2])
+        print(df['slowd'][-2])
                                        
         try:
             df = calculate_indicators(symbol)
-            
-                             
+                                         
             if df is None:
                 continue
             # CONTRATENDENCIAs:         
@@ -149,7 +150,7 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)    
 
                 
-            if (df['diff'][-2] >= 1) and ((df['Close'][-2]) <= df['lowerband'][-2]) and (df['d_up'][-2] > 0.5):    
+            if (df['diff'][-2] >= 1) and ((df['Close'][-2]) <= df['lowerband'][-2]):    
                
                 if  float(df['bid_orders'][-2]) <  float(df['ask_orders'][-2]):
                          

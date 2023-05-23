@@ -136,6 +136,41 @@ def run_strategy():
                     }
                     }
                     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
+             
+             # Tendencia:
+             
+            if (df['diff'][-3] >= 1) and (df['ema_3'][-2] >= float(df['Close'][-2])):
+                if (df['rsi'][-3] > df['rsi'][-2]):
+                       
+                    Tb.telegram_canal_prueba(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Trend ▫️ 3 min")
+                    
+                    PORSHORT = {
+                    "name": "CORTO 3POR",
+                    "secret": "ao2cgree8fp",
+                    "side": "sell",
+                    "symbol": symbol,
+                    "open": {
+                    "price": float(df['Close'][-2]) 
+                    }
+                    }
+   
+                    requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)    
+
+                
+            if (df['diff'][-3] >= 1) and (df['ema_3'][-2] <= float(df['Close'][-2])):    
+                 if (df['rsi'][-3] < df['rsi'][-2]):  
+                    Tb.telegram_canal_prueba(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Trend ▫️ 3 min")
+                                
+                    PORLONG = {
+                    "name": "LARGO 3POR",
+                    "secret": "nwh2tbpay1r",
+                    "side": "buy",
+                    "symbol": symbol,
+                    "open": {
+                    "price": float(df['Close'][-2]) 
+                    }
+                    }
+                    requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)        
     
                 
         except Exception as e:

@@ -30,6 +30,12 @@ def calculate_indicators(symbol):
     
     df = df.set_index('Open time')
     
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+    df['upperband'] = upperband
+    df['middleband'] = middleband
+    df['lowerband'] = lowerband
+    
+    
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     
     diff = abs((df['High'] / df['Low'] -1) * 100)
@@ -91,14 +97,18 @@ def run_strategy():
                                
         try:
             df = calculate_indicators(symbol)
-            upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+                    
+            d_up = abs((df['High'] / df['upperband'] -1) * 100)
+            df['d_up'] = d_up
+            
            
+            
             if df is None:
                 continue
             # CONTRATENDENCIAs:         
              
-            if (df['diff'][-2] >= 1) and (float(df['Close'][-2]) >= upperband[-2]):
-                if (float(df['bid_orders'][-2]) < float(df['ask_orders'][-2])):
+            if (df['diff'][-2] >= 1) and (float(df['Close'][-2]) >= df['upperband'][-2]):
+                
                        
                     Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                     
@@ -115,8 +125,8 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)    
 
                 
-            if (df['diff'][-2] >= 1) and (float(df['Close'][-2]) <= lowerband[-2]):    
-                if (float(df['bid_orders'][-2]) > float(df['ask_orders'][-2])):  
+            if (df['diff'][-2] >= 1) and (float(df['Close'][-2]) <= df['lowerband'][-2]) and (df['d_up'][-2] > 0.5):    
+               
                     
                     Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                                 
@@ -130,7 +140,29 @@ def run_strategy():
                     }
                     }
                     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
-             
+            
+            
+            #TENDENCIA:
+            
+            if (df['diff'][-2] >= 1) and (float(df['Close'][-2]) >= df['upperband'][-2]):
+                    
+                if  float(df['bid_orders'][-2]) >  float(df['ask_orders'][-2]): 
+                    
+                    Tb.telegram_canal_prueba(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Trend ▫️ 3 min")     
+                    
+                    
+                 
+                    requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)    
+
+                
+            if (df['diff'][-2] >= 1) and (float(df['Close'][-2]) <= df['lowerband'][-2]) and (df['d_up'][-2] > 0.5):    
+               
+                if  float(df['bid_orders'][-2]) <  float(df['ask_orders'][-2]):
+                         
+                    Tb.telegram_canal_prueba(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Trend ▫️ 3 min")
+                                
+            
+                    requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
       
     
                 

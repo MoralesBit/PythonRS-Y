@@ -74,7 +74,14 @@ def calculate_indicators(symbol):
     total_ask_amount = sum([float(ask[1]) for ask in order_book['asks']])
     market_sentiment = (total_bid_amount - total_ask_amount) / (total_bid_amount + total_ask_amount)
     df['market_sentiment'] = market_sentiment   
-      
+    
+    # Obtener la cantidad de órdenes de compra y venta en el libro de órdenes
+    bid_orders = len(order_book['bids'])
+    ask_orders = len(order_book['asks'])
+    df['bid_orders'] = bid_orders
+    df['ask_orders'] = ask_orders
+
+          
     return df[-3:]
      
     
@@ -87,7 +94,8 @@ def run_strategy():
         ff = get_last_funding_rate(symbol)
         
         print(symbol)
-              
+        print(ff)
+       
         try:
             df = calculate_indicators(symbol)
             upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)       
@@ -97,8 +105,9 @@ def run_strategy():
                 continue
             # CONTRATENDENCIAs:         
          
-            if (df['rsi'][-2] > 70) and (df['diff'][-2] > 2) and (0 <= df['market_sentiment'][-2] <= 0.2):  
-               
+            if (df['rsi'][-2] >= 70) and (df['diff'][-2] > 2):  
+                if float(df['bid_orders'][-2]) < float(df['ask_orders'][-2]):
+                    
                     Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(ff,2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
             
                     PICKERSHORT= {
@@ -114,8 +123,8 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
                     
                             
-            if (df['rsi'][-2] < 30) and (df['diff'][-2] > 2)  and (0 >= df['market_sentiment'][-2] >= -0.2):
-                
+            if (df['rsi'][-2] <= 30) and (df['diff'][-2] > 2):
+                if float(df['bid_orders'][-2]) > float(df['ask_orders'][-2]):
                     Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(ff,2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️") 
             
                     PICKERLONG = {
@@ -131,7 +140,7 @@ def run_strategy():
             
             #FISHING PISHA:
                           
-            if ff > 0:
+            if float(ff) > 0:
                 if (df['rsi'][-2] >= 45) and (middleband[-2] <= float(df['Close'][-2])) :
                  
                         Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(ff,2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
@@ -149,7 +158,7 @@ def run_strategy():
             
               
             
-            if ff < 0:
+            if float(ff) < 0:
                 if (df['rsi'][-2] <= 55) and (middleband[-2] >= float(df['Close'][-2])):
                         Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               

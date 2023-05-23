@@ -37,16 +37,16 @@ def calculate_indicators(symbol):
     
     ema_3 = df['Close'].ewm(span=3, adjust=False).mean()
     df['ema_3'] = ema_3
-    
-   
-         
+            
     rsi = ta.RSI(df['Close'], timeperiod=14)
     df['rsi'] = rsi 
        
     roc = ta.ROC(df['Close'], timeperiod=6)
     df['roc'] = roc
       
-      
+    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+    df['slowk'] = slowk
+    df['slowd'] = slowd  
     
     # Obtener el libro de órdenes actual
     order_book = client.get_order_book(symbol=symbol)
@@ -57,24 +57,10 @@ def calculate_indicators(symbol):
     market_sentiment = (total_bid_amount - total_ask_amount) / (total_bid_amount + total_ask_amount)
     df['market_sentiment'] = market_sentiment
             
-    # Obtener la cantidad de órdenes de compra y venta en el libro de órdenes
-    bid_orders = len(order_book['bids'])
-    ask_orders = len(order_book['asks'])
-    df['bid_orders'] = bid_orders
-    df['ask_orders'] = ask_orders
-    
-    # Obtiene la mejor oferta de compra y venta en el libro de órdenes
-    best_bid = float(order_book['bids'][0][0])
-    best_ask = float(order_book['asks'][0][0])
-
     # Calcula el agotamiento de precio
             
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
-    
-    price_exhaustion = (best_bid - df['Close']) / df['Close'] * 100
-    
-    df['price_exhaustion'] = price_exhaustion 
-    
+       
     diff = abs((df['High'] / df['Low'] -1) * 100)
     
     df['diff'] = diff   
@@ -116,7 +102,7 @@ def run_strategy():
              
             if (df['diff'][-3] >= 1) and ((df['Close'][-3]) >= df['upperband'][-3]):
                 
-                if  df['price_exhaustion'][-2] > df['price_exhaustion'][-1]: 
+                if  df['slowk'][-1] < df['slowd'][-1]: 
                        
                     Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                     
@@ -135,7 +121,7 @@ def run_strategy():
                 
             if (df['diff'][-3] >= 1) and ((df['Close'][-3]) <= df['lowerband'][-3]): 
                    
-                if  df['price_exhaustion'][-2] < df['price_exhaustion'][-1]: 
+                if  df['slowk'][-1] > df['slowd'][-1]:  
                     
                     Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                                 

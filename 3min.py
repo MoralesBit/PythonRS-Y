@@ -102,7 +102,7 @@ def run_strategy():
              
             if (df['diff'][-3] >= 1) and ((df['Close'][-3]) >= df['upperband'][-3]):
                 
-                if  df['slowk'][-1] < df['slowd'][-1]: 
+                if  df['slowk'][-2] < df['slowd'][-2]: 
                        
                     Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                     
@@ -121,7 +121,7 @@ def run_strategy():
                 
             if (df['diff'][-3] >= 1) and ((df['Close'][-3]) <= df['lowerband'][-3]): 
                    
-                if  df['slowk'][-1] > df['slowd'][-1]:  
+                if  df['slowk'][-2] > df['slowd'][-2]:  
                     
                     Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                                 

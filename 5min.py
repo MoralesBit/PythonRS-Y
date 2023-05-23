@@ -17,21 +17,6 @@ def get_trading_symbols():
       
     return symbols
 
-def get_last_funding_rate(symbol):
-    try:
-        # Obtener el historial de tasas de financiamiento
-        funding_history = client.futures_funding_rate(symbol=symbol)
-
-        # Obtener la última tasa de financiamiento
-        ff = None
-        for funding_info in funding_history:
-            ff = float(funding_info['fundingRate']) * 100
-        # Devolver la última tasa de financiamiento
-        return ff
-
-    except Exception as e:
-        print(f"Error en el símbolo {symbol}: {e}")
-        return None
              
 def calculate_indicators(symbol):
     """Calcula los indicadores de Bollinger para un símbolo y devuelve las últimas velas"""
@@ -45,12 +30,8 @@ def calculate_indicators(symbol):
     
     df = df.set_index('Open time')
     
-    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
-    
-    diff = abs((df['High'] / df['Low'] -1) * 100)
-    
-    df['diff'] = diff
-         
+   
+             
     rsi = ta.RSI(df['Close'], timeperiod=14)
     df['rsi'] = rsi 
     
@@ -81,6 +62,11 @@ def calculate_indicators(symbol):
     df['bid_orders'] = bid_orders
     df['ask_orders'] = ask_orders
 
+    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
+    
+    diff = abs((df['High'] / df['Low'] -1) * 100)
+    
+    df['diff'] = diff
           
     return df[-3:]
      
@@ -90,16 +76,13 @@ def run_strategy():
     symbols = get_trading_symbols()
     
     for symbol in symbols:
-          
-        ff = get_last_funding_rate(symbol)
-        
+                      
         print(symbol)
-        print(ff)
-       
+              
         try:
             df = calculate_indicators(symbol)
-            upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)       
-           
+            upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0) 
+          
                               
             if df is None:
                 continue
@@ -108,7 +91,7 @@ def run_strategy():
             if (df['rsi'][-2] >= 70) and (df['diff'][-2] > 2):  
                 if float(df['bid_orders'][-2]) < float(df['ask_orders'][-2]):
                     
-                    Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(ff,2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
+                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
             
                     PICKERSHORT= {
                     "name": "PICKER SHORT",
@@ -125,7 +108,7 @@ def run_strategy():
                             
             if (df['rsi'][-2] <= 30) and (df['diff'][-2] > 2):
                 if float(df['bid_orders'][-2]) > float(df['ask_orders'][-2]):
-                    Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(ff,2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️") 
+                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️") 
             
                     PICKERLONG = {
                     "name": "PICKER LONG",
@@ -140,10 +123,10 @@ def run_strategy():
             
             #FISHING PISHA:
                           
-            if float(ff) > 0:
-                if (df['rsi'][-2] >= 45) and (middleband[-2] <= float(df['Close'][-2])) :
+           
+            if (df['rsi'][-2] >= 45) and (middleband[-2] <= float(df['Close'][-2])) :
                  
-                        Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(ff,2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
+                        Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
                         FISHINGSHORT = {
                             "name": "FISHING SHORT",
@@ -158,8 +141,7 @@ def run_strategy():
             
               
             
-            if float(ff) < 0:
-                if (df['rsi'][-2] <= 55) and (middleband[-2] >= float(df['Close'][-2])):
+            if (df['rsi'][-2] <= 55) and (middleband[-2] >= float(df['Close'][-2])):
                         Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               
                         FISHINGLONG = {

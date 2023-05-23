@@ -72,10 +72,9 @@ def run_strategy():
         print(symbol)
               
         try:
+            
             df = calculate_indicators(symbol)
-          
-          
-                              
+                         
             if df is None:
                 continue
             # CONTRATENDENCIAs:         
@@ -116,7 +115,7 @@ def run_strategy():
             #FISHING PISHA:
                           
            
-            if (df['rsi'][-2] >= 45) and (df['middleband'][-2] <= (df['Close'][-2])) :
+            if (df['rsi'][-2] >= 45) and (df['middleband'][-2] <= float(df['Close'][-2])) :
                 if df['slowk'][-2] < df['slowd'][-2]:  
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
@@ -133,7 +132,7 @@ def run_strategy():
             
               
             
-            if (df['rsi'][-2] <= 55) and (df['middleband'][-2] >= (df['Close'][-2])):
+            if (df['rsi'][-2] <= 55) and (df['middleband'][-2] >= float(df['Close'][-2])):
                 if df['slowk'][-2] > df['slowd'][-2]: 
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               

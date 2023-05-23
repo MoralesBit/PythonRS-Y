@@ -47,16 +47,7 @@ def calculate_indicators(symbol):
     slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=6, slowk_matype=0, slowd_period=3, slowd_matype=0)
     df['slowk'] = slowk
     df['slowd'] = slowd  
-    
-    # Obtener el libro de órdenes actual
-    order_book = client.get_order_book(symbol=symbol)
-        
-    # Obtener el sentimiento del mercado
-    total_bid_amount = sum([float(bid[1]) for bid in order_book['bids']])
-    total_ask_amount = sum([float(ask[1]) for ask in order_book['asks']])
-    market_sentiment = (total_bid_amount - total_ask_amount) / (total_bid_amount + total_ask_amount)
-    df['market_sentiment'] = market_sentiment
-            
+                  
     # Calcula el agotamiento de precio
             
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
@@ -66,37 +57,18 @@ def calculate_indicators(symbol):
     df['diff'] = diff   
     
     return df[-3:]
-    
-def get_last_funding_rate(symbol):
-    try:
-        # Obtener el historial de tasas de financiamiento
-        funding_history = client.futures_funding_rate(symbol=symbol)
-
-        # Obtener la última tasa de financiamiento
-        ff = None
-        for funding_info in funding_history:
-            ff = float(funding_info['fundingRate']) * 100
-        # Devolver la última tasa de financiamiento
-        return ff
-
-    except Exception as e:
-        print(f"Error en el símbolo {symbol}: {e}")
-        return None
-    
+        
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
     symbols = get_trading_symbols()
        
     for symbol in symbols:
-        ff = get_last_funding_rate(symbol)
-               
+                      
         print(symbol)
-        print(df['slowk'][-2])
-        print(df['slowd'][-2])
-                                       
+              
         try:
             df = calculate_indicators(symbol)
-                                         
+                                                                        
             if df is None:
                 continue
             # CONTRATENDENCIAs:         
@@ -105,7 +77,7 @@ def run_strategy():
                 
                 if  df['slowk'][-2] < df['slowd'][-2]: 
                        
-                    Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
+                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                     
                     PORSHORT = {
                     "name": "CORTO 3POR",
@@ -124,7 +96,7 @@ def run_strategy():
                    
                 if  df['slowk'][-2] > df['slowd'][-2]:  
                     
-                    Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
+                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                                 
                     PORLONG = {
                     "name": "LARGO 3POR",
@@ -142,8 +114,7 @@ def run_strategy():
             
             if (df['diff'][-2] >= 1) and ((df['Close'][-2]) >= df['upperband'][-2]):
                     
-                if  float(df['bid_orders'][-2]) >  float(df['ask_orders'][-2]): 
-                    
+                                 
                     Tb.telegram_canal_prueba(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Trend ▫️ 3 min")     
                                        
                  
@@ -151,15 +122,12 @@ def run_strategy():
 
                 
             if (df['diff'][-2] >= 1) and ((df['Close'][-2]) <= df['lowerband'][-2]):    
-               
-                if  float(df['bid_orders'][-2]) <  float(df['ask_orders'][-2]):
+                        
                          
                     Tb.telegram_canal_prueba(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Trend ▫️ 3 min")
-                       
-            
+                 
                     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
       
-    
                 
         except Exception as e:
           

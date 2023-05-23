@@ -30,6 +30,9 @@ def calculate_indicators(symbol):
     
     df = df.set_index('Open time')
     
+    cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
+    df['cci'] = cci
+    
     upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
     df['upperband'] = upperband
     df['middleband'] = middleband
@@ -114,7 +117,7 @@ def run_strategy():
             #FISHING PISHA:
                           
             if  (df['Close'][-2] < df['ema_300'][-2]) and (df['middleband'][-2] > df['Close'][-2]):
-                if (df['slowk'][-3] > df['slowd'][-3]) and (df['slowk'][-2] < df['slowd'][-2]):
+                if (df['slowk'][-3] > df['slowd'][-3]) and (df['slowk'][-2] < df['slowd'][-2]) and (df['slowk'][-2] > 20):
                  
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
@@ -134,7 +137,7 @@ def run_strategy():
                 print("no cumple")
               
             if  (df['Close'][-2] > df['ema_300'][-2]) and (df['middleband'][-2] < df['Close'][-2]):
-                if (df['slowk'][-3] < df['slowd'][-3]) and (df['slowk'][-2] > df['slowd'][-2]):
+                if (df['slowk'][-3] < df['slowd'][-3]) and (df['slowk'][-2] > df['slowd'][-2]) and (df['slowk'][-2] < 80):
                
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               

@@ -30,7 +30,9 @@ def calculate_indicators(symbol):
     
     df = df.set_index('Open time')
     
-   
+    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowk_matype=0, slowd_period=1, slowd_matype=0)
+    df['slowk'] = slowk
+    df['slowd'] = slowd  
              
     rsi = ta.RSI(df['Close'], timeperiod=14)
     df['rsi'] = rsi 
@@ -47,21 +49,6 @@ def calculate_indicators(symbol):
     cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
     df['cci'] = cci
          
-    # Obtener el libro de órdenes actual
-    order_book = client.get_order_book(symbol=symbol)
-        
-    # Obtener el sentimiento del mercado
-    total_bid_amount = sum([float(bid[1]) for bid in order_book['bids']])
-    total_ask_amount = sum([float(ask[1]) for ask in order_book['asks']])
-    market_sentiment = (total_bid_amount - total_ask_amount) / (total_bid_amount + total_ask_amount)
-    df['market_sentiment'] = market_sentiment   
-    
-    # Obtener la cantidad de órdenes de compra y venta en el libro de órdenes
-    bid_orders = len(order_book['bids'])
-    ask_orders = len(order_book['asks'])
-    df['bid_orders'] = bid_orders
-    df['ask_orders'] = ask_orders
-
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     
     diff = abs((df['High'] / df['Low'] -1) * 100)
@@ -89,7 +76,7 @@ def run_strategy():
             # CONTRATENDENCIAs:         
          
             if (df['rsi'][-2] >= 70) and (df['diff'][-2] > 2):  
-                if float(df['bid_orders'][-2]) < float(df['ask_orders'][-2]):
+                if df['slowk'][-2] >= 90:
                     
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
             
@@ -107,7 +94,7 @@ def run_strategy():
                     
                             
             if (df['rsi'][-2] <= 30) and (df['diff'][-2] > 2):
-                if float(df['bid_orders'][-2]) > float(df['ask_orders'][-2]):
+                if df['slowk'][-2] <= 10:
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️") 
             
                     PICKERLONG = {
@@ -125,7 +112,7 @@ def run_strategy():
                           
            
             if (df['rsi'][-2] >= 45) and (middleband[-2] <= float(df['Close'][-2])) :
-                 
+                if df['slowk'][-3] > df['slowk'][-2]:  
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
                         FISHINGSHORT = {
@@ -142,7 +129,8 @@ def run_strategy():
               
             
             if (df['rsi'][-2] <= 55) and (middleband[-2] >= float(df['Close'][-2])):
-                        Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
+                if df['slowk'][-3] < df['slowk'][-2]: 
+                        Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               
                         FISHINGLONG = {
                             "name": "FISHING LONG",

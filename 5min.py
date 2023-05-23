@@ -18,23 +18,19 @@ def get_trading_symbols():
     return symbols
 
 def get_last_funding_rate(symbol):
-    """Obtiene la última tasa de financiamiento para un símbolo en Binance"""
+    try:
+        # Obtener el historial de tasas de financiamiento
+        funding_history = client.futures_funding_rate(symbol=symbol)
 
-    url = "https://fapi.binance.com/fapi/v1/fundingRate"
-    params = {'symbol': symbol}
-    response = requests.get(url, params=params)
+        # Obtener la última tasa de financiamiento
+        ff = None
+        for funding_info in funding_history:
+            ff = float(funding_info['fundingRate']) * 100
+        # Devolver la última tasa de financiamiento
+        return ff
 
-    if response.status_code == 200:
-        data = response.json()
-        if data:
-            last_funding_rate = float(data[-2]['fundingRate']) * 100
-            prev_funding_rate = float(data[-3]['fundingRate']) * 100
-            return last_funding_rate, prev_funding_rate
-        else:
-            print("La lista de datos está vacía.")
-            return None
-    else:
-        print("Error al obtener la tasa de financiamiento. Código de estado:", response.status_code)
+    except Exception as e:
+        print(f"Error en el símbolo {symbol}: {e}")
         return None
              
 def calculate_indicators(symbol):
@@ -69,40 +65,6 @@ def calculate_indicators(symbol):
     
     cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
     df['cci'] = cci
-    
-    # Obtener el libro de órdenes actual
-    order_book = client.get_order_book(symbol=symbol)
-
-        
-    # Obtener el sentimiento del mercado
-    total_bid_amount = sum([float(bid[1]) for bid in order_book['bids']])
-    total_ask_amount = sum([float(ask[1]) for ask in order_book['asks']])
-    market_sentiment = (total_bid_amount - total_ask_amount) / (total_bid_amount + total_ask_amount)
-    df['market_sentiment'] = market_sentiment
-    
-    # Obtener la posible dirección del precio
-    bid_prices = np.array([float(bid[0]) for bid in order_book['bids']])
-    ask_prices = np.array([float(ask[0]) for ask in order_book['asks']])
-    bid_volumes = np.array([float(bid[1]) for bid in order_book['bids']])
-    ask_volumes = np.array([float(ask[1]) for ask in order_book['asks']])
-    bid_cumulative_volumes = np.cumsum(bid_volumes)
-    ask_cumulative_volumes = np.cumsum(ask_volumes)
-
-    bid_support = np.where(bid_cumulative_volumes > np.max(bid_cumulative_volumes)*0.15)[0][0]
-    ask_resistance = np.where(ask_cumulative_volumes > np.max(ask_cumulative_volumes)*0.15)[0][0]
-
-    df['bid_support'] = bid_prices[bid_support]
-    df['ask_resistance'] = ask_prices[ask_resistance] 
-    
-    # Calcular el Weighted Bid Ratio
-    total_bid_amount = sum([float(bid[1]) for bid in order_book['bids']])
-    weighted_bid_ratio = sum([float(bid[0]) * float(bid[1]) for bid in order_book['bids']]) / total_bid_amount
-    df['weighted_bid_ratio'] = weighted_bid_ratio
-    
-    # Calcular el Weighted Ask Ratio
-    total_ask_amount = sum([float(ask[1]) for ask in order_book['asks']])
-    weighted_ask_ratio = sum([float(ask[0]) * float(ask[1]) for ask in order_book['asks']]) / total_ask_amount
-    df['weighted_ask_ratio'] = weighted_ask_ratio
        
       
     return df[-3:]
@@ -114,22 +76,23 @@ def run_strategy():
     
     for symbol in symbols:
           
-        last_funding_rate, prev_funding_rate = get_last_funding_rate(symbol)
+        ff = get_last_funding_rate(symbol)
         
         print(symbol)
+        print(ff)
        
         try:
             df = calculate_indicators(symbol)
             upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)       
-            market_sentiment_2 = float(df['market_sentiment'][-2]) 
+           
                               
             if df is None:
                 continue
             # CONTRATENDENCIAs:         
          
-            if (df['rsi'][-3] > df['rsi'][-2] > 70):  
-                if market_sentiment_2 <= -0.5:
-                    Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['weighted_ask_ratio'][-2],4)} ")
+            if (df['rsi'][-2] > 70) and (df['diff'][-2] > 2):  
+               
+                    Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(ff,2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
             
                     PICKERSHORT= {
                     "name": "PICKER SHORT",
@@ -142,13 +105,11 @@ def run_strategy():
                     }
    
                     requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
-         
-            
-            #if df['market_sentiment'][-2] >= (var):
+                    
+                            
+            if (df['rsi'][-2] < 30) and (df['diff'][-2] > 2):
                 
-            if (df['rsi'][-3] < df['rsi'][-2] < 30):    
-                if market_sentiment_2 >= 0.5:
-                    Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)} ") 
+                    Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(ff,2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️") 
             
                     PICKERLONG = {
                     "name": "PICKER LONG",
@@ -163,10 +124,10 @@ def run_strategy():
             
             #FISHING PISHA:
                           
-            if last_funding_rate > 0:
+            if ff > 0:
                 if (df['rsi'][-2] >= 45) and (middleband[-2] <= float(df['Close'][-2])):
                  
-                        Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_ask_ratio'][-2],4)} ") 
+                        Tb.telegram_send_message(f"🔴 {symbol} ▫️ {round(ff,2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
                         FISHINGSHORT = {
                             "name": "FISHING SHORT",
@@ -181,9 +142,9 @@ def run_strategy():
             
               
             
-            if last_funding_rate < 0:
+            if ff < 0:
                 if (df['rsi'][-2] <= 55) and (middleband[-2] >= float(df['Close'][-2])):
-                        Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min ▫️ {round(df['weighted_bid_ratio'][-2],4)}")            
+                        Tb.telegram_send_message(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               
                         FISHINGLONG = {
                             "name": "FISHING LONG",

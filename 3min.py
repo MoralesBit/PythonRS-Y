@@ -55,19 +55,12 @@ def calculate_indicators(symbol):
     market_sentiment = (total_bid_amount - total_ask_amount) / (total_bid_amount + total_ask_amount)
     df['market_sentiment'] = market_sentiment
     
-    # Obtener la posible dirección del precio
-    bid_prices = np.array([float(bid[0]) for bid in order_book['bids']])
-    ask_prices = np.array([float(ask[0]) for ask in order_book['asks']])
-    bid_volumes = np.array([float(bid[1]) for bid in order_book['bids']])
-    ask_volumes = np.array([float(ask[1]) for ask in order_book['asks']])
-    bid_cumulative_volumes = np.cumsum(bid_volumes)
-    ask_cumulative_volumes = np.cumsum(ask_volumes)
-
-    bid_support = np.where(bid_cumulative_volumes > np.max(bid_cumulative_volumes)*0.15)[0][0]
-    ask_resistance = np.where(ask_cumulative_volumes > np.max(ask_cumulative_volumes)*0.15)[0][0]
-
-    df['bid_support'] = bid_prices[bid_support]
-    df['ask_resistance'] = ask_prices[ask_resistance] 
+       
+     # Obtener la cantidad de órdenes de compra y venta en el libro de órdenes
+    bid_orders = len(order_book['bids'])
+    ask_orders = len(order_book['asks'])
+    df['bid_orders'] = bid_orders
+    df['ask_orders'] = ask_orders
       
     return df[-3:]
     
@@ -104,8 +97,8 @@ def run_strategy():
                 continue
             # CONTRATENDENCIAs:         
              
-            if (df['diff'][-3] >= 1) and (df['ema_3'][-2] <= float(df['Close'][-2])):
-                if (df['rsi'][-3] > df['rsi'][-2]):
+            if (df['diff'][-2] >= 1) and (float(df['Close'][-2]) >= upperband[-2]):
+                if (float(df['bid_orders'][-2]) < float(df['ask_orders'][-2])):
                        
                     Tb.telegram_canal_3por(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                     
@@ -122,8 +115,9 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)    
 
                 
-            if (df['diff'][-3] >= 1) and (df['ema_3'][-2] >= float(df['Close'][-2])):    
-                 if (df['rsi'][-3] < df['rsi'][-2]):  
+            if (df['diff'][-2] >= 1) and (float(df['Close'][-2]) <= lowerband[-2]):    
+                if (float(df['bid_orders'][-2]) > float(df['ask_orders'][-2])):  
+                    
                     Tb.telegram_canal_3por(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 3 min")
                                 
                     PORLONG = {
@@ -137,40 +131,7 @@ def run_strategy():
                     }
                     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
              
-             # Tendencia:
-             
-            if (df['diff'][-3] >= 1) and (df['ema_3'][-2] >= float(df['Close'][-2])):
-                if (df['rsi'][-3] > df['rsi'][-2]):
-                       
-                    Tb.telegram_canal_prueba(f"🔴 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Trend ▫️ 3 min")
-                    
-                    PORSHORT = {
-                    "name": "CORTO 3POR",
-                    "secret": "ao2cgree8fp",
-                    "side": "sell",
-                    "symbol": symbol,
-                    "open": {
-                    "price": float(df['Close'][-2]) 
-                    }
-                    }
-   
-                    requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)    
-
-                
-            if (df['diff'][-3] >= 1) and (df['ema_3'][-2] <= float(df['Close'][-2])):    
-                 if (df['rsi'][-3] < df['rsi'][-2]):  
-                    Tb.telegram_canal_prueba(f"🟢 {symbol} ▫️ {round(df['market_sentiment'][-2],2)}\n💵 Precio: {df['Close'][-2]}\n📍 Trend ▫️ 3 min")
-                                
-                    PORLONG = {
-                    "name": "LARGO 3POR",
-                    "secret": "nwh2tbpay1r",
-                    "side": "buy",
-                    "symbol": symbol,
-                    "open": {
-                    "price": float(df['Close'][-2]) 
-                    }
-                    }
-                    requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)        
+      
     
                 
         except Exception as e:

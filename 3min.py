@@ -44,7 +44,7 @@ def calculate_indicators(symbol):
     roc = ta.ROC(df['Close'], timeperiod=6)
     df['roc'] = roc
       
-    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowk_matype=0, slowd_period=1, slowd_matype=0)
     df['slowk'] = slowk
     df['slowd'] = slowd  
     

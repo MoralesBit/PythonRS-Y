@@ -117,7 +117,7 @@ def run_strategy():
             #FISHING PISHA:
                           
             if  (df['Close'][-2] < df['ema_300'][-2]) and (df['middleband'][-2] > df['Close'][-2]):
-                if (df['slowk'][-3] > df['slowd'][-3]) and (df['slowk'][-2] < df['slowd'][-2]) and (df['slowk'][-2] > 20) and (df['cci'][-2] < -80):
+                if (df['slowk'][-3] > df['slowd'][-3]) and (df['slowk'][-2] < df['slowd'][-2]) and (df['slowk'][-2] > 20):
                  
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
@@ -137,7 +137,7 @@ def run_strategy():
                 print("no cumple")
               
             if  (df['Close'][-2] > df['ema_300'][-2]) and (df['middleband'][-2] < df['Close'][-2]):
-                if (df['slowk'][-3] < df['slowd'][-3]) and (df['slowk'][-2] > df['slowd'][-2]) and (df['slowk'][-2] < 80) and (df['cci'][-2] > 80):
+                if (df['slowk'][-3] < df['slowd'][-3]) and (df['slowk'][-2] > df['slowd'][-2]) and (df['slowk'][-2] < 80):
                
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               

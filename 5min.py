@@ -30,7 +30,12 @@ def calculate_indicators(symbol):
     
     df = df.set_index('Open time')
     
-    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowk_matype=0, slowd_period=1, slowd_matype=0)
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+    df['upperband'] = upperband
+    df['middleband'] = middleband
+    df['lowerband'] = lowerband
+    
+    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=6, slowk_matype=0, slowd_period=3, slowd_matype=0)
     df['slowk'] = slowk
     df['slowd'] = slowd  
              
@@ -68,7 +73,7 @@ def run_strategy():
               
         try:
             df = calculate_indicators(symbol)
-            upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0) 
+          
           
                               
             if df is None:
@@ -111,8 +116,8 @@ def run_strategy():
             #FISHING PISHA:
                           
            
-            if (df['rsi'][-2] >= 45) and (middleband[-2] <= float(df['Close'][-2])) :
-                if df['slowk'][-3] > df['slowk'][-2]:  
+            if (df['rsi'][-2] >= 45) and (df['middleband'][-2] <= (df['Close'][-2])) :
+                if df['slowk'][-2] < df['slowd'][-2]:  
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
                         FISHINGSHORT = {
@@ -128,8 +133,8 @@ def run_strategy():
             
               
             
-            if (df['rsi'][-2] <= 55) and (middleband[-2] >= float(df['Close'][-2])):
-                if df['slowk'][-3] < df['slowk'][-2]: 
+            if (df['rsi'][-2] <= 55) and (df['middleband'][-2] >= (df['Close'][-2])):
+                if df['slowk'][-2] > df['slowd'][-2]: 
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               
                         FISHINGLONG = {

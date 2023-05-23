@@ -74,13 +74,13 @@ def run_strategy():
         try:
             
             df = calculate_indicators(symbol)
+            
                          
             if df is None:
                 continue
             # CONTRATENDENCIAs:         
          
-            if (df['rsi'][-2] >= 70) and (df['diff'][-2] > 2):  
-                if df['slowk'][-2] >= 90:
+            if (df['rsi'][-2] >= 70) and (df['diff'][-2] > 2) and (df['slowk'][-2] >= 90):
                     
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
             
@@ -97,8 +97,7 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
                     
                             
-            if (df['rsi'][-2] <= 30) and (df['diff'][-2] > 2):
-                if df['slowk'][-2] <= 10:
+            if (df['rsi'][-2] <= 30) and (df['diff'][-2] > 2) and  (df['slowk'][-2] <= 10):
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️") 
             
                     PICKERLONG = {
@@ -115,8 +114,8 @@ def run_strategy():
             #FISHING PISHA:
                           
            
-            if (df['rsi'][-2] >= 45) and (df['middleband'][-2] <= float(df['Close'][-2])) :
-                if df['slowk'][-2] < df['slowd'][-2]:  
+            if (df['rsi'][-2] >= 45) and (df['middleband'][-2] < (df['Close'][-2])) and (df['slowk'][-2] < df['slowd'][-2]):
+                 
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
             
                         FISHINGSHORT = {
@@ -132,8 +131,8 @@ def run_strategy():
             
               
             
-            if (df['rsi'][-2] <= 55) and (df['middleband'][-2] >= float(df['Close'][-2])):
-                if df['slowk'][-2] > df['slowd'][-2]: 
+            if (df['rsi'][-2] <= 55) and (df['middleband'][-2] > (df['Close'][-2])) and (df['slowk'][-2] > df['slowd'][-2]):
+               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
               
                         FISHINGLONG = {

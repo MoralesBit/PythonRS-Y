@@ -14,12 +14,12 @@ def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
     symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-      
+    #symbols = ["TOMOUSDT", "MTLUSDT", "QNTUSDT", "LDOUSDT","TRUUSDT", "HIGHUSDT", "SANDUSDT", "IDUSDT" , "MANAUSDT", "1000PEPEUSDT", "LITUSDT"]  
     return symbols
 
-             
+   
 def calculate_indicators(symbol):
-    """Calcula los indicadores de Bollinger para un símbolo y devuelve las últimas velas"""
+        
     klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE, limit=1000)
     df = pd.DataFrame(klines)
     if df.empty:
@@ -30,117 +30,75 @@ def calculate_indicators(symbol):
     
     df = df.set_index('Open time')
     
-    cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
-    df['cci'] = cci
-    
     upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
     df['upperband'] = upperband
     df['middleband'] = middleband
     df['lowerband'] = lowerband
     
-    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=6, slowk_matype=0, slowd_period=3, slowd_matype=0)
-    df['slowk'] = slowk
-    df['slowd'] = slowd  
-             
+    up_bb_30, mid_bb_30, low_bb_30 = ta.BBANDS(df['Close'], timeperiod=30, nbdevup=1.5, nbdevdn=1.5, matype=0)
+    df['up_bb_30'] = up_bb_30
+    df['mid_bb_30'] = mid_bb_30
+    df['low_bb_30'] = low_bb_30
+                   
+    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
+    
+    BB = (df['Close'] - df['lowerband']) / ( df['upperband'] - df['lowerband'])
+    
+    df['BB'] = BB
+     
     rsi = ta.RSI(df['Close'], timeperiod=14)
     df['rsi'] = rsi 
+      
+    sma_period = 14
     
-    adx= ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
-    df['adx'] = adx
-    
-    ema_300 = df['Close'].ewm(span=300, adjust=False).mean()
-    df['ema_300'] = ema_300
-    
-    roc = ta.ROC(df['Close'], timeperiod=6)
-    df['roc'] = roc
+    df['rsi_sma'] = ta.SMA(df['rsi'], timeperiod=sma_period)
     
     cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
     df['cci'] = cci
-         
-    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     
-    diff = abs((df['High'] / df['Low'] -1) * 100)
-    
-    df['diff'] = diff
-          
+    df['cci_sma'] = ta.SMA(df['cci'], timeperiod=20)
+       
     return df[-3:]
-     
-    
+        
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
     symbols = get_trading_symbols()
-    
+       
     for symbol in symbols:
-                      
+                    
         print(symbol)
-              
+        
         try:
-            
             df = calculate_indicators(symbol)
-            
-                         
+            df_new = calculate_indicators("BTCUSDT") 
+                                                                                              
             if df is None:
                 continue
-            # CONTRATENDENCIAs:         
-         
-            if (df['rsi'][-2] >= 70) and (df['diff'][-2] > 2) and (df['slowk'][-2] >= 90):
+            # TENDENCIAs:
+            if (df['low_bb_30'][-2] > df['Close'][-2]) and (55 > df['rsi_sma'][-2] > 50):    
+                if (df['Close'][-2] < df['Open'][-2]) and (df['BB'][-2] <= 0.05) :
+                    if (0 < df_new['cci_sma'][-2] < 100) or (df_new['cci_sma'][-2] < -100):   
                     
-                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
-            
-                    PICKERSHORT= {
-                    "name": "PICKER SHORT",
-                    "secret": "hgw3399vhh",
-                    "side": "sell",
-                    "symbol": symbol,
-                    "open": {
-                    "price": float(df['Close'][-2])
-                    }
-                    }
-   
-                    requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=PICKERSHORT)    
-                    
-                            
-            if (df['rsi'][-2] <= 30) and (df['diff'][-2] > 2) and  (df['slowk'][-2] <= 10):
-                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min ▫️") 
-            
-                    PICKERLONG = {
-                    "name": "PICKER LONG",
-                    "secret": "xjth0i3qgb",
-                    "side": "buy",
-                    "symbol": symbol,
-                    "open": {
-                    "price": float(df['Close'][-2]) 
-                    }
-                    }
-                    requests.post('https://hook.finandy.com/lIpZBtogs11vC6p5qFUK', json=PICKERLONG) 
-            
-            #FISHING PISHA:
-                          
-            if  (df['Close'][-2] < df['ema_300'][-2]) and (df['middleband'][-2] > df['Close'][-2]):
-                if (df['slowk'][-3] > df['slowd'][-3]) and (df['slowk'][-2] < df['slowd'][-2]) and (df['slowk'][-2] > 20):
-                 
-                        Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min") 
-            
+                        Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ({round(df_new['cci_sma'][-2],1)}) ▫️ 5 min")
                         FISHINGSHORT = {
                             "name": "FISHING SHORT",
                             "secret": "azsdb9x719",
                             "side": "sell",
                             "symbol": symbol,
                             "open": {
-                            "price": float(df['Close'][-1])
+                            "price": float(df['Close'][-2])
+                                }
                             }
-                            }
+   
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-                else:
-                    print("tampoco cumple") 
-            else:
-                print("no cumple")
-              
-            if  (df['Close'][-2] > df['ema_300'][-2]) and (df['middleband'][-2] < df['Close'][-2]):
-                if (df['slowk'][-3] < df['slowd'][-3]) and (df['slowk'][-2] > df['slowd'][-2]) and (df['slowk'][-2] < 80):
-               
-                        Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n🎣 Fishing Pisha ▫️ 5 min")            
-              
+                    else:
+                        print("No hay señales SHORT Fishing")
+            
+            if (df['up_bb_30'][-2] < df['Close'][-2]) and (45 < df['rsi_sma'][-2] < 50):    
+                if (df['Close'][-2] > df['Open'][-2]) and (df['BB'][-2] >= 0.95):
+                    if ( 0 < df_new['cci_sma'][-2] < -100) or (df_new['cci_sma'][-2] > 100): 
+                                                                      
+                        Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ({round(df_new['cci_sma'][-2],1)}) ▫️ 5 min")
                         FISHINGLONG = {
                             "name": "FISHING LONG",
                             "secret": "0kivpja7tz89",
@@ -148,15 +106,53 @@ def run_strategy():
                             "symbol": symbol,
                             "open": {
                             "price": float(df['Close'][-2])
+                                }
                             }
-                            }
-   
-                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
-                else:
-                    print("tampoco cumple")     
-            else:
-                print("no cumple")
+                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)                                              
+                    
+                    else:
+                        print("No hay señales LONG Fishing")
             
+            #CONTRATENDENCIA
+            
+            if (df['cci'][-2] < df['cci_sma'][-2]) and (df_new['cci'][-2] > 100):     
+                if (df['up_bb_30'][-2] < df['Close'][-2]) and (df['Close'][-2] < df['Open'][-2]):
+                    if df['BB'][-2] < 1:   
+                        
+                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
+                        PORSHORT = {
+                        "name": "CORTO 3POR",
+                        "secret": "ao2cgree8fp",
+                        "side": "sell",
+                        "symbol": symbol,
+                        "open": {
+                        "price": float(df['Close'][-2]) 
+                        }
+                        }
+   
+                        requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
+                    else:
+                        print("No hay señales SHORT PICKER") 
+             
+            if (df['cci'][-2] > df['cci_sma'][-2]) and (df_new['cci'][-2] < -100):    
+                if (df['low_bb_30'][-2] > df['Close'][-2]) and (df['Close'][-2] > df['Open'][-2]):
+                    if df['BB'][-2] > 0:    
+                   
+                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker  ▫️ 5 min")
+                        PORLONG = {
+                        "name": "LARGO 3POR",
+                        "secret": "nwh2tbpay1r",
+                        "side": "buy",
+                        "symbol": symbol,
+                        "open": {
+                        "price": float(df['Close'][-2])
+                        }
+                        }
+                        requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)      
+                      
+                    else:
+                        print("No hay señales LONG PICKER")         
+                        
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

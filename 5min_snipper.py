@@ -31,6 +31,13 @@ def calculate_indicators(symbol):
     df = df.set_index('Open time')
                           
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
+    
+    fz=2
+     
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=fz, nbdevdn=fz, matype=0)
+    df['upperband'] = upperband
+    df['middleband'] = middleband
+    df['lowerband'] = lowerband
    
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
     
@@ -59,14 +66,16 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol)
-                                                                                   
+            print(df['SRVI'][-2])
+            print(df['rvi'][-2])       
+                                                                             
             if df is None:
                 continue
             
             
             if df['rsi'][-3] > 70 and df['rvi'][-3] > 70:
                 
-                if df['SRVI'][-2] <= df['rvi'][-2] and  df['SRSI'][-2] >= df['rsi'][-2]:
+                if df['SRSI'][-2] >= df['rsi'][-2] and df['upperband'][-2] < df['Close'][-2]:
                       
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                             PICKERSHORT = {
@@ -86,7 +95,7 @@ def run_strategy():
             
             if df['rsi'][-3] < 30 and df['rvi'][-3] < 30: 
                 
-                if df['SRVI'][-2] >= df['rvi'][-2] and df['SRSI'][-2] <= df['rsi'][-2]: 
+                if df['SRSI'][-2] <= df['rsi'][-2] and df['lowerband'][-2] > df['Close'][-2]: 
                                                                          
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                             PICKERLONG = {

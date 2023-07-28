@@ -73,7 +73,9 @@ def run_strategy():
             
             if df['rsi'][-3] > 70 and df['rvi'][-3] > 80:
                 
-                if df['SRSI'][-2] >= df['rsi'][-2] and df['upperband'][-2] < df['Close'][-2]:
+                if df['SRSI'][-2] >= df['rsi'][-2]:
+                    
+                    if df['upperband'][-2] < df['Close'][-2]:
                       
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                             PICKERSHORT = {
@@ -87,13 +89,15 @@ def run_strategy():
                             }
    
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
-                else:
+                    else:
                             print("No Cumple")        
             
             
             if df['rsi'][-3] < 30 and df['rvi'][-3] < 20: 
                 
-                if df['SRSI'][-2] <= df['rsi'][-2] and df['lowerband'][-2] > df['Close'][-2]: 
+                if df['SRSI'][-2] <= df['rsi'][-2]: 
+                    
+                    if df['lowerband'][-2] > df['Close'][-2]: 
                                                                          
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                             PICKERLONG = {
@@ -107,7 +111,7 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)                                               
                     
-                else:
+                    else:
                             print("No Cumple")
                 
         except Exception as e:

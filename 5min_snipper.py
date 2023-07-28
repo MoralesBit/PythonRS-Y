@@ -124,7 +124,7 @@ def run_strategy():
                     if (df['up_bb_30'][-2] < df['Close'][-2]):    
                         Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
                         PORSHORT = {
-                        "name": "CORTO 3POR",
+                        "name": "PICKER SHORT",
                         "secret": "ao2cgree8fp",
                         "side": "sell",
                         "symbol": symbol,
@@ -144,7 +144,7 @@ def run_strategy():
                    
                         Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker  ▫️ 5 min")
                         PORLONG = {
-                        "name": "LARGO 3POR",
+                        "name": "PICKER LONG",
                         "secret": "nwh2tbpay1r",
                         "side": "buy",
                         "symbol": symbol,

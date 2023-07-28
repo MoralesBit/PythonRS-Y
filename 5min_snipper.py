@@ -66,14 +66,12 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol)
-            print(df['SRVI'][-2])
-            print(df['rvi'][-2])       
                                                                              
             if df is None:
                 continue
             
             
-            if df['rsi'][-3] > 70 and df['rvi'][-3] > 70:
+            if df['rsi'][-3] > 70 and df['rvi'][-3] > 80:
                 
                 if df['SRSI'][-2] >= df['rsi'][-2] and df['upperband'][-2] < df['Close'][-2]:
                       
@@ -93,7 +91,7 @@ def run_strategy():
                             print("No Cumple")        
             
             
-            if df['rsi'][-3] < 30 and df['rvi'][-3] < 30: 
+            if df['rsi'][-3] < 30 and df['rvi'][-3] < 20: 
                 
                 if df['SRSI'][-2] <= df['rsi'][-2] and df['lowerband'][-2] > df['Close'][-2]: 
                                                                          
@@ -119,5 +117,5 @@ def run_strategy():
 while True:
     current_time = time.time()
     seconds_to_wait = 300 - current_time % 300
-    time.sleep(seconds_to_wait)    
+    #time.sleep(seconds_to_wait)    
     run_strategy()

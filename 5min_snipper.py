@@ -44,6 +44,9 @@ def calculate_indicators(symbol):
     rvi = ta.RSI(std, timeperiod=5)
     df['rvi'] = rvi
     df['SRVI'] = ta.SMA(df['rvi'], timeperiod=14)
+    
+    cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
+    df['cci'] = cci
 
     return df[-3:]
         
@@ -60,9 +63,10 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df['rsi'][-3] > 70 and df['SRSI'][-2] >= df['rsi'][-2]:
+            if df['cci'][-2] < -25:
+                if df['rsi'][-3] > 70 and df['SRSI'][-2] >= df['rsi'][-2]:
                 
-                if df['SRVI'][-2] <= df['rvi'][-2]:
+                    if df['SRVI'][-2] <= df['rvi'][-2]:
                       
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                             PICKERSHORT = {
@@ -79,9 +83,10 @@ def run_strategy():
                 else:
                             print("No Cumple")        
             
-            if df['rsi'][-3] < 30 and df['SRSI'][-2] <= df['rsi'][-2]:
+            if df['cci'][-2] > 25:
+                if df['rsi'][-3] < 30 and df['SRSI'][-2] <= df['rsi'][-2]:
                 
-                if df['SRVI'][-2] >= df['rvi'][-2]: 
+                    if df['SRVI'][-2] >= df['rvi'][-2]: 
                                                                          
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                             PICKERLONG = {

@@ -64,9 +64,9 @@ def run_strategy():
                 continue
             
             
-            if df['rsi'][-3] > 70 and df['rvi'][-3] > 70 and  df['SRSI'][-2] >= df['rsi'][-2]:
+            if df['rsi'][-3] > 70 and df['rvi'][-3] > 70:
                 
-                if df['SRVI'][-2] <= df['rvi'][-2]:
+                if df['SRVI'][-2] <= df['rvi'][-2] and  df['SRSI'][-2] >= df['rsi'][-2]:
                       
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                             PICKERSHORT = {
@@ -84,9 +84,9 @@ def run_strategy():
                             print("No Cumple")        
             
             
-            if df['rsi'][-3] < 30 and df['rvi'][-3] < 30 and df['SRSI'][-2] <= df['rsi'][-2]:
+            if df['rsi'][-3] < 30 and df['rvi'][-3] < 30: 
                 
-                if df['SRVI'][-2] >= df['rvi'][-2]: 
+                if df['SRVI'][-2] >= df['rvi'][-2] and df['SRSI'][-2] <= df['rsi'][-2]: 
                                                                          
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                             PICKERLONG = {

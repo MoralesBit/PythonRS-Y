@@ -61,12 +61,11 @@ def run_strategy():
             if df is None:
                 continue
                       
-            if df['support_levels'][-4] > df['Close'][-4]: 
+            
                 
-                if df['Close'][-3] < df['Open'][-3] and df['Close'][-2] < df['Open'][-2]:
-                    
-                    if  df['adx'][-2] > 40:
-                          
+            if df['Close'][-3] < df['Open'][-3] and df['Close'][-2] < df['Open'][-2]:
+                if  df['adx'][-2] > 40:
+                    if df['support_levels'][-4] > df['Close'][-4]:   
                             Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                             FISHINGSHORT = {
                             "name": "FISHING SHORT",
@@ -82,12 +81,11 @@ def run_strategy():
                 else:
                     print("No Cumple")        
             
-            if df['resistance_levels'][-4] < df['Close'][-4]:
-                  
-                if df['Close'][-3] > df['Open'][-3] and df['Close'][-2] > df['Open'][-2]:
             
-                    if  df['adx'][-2] < 20:          
-                                                                   
+                  
+            if df['Close'][-3] > df['Open'][-3] and df['Close'][-2] > df['Open'][-2]:
+                if  df['adx'][-2] < 20:          
+                    if df['resistance_levels'][-4] < df['Close'][-4]:                                           
                             Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                             FISHINGLONG = {
                             "name": "FISHING LONG",
@@ -104,11 +102,10 @@ def run_strategy():
                     print("No Cumple")
                 
             
-            if df['resistance_levels'][-2] > df['Close'][-2]: 
-                
-                if df['upperband'][-2] < df['Close'][-2]:
+            if df['upperband'][-2] < df['Close'][-2]:
+                if df['adx'][-2] > 40:
+                    if df['resistance_levels'][-2] > df['Close'][-2]: 
                     
-                    if df['adx'][-2] > 40:
                           
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                             PICKERSHORT = {
@@ -125,11 +122,10 @@ def run_strategy():
                 else:
                     print("No Cumple")        
             
-            if df['support_levels'][-2] > df['Close'][-2]:
-                  
-                if df['lowerband'][-2] > df['Close'][-2]:
-            
-                    if  df['adx'][-2] < 20:          
+            if df['lowerband'][-2] > df['Close'][-2]:
+                if  df['adx'][-2] < 20:
+                    if df['support_levels'][-2] > df['Close'][-2]:
+                              
                                                                    
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                             PICKERLONG = {

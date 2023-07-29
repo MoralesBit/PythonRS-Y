@@ -29,13 +29,16 @@ def calculate_indicators(symbol):
     df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
     
     df = df.set_index('Open time')
-                          
-    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     
     upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5, matype=0)
     df['upperband'] = upperband
     df['middleband'] = middleband
     df['lowerband'] = lowerband
+    
+                          
+    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
+    
+    
     
     # Calcular los niveles de soporte y resistencia utilizando la función de la biblioteca TA-Lib
     n = 20  # Número de periodos utilizado para el cálculo

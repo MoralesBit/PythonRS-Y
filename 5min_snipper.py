@@ -35,7 +35,7 @@ def calculate_indicators(symbol):
     df['lowerband'] = lowerband
                      
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
-   
+    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
     # Calcular los niveles de soporte y resistencia utilizando la función de la biblioteca TA-Lib
     n = 20  # Número de periodos utilizado para el cálculo
     df['support_levels'] = ta.SMA(df['Close'], n) - 2 * ta.STDDEV(df['Close'], n)
@@ -57,8 +57,7 @@ def run_strategy():
             if df is None:
                 continue
             
-            if (Close > df['upperband'][-2]):
-                if (df['resistance_levels'][-2] > df['Close'][-2]): 
+            if (df['resistance_levels'][-2] > df['Close'][-2]) and (df['rsi'][-2] > 70): 
                     Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
                     "name": "PICKER SHORT",
@@ -72,8 +71,8 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
                  
             
-            if (Close < df['lowerband'][-2]):
-                if (df['support_levels'][-2] > df['Close'][-2]):
+            
+            if (df['support_levels'][-2] > df['Close'][-2]) and (df['rsi'][-2] < 30):
                     Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {
                     "name": "PICKER LONG",

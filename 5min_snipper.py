@@ -56,8 +56,7 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol)
-            print(df['resistance_levels'][-2])
-            print(df['support_levels'][-2])                                                                
+                                                                   
             
             if df is None:
                 continue
@@ -80,8 +79,8 @@ def run_strategy():
                             }
    
                             requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)  
-                    else:
-                            print("No Cumple")        
+                else:
+                    print("No Cumple")        
             
             if df['resistance_levels'][-4] < df['Close'][-4]:
                   
@@ -101,8 +100,8 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)                                               
                     
-                    else:
-                            print("No Cumple")
+                else:
+                    print("No Cumple")
                 
             
             if df['resistance_levels'][-2] > df['Close'][-2]: 
@@ -123,8 +122,8 @@ def run_strategy():
                             }
    
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
-                    else:
-                            print("No Cumple")        
+                else:
+                    print("No Cumple")        
             
             if df['support_levels'][-2] > df['Close'][-2]:
                   
@@ -144,8 +143,8 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)                                               
                     
-                    else:
-                            print("No Cumple")
+                else:
+                    print("No Cumple")
                 
         except Exception as e:
           

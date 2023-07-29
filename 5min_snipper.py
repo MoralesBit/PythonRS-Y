@@ -35,6 +35,7 @@ def calculate_indicators(symbol):
     df['lowerband'] = lowerband
                      
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
+   
     
     # Calcular los niveles de soporte y resistencia utilizando la función de la biblioteca TA-Lib
     #n = 20  # Número de periodos utilizado para el cálculo
@@ -54,11 +55,12 @@ def run_strategy():
 
         try:
             df = calculate_indicators(symbol)
-
+            Close = float(df['Close'][-2])
+            
             if df is None:
                 continue
             
-            if df['Close'][-2] >= df['upperband'][-2]:
+            if Close >= df['upperband'][-2]:
                 if df['adx'][-2] > 40:
                     #if df['resistance_levels'][-2] > df['Close'][-2]: 
                     
@@ -78,7 +80,7 @@ def run_strategy():
             else:
                 print("No Cumple BB")        
             
-            if df['Close'][-2] <= df['lowerband'][-2]:
+            if Close <= df['lowerband'][-2]:
                 if  df['adx'][-2] < 20:
                     #if df['support_levels'][-2] > df['Close'][-2]:
                               

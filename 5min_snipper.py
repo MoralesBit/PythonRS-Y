@@ -37,9 +37,9 @@ def calculate_indicators(symbol):
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     
     # Calcular los niveles de soporte y resistencia utilizando la función de la biblioteca TA-Lib
-    n = 20  # Número de periodos utilizado para el cálculo
-    df['support_levels'] = ta.SMA(df['Close'], n) - 2 * ta.STDDEV(df['Close'], n)
-    df['resistance_levels'] = ta.SMA(df['Close'], n) + 2 * ta.STDDEV(df['Close'], n)
+    #n = 20  # Número de periodos utilizado para el cálculo
+    #df['support_levels'] = ta.SMA(df['Close'], n) - 2 * ta.STDDEV(df['Close'], n)
+    #df['resistance_levels'] = ta.SMA(df['Close'], n) + 2 * ta.STDDEV(df['Close'], n)
     
     df['adx'] = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)   
     
@@ -60,7 +60,7 @@ def run_strategy():
             
             if df['Close'][-2] >= df['upperband'][-2]:
                 if df['adx'][-2] > 40:
-                    if df['resistance_levels'][-2] > df['Close'][-2]: 
+                    #if df['resistance_levels'][-2] > df['Close'][-2]: 
                     
                           
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
@@ -80,7 +80,7 @@ def run_strategy():
             
             if df['Close'][-2] <= df['lowerband'][-2]:
                 if  df['adx'][-2] < 20:
-                    if df['support_levels'][-2] > df['Close'][-2]:
+                    #if df['support_levels'][-2] > df['Close'][-2]:
                               
                                                                    
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")

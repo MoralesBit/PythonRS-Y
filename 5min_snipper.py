@@ -53,11 +53,11 @@ def run_strategy():
 
         try:
             df = calculate_indicators(symbol)
-
+            Close = float(df['Close'][-2])
             if df is None:
                 continue
             
-            if (df['Close'][-2] > df['upperband'][-2]):
+            if (Close > df['upperband'][-2]):
                 if (df['resistance_levels'][-2] > df['Close'][-2]): 
                     Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
@@ -72,7 +72,7 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
                  
             
-            if (df['Close'][-2] < df['lowerband'][-2]):
+            if (Close < df['lowerband'][-2]):
                 if (df['support_levels'][-2] > df['Close'][-2]):
                     Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {

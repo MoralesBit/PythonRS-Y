@@ -1,6 +1,5 @@
 import time
 import requests
-import numpy as np
 import pandas as pd
 import talib as ta
 from binance.client import Client
@@ -30,15 +29,12 @@ def calculate_indicators(symbol):
     
     df = df.set_index('Open time')
     
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5, matype=0)
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=3, nbdevdn=3, matype=0)
     df['upperband'] = upperband
     df['middleband'] = middleband
     df['lowerband'] = lowerband
-    
-                          
+                     
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
-    
-    
     
     # Calcular los niveles de soporte y resistencia utilizando la función de la biblioteca TA-Lib
     n = 20  # Número de periodos utilizado para el cálculo
@@ -61,47 +57,8 @@ def run_strategy():
 
             if df is None:
                 continue
-   
-            #if df['Close'][-3] < df['Open'][-3] and df['Close'][-2] < df['Open'][-2]:
-            #    if  df['adx'][-2] > 40:
-            #        if df['support_levels'][-4] > df['Close'][-4]:   
-            #                Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
-            #                FISHINGSHORT = {
-            #                "name": "FISHING SHORT",
-            #                "secret": "azsdb9x719",
-            #                "side": "sell",
-            #                "symbol": symbol,
-            #                "open": {
-            #                "price": float(df['Close'][-2])
-            #                    }
-            #                }
-            #
-            #                requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)  
-            #    else:
-            #        print("No Cumple")        
             
-            
-                  
-            #if df['Close'][-3] > df['Open'][-3] and df['Close'][-2] > df['Open'][-2]:
-            #    if  df['adx'][-2] < 20:          
-            #        if df['resistance_levels'][-4] < df['Close'][-4]:                                           
-            #                Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
-            #                FISHINGLONG = {
-            #                "name": "FISHING LONG",
-            #                "secret": "0kivpja7tz89",
-            #                "side": "buy",
-            #                "symbol": symbol,
-            #                "open": {
-            #                "price": float(df['Close'][-2])
-            #                    }
-            #                }
-            #                requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)                                               
-                    
-            #    else:
-            #        print("No Cumple")
-                
-            
-            if df['upperband'][-2] < df['Close'][-2]:
+            if df['Close'][-2] >= df['upperband'][-2]:
                 if df['adx'][-2] > 40:
                     if df['resistance_levels'][-2] > df['Close'][-2]: 
                     
@@ -118,10 +75,10 @@ def run_strategy():
                             }
    
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
-                else:
-                    print("No Cumple")        
+            else:
+                print("No Cumple BB")        
             
-            if df['lowerband'][-2] > df['Close'][-2]:
+            if df['Close'][-2] <= df['lowerband'][-2]:
                 if  df['adx'][-2] < 20:
                     if df['support_levels'][-2] > df['Close'][-2]:
                               
@@ -138,8 +95,8 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)                                               
                     
-                else:
-                    print("No Cumple")
+            else:
+                print("No Cumple BB")
                 
         except Exception as e:
           

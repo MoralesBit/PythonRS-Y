@@ -44,7 +44,7 @@ def calculate_indicators(symbol):
     
     df['adx'] = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)   
     
-    return df[-4:]
+    return df[-3:]
         
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
@@ -52,54 +52,50 @@ def run_strategy():
        
     for symbol in symbols:
         print(symbol)
-       
-        
+
         try:
             df = calculate_indicators(symbol)
-                                                                   
-            
+
             if df is None:
                 continue
-                      
-            
-                
-            if df['Close'][-3] < df['Open'][-3] and df['Close'][-2] < df['Open'][-2]:
-                if  df['adx'][-2] > 40:
-                    if df['support_levels'][-4] > df['Close'][-4]:   
-                            Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
-                            FISHINGSHORT = {
-                            "name": "FISHING SHORT",
-                            "secret": "azsdb9x719",
-                            "side": "sell",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2])
-                                }
-                            }
    
-                            requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)  
-                else:
-                    print("No Cumple")        
+            #if df['Close'][-3] < df['Open'][-3] and df['Close'][-2] < df['Open'][-2]:
+            #    if  df['adx'][-2] > 40:
+            #        if df['support_levels'][-4] > df['Close'][-4]:   
+            #                Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
+            #                FISHINGSHORT = {
+            #                "name": "FISHING SHORT",
+            #                "secret": "azsdb9x719",
+            #                "side": "sell",
+            #                "symbol": symbol,
+            #                "open": {
+            #                "price": float(df['Close'][-2])
+            #                    }
+            #                }
+            #
+            #                requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)  
+            #    else:
+            #        print("No Cumple")        
             
             
                   
-            if df['Close'][-3] > df['Open'][-3] and df['Close'][-2] > df['Open'][-2]:
-                if  df['adx'][-2] < 20:          
-                    if df['resistance_levels'][-4] < df['Close'][-4]:                                           
-                            Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
-                            FISHINGLONG = {
-                            "name": "FISHING LONG",
-                            "secret": "0kivpja7tz89",
-                            "side": "buy",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2])
-                                }
-                            }
-                            requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)                                               
+            #if df['Close'][-3] > df['Open'][-3] and df['Close'][-2] > df['Open'][-2]:
+            #    if  df['adx'][-2] < 20:          
+            #        if df['resistance_levels'][-4] < df['Close'][-4]:                                           
+            #                Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
+            #                FISHINGLONG = {
+            #                "name": "FISHING LONG",
+            #                "secret": "0kivpja7tz89",
+            #                "side": "buy",
+            #                "symbol": symbol,
+            #                "open": {
+            #                "price": float(df['Close'][-2])
+            #                    }
+            #                }
+            #                requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)                                               
                     
-                else:
-                    print("No Cumple")
+            #    else:
+            #        print("No Cumple")
                 
             
             if df['upperband'][-2] < df['Close'][-2]:

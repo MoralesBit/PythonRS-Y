@@ -57,7 +57,7 @@ def run_strategy():
             if df is None:
                 continue
             
-            if (df['resistance_levels'][-2] > df['Close'][-2]) and (df['rsi'][-2] > 70): 
+            if (df['resistance_levels'][-2] > df['Close'][-2]) and (df['rsi'][-2] > 80): 
                     Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
                     "name": "PICKER SHORT",
@@ -72,7 +72,7 @@ def run_strategy():
                  
             
             
-            if (df['support_levels'][-2] > df['Close'][-2]) and (df['rsi'][-2] < 30):
+            if (df['support_levels'][-2] > df['Close'][-2]) and (df['rsi'][-2] < 20):
                     Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {
                     "name": "PICKER LONG",

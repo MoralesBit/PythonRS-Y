@@ -38,7 +38,8 @@ def calculate_indicators(symbol):
     
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
     
-    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
+    cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
+    df['cci'] = cci
     
     # Calcular los niveles de soporte y resistencia utilizando la función de la biblioteca TA-Lib
     n = 20  # Número de periodos utilizado para el cálculo
@@ -60,7 +61,7 @@ def run_strategy():
             if df is None:
                 continue
             
-            if (df['resistance_levels'][-2] > df['Close'][-2]) and (df['rsi'][-2] > 70) and (df['diff'][-2] > 1.5): 
+            if (df['resistance_levels'][-2] > df['Close'][-2]) and (df['cci'][-2] > 150) and (df['diff'][-2] > 1): 
                     Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
                     "name": "PICKER SHORT",
@@ -75,7 +76,7 @@ def run_strategy():
                  
             
             
-            if (df['support_levels'][-2] > df['Close'][-2]) and (df['rsi'][-2] < 30) and (df['diff'][-2] > 1.5):
+            if (df['support_levels'][-2] > df['Close'][-2]) and (df['cci'][-2] < -150) and (df['diff'][-2] > 1):
                     Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {
                     "name": "PICKER LONG",

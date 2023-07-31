@@ -65,7 +65,7 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df_new['cci'] < -15:
+            if df_new['cci'][-2] < -15:
                 if (float(df['resistance_levels'][-2]) > df['Close'][-2]) and (df['cci'][-2] > 200) and (df['diff'][-2] > 1): 
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
@@ -80,7 +80,7 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
                  
             
-            if df_new['cci'] > 15:
+            if df_new['cci'][-2] > 15:
                 if (float(df['support_levels'][-2]) > df['Close'][-2]) and (df['cci'][-2] < -200) and (df['diff'][-2] > 1):
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {

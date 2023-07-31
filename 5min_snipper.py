@@ -41,6 +41,8 @@ def calculate_indicators(symbol):
     cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
     df['cci'] = cci
     
+    df['cci_sma'] = ta.SMA(df['cci'], timeperiod=58)
+    
     # Calcular los niveles de soporte y resistencia utilizando la función de la biblioteca TA-Lib
     n = 20  # Número de periodos utilizado para el cálculo
     df['support_levels'] = ta.SMA(df['Close'], n) - 2 * ta.STDDEV(df['Close'], n)
@@ -61,8 +63,8 @@ def run_strategy():
             if df is None:
                 continue
             
-            if (df['resistance_levels'][-2] > df['Close'][-2]) and (df['cci'][-2] > 150) and (df['diff'][-2] > 1): 
-                    Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
+            if (df['resistance_levels'][-2] > df['Close'][-2]) and (df['cci_sma'][-2] > 100) and (df['diff'][-2] > 1): 
+                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
                     "name": "PICKER SHORT",
                     "secret": "ao2cgree8fp",
@@ -76,8 +78,8 @@ def run_strategy():
                  
             
             
-            if (df['support_levels'][-2] > df['Close'][-2]) and (df['cci'][-2] < -150) and (df['diff'][-2] > 1):
-                    Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
+            if (df['support_levels'][-2] > df['Close'][-2]) and (df['cci_sma'][-2] < -100) and (df['diff'][-2] > 1):
+                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {
                     "name": "PICKER LONG",
                     "secret": "nwh2tbpay1r",

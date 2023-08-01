@@ -35,6 +35,11 @@ def calculate_indicators(symbol):
     
     cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
     df['cci'] = cci
+    
+    df[['macd', 'signal', 'hist']] = ta.MACD(df['Close'], 
+                                    fastperiod=12, 
+                                    slowperiod=58, 
+                                    signalperiod=9)
 
     return df[-3:]
         
@@ -52,7 +57,8 @@ def run_strategy():
             if df is None:
                 continue
             
-            if (df['cci'][-2] > 250) and (df['diff'][-2] > 1): 
+            if (df['signal'][-3] < df['hist'][-3]) and (df['signal'][-2] > df['hist'][-2]) : 
+                
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
                     "name": "PICKER SHORT",
@@ -67,7 +73,8 @@ def run_strategy():
                  
             
             
-            if (df['cci'][-2] < -250) and (df['diff'][-2] > 1):
+            if (df['signal'][-3] > df['hist'][-3]) and (df['signal'][-2] < df['hist'][-2]) : 
+                
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {
                     "name": "PICKER LONG",

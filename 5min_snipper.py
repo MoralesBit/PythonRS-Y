@@ -28,26 +28,14 @@ def calculate_indicators(symbol):
     df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
     
     df = df.set_index('Open time')
-    
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5, matype=0)
-    df['upperband'] = upperband
-    df['middleband'] = middleband
-    df['lowerband'] = lowerband
-                     
+                   
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
     
     cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
     df['cci'] = cci
-    
-    df['cci_sma'] = ta.SMA(df['cci'], timeperiod=58)
-    
-    # Calcular los niveles de soporte y resistencia utilizando la función de la biblioteca TA-Lib
-    n = 20  # Número de periodos utilizado para el cálculo
-    df['support_levels'] = ta.SMA(df['Close'], n) - 2 * ta.STDDEV(df['Close'], n)
-    df['resistance_levels'] = ta.SMA(df['Close'], n) + 2 * ta.STDDEV(df['Close'], n)
-   
+
     return df[-3:]
         
 def run_strategy():
@@ -59,14 +47,12 @@ def run_strategy():
 
         try:
             df = calculate_indicators(symbol)
-            
-            df_new = calculate_indicators("BTCUSDT")
+
             
             if df is None:
                 continue
             
-            if df_new['cci'][-2] < -15:
-                if (float(df['resistance_levels'][-2]) > df['Close'][-2]) and (df['cci'][-2] > 200) and (df['diff'][-2] > 1): 
+            if (df['cci'][-2] > 250) and (df['diff'][-2] > 1): 
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
                     "name": "PICKER SHORT",
@@ -80,8 +66,8 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
                  
             
-            if df_new['cci'][-2] > 15:
-                if (float(df['support_levels'][-2]) > df['Close'][-2]) and (df['cci'][-2] < -200) and (df['diff'][-2] > 1):
+            
+            if (df['cci'][-2] < -250) and (df['diff'][-2] > 1):
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {
                     "name": "PICKER LONG",

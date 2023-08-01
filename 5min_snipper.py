@@ -62,7 +62,7 @@ def run_strategy():
             if df is None:
                 continue
             if df_new['hist'][-2] < 0:
-                if (df['macd'][-3] > df['signal'][-3]) and (df['macd'][-2] < df['signal'][-2]) and (df['macd'][-2] < 0): 
+                if (df['macd'][-3] > df['signal'][-3]) and (df['macd'][-2] < df['signal'][-2]) and (df['macd'][-2] > 0): 
                 
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
@@ -78,7 +78,7 @@ def run_strategy():
                  
             
             if df_new['hist'][-2] > 0:
-                if (df['macd'][-3] < df['signal'][-3]) and (df['macd'][-2] > df['signal'][-2]) and (df['macd'][-2] > 0):  
+                if (df['macd'][-3] < df['signal'][-3]) and (df['macd'][-2] > df['signal'][-2]) and (df['macd'][-2] < 0):  
                 
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {

@@ -39,7 +39,7 @@ def calculate_indicators(symbol):
     macd, signal, hist = ta.MACD(df['Close'], 
                                     fastperiod=12, 
                                     slowperiod=58, 
-                                    signalperiod=9)
+                                    signalperiod=50)
     
     df['macd'] = macd
     df['signal'] = signal
@@ -61,7 +61,7 @@ def run_strategy():
             if df is None:
                 continue
             
-            if (df['signal'][-3] < df['hist'][-3]) and (df['signal'][-2] > df['hist'][-2]) : 
+            if (df['macd'][-3] > df['signal'][-3]) and (df['macd'][-2] < df['signal'][-2]) and (df['macd'][-2] < 0): 
                 
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
@@ -77,7 +77,7 @@ def run_strategy():
                  
             
             
-            if (df['signal'][-3] > df['hist'][-3]) and (df['signal'][-2] < df['hist'][-2]) : 
+            if (df['macd'][-3] < df['signal'][-3]) and (df['macd'][-2] > df['signal'][-2]) and (df['macd'][-2] > 0):  
                 
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {

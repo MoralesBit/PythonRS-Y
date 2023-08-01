@@ -36,10 +36,14 @@ def calculate_indicators(symbol):
     cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
     df['cci'] = cci
     
-    df[['macd', 'signal', 'hist']] = ta.MACD(df['Close'], 
+    macd, signal, hist = ta.MACD(df['Close'], 
                                     fastperiod=12, 
                                     slowperiod=58, 
                                     signalperiod=9)
+    
+    df['macd'] = macd
+    df['signal'] = signal
+    df['hist'] = hist
 
     return df[-3:]
         

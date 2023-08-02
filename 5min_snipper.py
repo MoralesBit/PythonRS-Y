@@ -28,6 +28,11 @@ def calculate_indicators(symbol):
     df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
     
     df = df.set_index('Open time')
+    
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+    df['upperband'] = upperband
+    df['middleband'] = middleband
+    df['lowerband'] = lowerband
                    
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     
@@ -36,15 +41,10 @@ def calculate_indicators(symbol):
     cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
     df['cci'] = cci
     
-    macd, signal, hist = ta.MACD(df['Close'], 
-                                    fastperiod=12, 
-                                    slowperiod=58, 
-                                    signalperiod=50)
+    df['%BB'] = abs((df['upperband'] / df['lowerband'] -1) * 100)
     
-    df['macd'] = macd
-    df['signal'] = signal
-    df['hist'] = hist
-
+    df['sma_cci'] = ta.SMA(df['cci'], timeperiod=20)
+       
     return df[-3:]
         
 def run_strategy():
@@ -57,12 +57,11 @@ def run_strategy():
         try:
             df = calculate_indicators(symbol)
             df_new = calculate_indicators("BTCUSDT") 
-
+            print(df['%BB'][-2])
             
             if df is None:
                 continue
-            if df_new['hist'][-2] < 0:
-                if (df['macd'][-3] > df['signal'][-3]) and (df['macd'][-2] < df['signal'][-2]) and (df['macd'][-2] > 0): 
+            if df['%BB'][-2] < 0.25 and df['sma_cci'][-2] < 0: 
                 
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
@@ -77,8 +76,7 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
                  
             
-            if df_new['hist'][-2] > 0:
-                if (df['macd'][-3] < df['signal'][-3]) and (df['macd'][-2] > df['signal'][-2]) and (df['macd'][-2] < 0):  
+            if df['%BB'][-2] < 0.25 and df['sma_cci'][-2] > 0:   
                 
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {

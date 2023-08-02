@@ -29,21 +29,16 @@ def calculate_indicators(symbol):
     
     df = df.set_index('Open time')
     
+    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
+    df['diff'] = abs((df['High'] / df['Low'] -1) * 100)    
+    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
+
     upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
     df['upperband'] = upperband
     df['middleband'] = middleband
     df['lowerband'] = lowerband
-                   
-    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
-    
-    df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-    
-    cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
-    df['cci'] = cci
-    
     df['%BB'] = abs((df['upperband'] / df['lowerband'] -1) * 100)
-
-       
+      
     return df[-3:]
         
 def run_strategy():
@@ -55,18 +50,16 @@ def run_strategy():
 
         try:
             df = calculate_indicators(symbol)
-            df_new = calculate_indicators("BTCUSDT") 
-            
             
             if df is None:
                 continue
-            
-            if df_new['cci'][-2] < 0:
-                if (df['%BB'][-2] < 0.5):
-                    if df['cci'][-2] < 0 and (df['lowerband'][-2] >= df['Close'][-2]): 
+
+            if (df['%BB'][-2] <= 0.5):
                 
-                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
-                        PICKERSHORT = {
+                if (df['lowerband'][-2] >= df['Close'][-2]): 
+                
+                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
+                    PICKERSHORT = {
                     "name": "PICKER SHORT",
                     "secret": "ao2cgree8fp",
                     "side": "sell",
@@ -75,16 +68,12 @@ def run_strategy():
                     "price": float(df['Close'][-1]) 
                     }
                     }
-                        requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
-                else:
-                    print("NO")   
-                      
-            if df_new['cci'][-2] > 0:
-                if df['%BB'][-2] < 0.5:
-                    if df['cci'][-2] > 0 and (df['upperband'][-2] <= df['Close'][-2]):   
+                    requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
+
+                if (df['upperband'][-2] <= df['Close'][-2]):   
                 
-                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
-                        PICKERLONG = {
+                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
+                    PICKERLONG = {
                     "name": "PICKER LONG",
                     "secret": "nwh2tbpay1r",
                     "side": "buy",
@@ -93,11 +82,11 @@ def run_strategy():
                     "price": float(df['Close'][-1])
                     }
                     }
-                        requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)                                               
-                else:
-                    print("NO")         
-            
-                
+                    requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)  
+                                                                 
+            else:
+                print("NO")                
+
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

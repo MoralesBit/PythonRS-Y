@@ -54,7 +54,7 @@ def run_strategy():
             if df is None:
                 continue
 
-            if (df['%BB'][-2] <= 0.5):
+            if (df['%BB'][-2] <= 0.25):
                 
                 if (df['lowerband'][-2] >= df['Close'][-2]): 
                 

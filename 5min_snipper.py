@@ -61,7 +61,7 @@ def run_strategy():
             
             if df is None:
                 continue
-            if df['%BB'][-2] < 0.25 and df['sma_cci'][-2] < 0: 
+            if df['%BB'][-2] < 0.25 and df['cci'][-2] < 0 and (df['middleband'][-2] >= df['Close'][-2]): 
                 
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
@@ -76,7 +76,7 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
                  
             
-            if df['%BB'][-2] < 0.25 and df['sma_cci'][-2] > 0:   
+            if df['%BB'][-2] < 0.25 and df['cci'][-2] > 0 and (df['middleband'][-2] <= df['Close'][-2]):   
                 
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {

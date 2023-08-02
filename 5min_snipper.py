@@ -42,8 +42,7 @@ def calculate_indicators(symbol):
     df['cci'] = cci
     
     df['%BB'] = abs((df['upperband'] / df['lowerband'] -1) * 100)
-    
-    df['sma_cci'] = ta.SMA(df['cci'], timeperiod=20)
+
        
     return df[-3:]
         
@@ -62,7 +61,7 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df_new['cci'] < 0:
+            if df_new['cci'][-2] < 0:
                 if df['%BB'][-2] < 0.25 and df['cci'][-2] < 0 and (df['middleband'][-2] >= df['Close'][-2]): 
                 
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
@@ -77,7 +76,7 @@ def run_strategy():
                     }
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
                  
-            if df_new['cci'] > 0:
+            if df_new['cci'][-2] > 0:
                 if df['%BB'][-2] < 0.25 and df['cci'][-2] > 0 and (df['middleband'][-2] <= df['Close'][-2]):   
                 
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")

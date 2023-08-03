@@ -65,7 +65,7 @@ def run_strategy():
                 if df['ema1'][-2] < df['ema2'][-2] and df['ema1'][-3] >= df['ema2'][-3]:
            
                 
-                    Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
+                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
                     "name": "PICKER SHORT",
                     "secret": "ao2cgree8fp",
@@ -81,7 +81,7 @@ def run_strategy():
                 
                 if df['ema1'][-2] > df['ema2'][-2] and df['ema1'][-3] <= df['ema2'][-3]:  
                 
-                    Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
+                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {
                     "name": "PICKER LONG",
                     "secret": "nwh2tbpay1r",

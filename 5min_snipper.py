@@ -33,11 +33,7 @@ def calculate_indicators(symbol):
     df['upperband'] = upperband
     df['middleband'] = middleband
     df['lowerband'] = lowerband
-    
-    
-    
-    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
-    
+       
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)    
     
    
@@ -52,7 +48,7 @@ def run_strategy():
 
         try:
             df = calculate_indicators(symbol)
-            df_new = calculate_indicators("BTCUSDT") 
+           
             Close = float(df['Close'][-2])
                                      
             if df is None:

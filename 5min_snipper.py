@@ -31,12 +31,10 @@ def indicator(symbol):
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
       
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5, matype=0)
-    Close = float(df['Close'][-2])
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
     
-     #Imbalance
+    #Imbalance
     depth = 3
 
     response = requests.get(f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}').json()
@@ -55,8 +53,8 @@ def indicator(symbol):
     else:
           imbalance = 0.0  
     
-    if imbalance > 0.8: 
-      if Close >= upperband[-2]:
+    if imbalance < -0.8: 
+      if df['diff'][-2] >= 1:
                     Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
                     "name": "PICKER SHORT",
@@ -68,8 +66,8 @@ def indicator(symbol):
                     }
                     }
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
-    elif imbalance < -0.8:                 
-      if Close <= lowerband[-2]:
+    elif imbalance > 0.8:                 
+      if df['diff'][-2] <= 1:
                     Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {
                     "name": "PICKER LONG",

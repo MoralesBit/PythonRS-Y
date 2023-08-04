@@ -34,6 +34,8 @@ def calculate_indicators(symbol):
     df['middleband'] = middleband
     df['lowerband'] = lowerband
     
+    
+    
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)    
@@ -51,11 +53,12 @@ def run_strategy():
         try:
             df = calculate_indicators(symbol)
             df_new = calculate_indicators("BTCUSDT") 
+            Close = float(df['Close'][-2])
                                      
             if df is None:
                 continue
             
-            if df['Close'][-2] >= df['upperband'][-2]:
+            if Close >= df['upperband'][-2]:
                 
            
                 
@@ -71,7 +74,7 @@ def run_strategy():
                     }
                         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
                     
-            elif df['Close'][-2] <= df['lowerband'][-2]:
+            elif Close <= df['lowerband'][-2]:
                 
                 
                         Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")

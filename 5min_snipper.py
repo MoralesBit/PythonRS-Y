@@ -19,7 +19,7 @@ def get_trading_symbols():
 
 def calculate_indicators(symbol):
         
-    klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE, limit=500)
+    klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE, limit=1000)
     df = pd.DataFrame(klines)
     if df.empty:
         return None
@@ -38,7 +38,7 @@ def calculate_indicators(symbol):
     df['middleband'] = middleband
     df['lowerband'] = lowerband
     
-    depth = 20
+    depth = 5
     response = requests.get(f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}').json()
     if 'bids' in response:
           bid_sum = sum([float(bid[1]) for bid in response['bids']])

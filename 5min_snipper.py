@@ -33,7 +33,8 @@ def calculate_indicators(symbol):
     df['upperband'] = upperband
     df['middleband'] = middleband
     df['lowerband'] = lowerband
-       
+    
+    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)   
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)    
     
    

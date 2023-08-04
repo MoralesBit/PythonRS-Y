@@ -30,10 +30,11 @@ def indicator(symbol):
       'Quote_Volume', 'Trades_Count', 'BUY_VOL', 'BUY_VOL_VAL', 'x']
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
     df = df.set_index('Date')
-    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
-    df['diff'] = abs((df['High'] / df['Low'] -1) * 100)    
+      
     upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5, matype=0)
     Close = float(df['Close'][-2])
+    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
+    df['diff'] = abs((df['High'] / df['Low'] -1) * 100)  
     
     if Close >= upperband[-2]:
                     Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")

@@ -33,31 +33,12 @@ def calculate_indicators(symbol):
     df['upperband'] = upperband
     df['middleband'] = middleband
     df['lowerband'] = lowerband
-
+    
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)    
     
-    depth = 5
-    response = requests.get(f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}').json()
-    if 'bids' in response:
-          bid_sum = sum([float(bid[1]) for bid in response['bids']])
-    else:
-          bid_sum = 0.0
-
-    if 'asks' in response:
-         ask_sum = sum([float(ask[1]) for ask in response['asks']])
-    else:
-         ask_sum = 0.0
-
-    if bid_sum + ask_sum > 0:
-          imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
-          df['imbalance'] = imbalance
-    else:
-          imbalance = 0.0
-          df['imbalance'] = imbalance  
-    
-
+   
     return df[-3:]
         
 def run_strategy():
@@ -74,11 +55,11 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df['Close'][-2] > df['upperband'][-2]:
-                if df_new['imbalance'][-2] > 0.8:
+            if df['Close'][-2] >= df['upperband'][-2]:
+                
            
                 
-                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
+                        Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                         PICKERSHORT = {
                     "name": "PICKER SHORT",
                     "secret": "ao2cgree8fp",
@@ -90,10 +71,10 @@ def run_strategy():
                     }
                         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
                     
-            elif df['Close'][-2] < df['lowerband'][-2]:
-                if df_new['imbalance'][-2] < -0.8: 
+            elif df['Close'][-2] <= df['lowerband'][-2]:
                 
-                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
+                
+                        Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                         PICKERLONG = {
                     "name": "PICKER LONG",
                     "secret": "nwh2tbpay1r",

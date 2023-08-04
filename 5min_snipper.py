@@ -67,7 +67,7 @@ def indicator(symbol):
                     }
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
     elif imbalance > 0.8:                 
-      if df['diff'][-2] <= 1:
+      if df['diff'][-2] >= 1:
                     Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {
                     "name": "PICKER LONG",

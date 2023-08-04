@@ -75,8 +75,7 @@ def run_strategy():
                 continue
             
             if df['Close'][-2] > df['upperband'][-2]:
-                if df['diff'][-2] > 1:
-                    if df_new['imbalance'][-2] < -0.55:
+                if df_new['imbalance'][-2] > 0.8:
            
                 
                         Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
@@ -92,8 +91,7 @@ def run_strategy():
                         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
                     
             elif df['Close'][-2] < df['lowerband'][-2]:
-                if df['diff'][-2] > 1:
-                    if df_new['imbalance'][-2] > 0.55: 
+                if df_new['imbalance'][-2] < -0.8: 
                 
                         Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                         PICKERLONG = {

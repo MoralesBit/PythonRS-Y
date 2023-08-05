@@ -47,7 +47,7 @@ def indicator(symbol):
     if df['roc'][-2] > 3 or df['roc'][-2] < -3:
         if df['max'][-2] <= df['Close'][-2]:
             if df['upperband'][-2] <= df['Close'][-2]:
-                    Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
+                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
                     "name": "PICKER SHORT",
                     "secret": "ao2cgree8fp",
@@ -61,7 +61,7 @@ def indicator(symbol):
     
         elif df['min'][-2] >= df['Close'][-2]:
             if df['lowerband'][-2] >= df['Close'][-2]:
-                    Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
+                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {
                     "name": "PICKER LONG",
                     "secret": "nwh2tbpay1r",

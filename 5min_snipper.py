@@ -33,30 +33,17 @@ def indicator(symbol):
     df['diff'] = ((df['High'] / df['Low'] -1) * 100)
     df['upperband'], df['middleband'], df['lowerband'] = ta.BBANDS(df['Close'],
                                                timeperiod=20,
-                                               nbdevup=2,
-                                               nbdevdn=2,
+                                               nbdevup=2.5,
+                                               nbdevdn=2.5,
                                                matype=0)
-    #Imbalance
-    depth = 3
-
-    response = requests.get(f'https://api.binance.com/api/v3/depth?symbol={symbol}&limit={depth}').json()
-    if 'bids' in response:
-          bid_sum = sum([float(bid[1]) for bid in response['bids']])
-    else:
-          bid_sum = 0.0
-
-    if 'asks' in response:
-         ask_sum = sum([float(ask[1]) for ask in response['asks']])
-    else:
-         ask_sum = 0.0
-
-    if bid_sum + ask_sum > 0:
-          imbalance = (ask_sum - bid_sum) / (bid_sum + ask_sum)
-    else:
-          imbalance = 0.0  
+   
+    df['max'] = ta.MAX(df['High'], timeperiod=14)
+    df['min'] = ta.MIN(df['Low'], timeperiod=14)
+    print(df['max'][-2])
+    print(df['min'][-2])  
     
-    if imbalance < -0.8: 
-      if df['diff'][-2] >= 1:
+    if df['max'][-2] <= df['Close'][-2]:
+        if df['upperband'][-2] <= df['Close'][-2]:
                     Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
                     "name": "PICKER SHORT",
@@ -68,8 +55,9 @@ def indicator(symbol):
                     }
                     }
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
-    elif imbalance > 0.8:                 
-      if df['diff'][-2] <= -1:
+    
+    elif df['min'][-2] >= df['Close'][-2]:
+        if df['lowerband'][-2] >= df['Close'][-2]:
                     Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {
                     "name": "PICKER LONG",
@@ -94,3 +82,4 @@ while True:
   for symbol in symbols:
       indicator(symbol)
       print(symbol)
+      

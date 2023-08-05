@@ -42,8 +42,11 @@ def indicator(symbol):
     print(df['max'][-2])
     print(df['min'][-2])  
     
-    if df['max'][-2] <= df['Close'][-2]:
-        if df['upperband'][-2] <= df['Close'][-2]:
+    df['roc'] = ta.ROC(df['Close'], timeperiod=288)
+    
+    if df['roc'][-2] > 3 or df['roc'][-2] < -3:
+        if df['max'][-2] <= df['Close'][-2]:
+            if df['upperband'][-2] <= df['Close'][-2]:
                     Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
                     "name": "PICKER SHORT",
@@ -56,8 +59,8 @@ def indicator(symbol):
                     }
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
     
-    elif df['min'][-2] >= df['Close'][-2]:
-        if df['lowerband'][-2] >= df['Close'][-2]:
+        elif df['min'][-2] >= df['Close'][-2]:
+            if df['lowerband'][-2] >= df['Close'][-2]:
                     Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {
                     "name": "PICKER LONG",

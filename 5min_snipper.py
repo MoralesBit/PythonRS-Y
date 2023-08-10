@@ -37,11 +37,15 @@ def indicator(symbol):
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
     
-    if df['roc'][-2] > 3 or df['roc'][-2] < -3:
-        if df['max'][-2] <= df['Close'][-2]:
-            if df['rsi'][-2] >= 80:
+    df["cmf"] = (((df["Close"] - df["Low"]) - (df["High"] - df["Close"])) / (df["High"] - df["Low"]))
+    
+    df['adx'] = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+        
+    print(df["cmf"][-2])
+    
+    if df["cmf"][-2] < 0 and df['adx'][-2] > 40 :
                 
-                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
+                    Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
                     "name": "PICKER SHORT",
                     "secret": "ao2cgree8fp",
@@ -53,10 +57,9 @@ def indicator(symbol):
                     }
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
     
-        elif df['min'][-2] >= df['Close'][-2]:
-            if df['rsi'][-2] <= 20:
+    elif df["cmf"][-2] > 0 and 40 > df['adx'][-2] > 20 :
                 
-                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
+                    Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {
                     "name": "PICKER LONG",
                     "secret": "nwh2tbpay1r",

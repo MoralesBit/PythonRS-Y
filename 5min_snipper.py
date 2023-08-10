@@ -31,6 +31,11 @@ def indicator(symbol):
       
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     df['diff'] = ((df['High'] / df['Low'] -1) * 100)
+    
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=30, nbdevup=1.5, nbdevdn=1.5, matype=0)
+    df['upperband'] = upperband
+    df['middleband'] = middleband
+    df['lowerband'] = lowerband 
    
     df['max'] = ta.MAX(df['High'], timeperiod=14)
     df['min'] = ta.MIN(df['Low'], timeperiod=14)
@@ -41,7 +46,7 @@ def indicator(symbol):
     
     df['adx'] = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
        
-    if df['cmf'][-2] < 0 and df['adx'][-2] > 40 and df['rsi'][-2] > 70:
+    if df['cmf'][-2] < 0 and df['adx'][-2] > 40 and df['upperband'][-2] <= df['Close']:
                 
                     Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
@@ -55,7 +60,7 @@ def indicator(symbol):
                     }
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
     
-    elif df['cmf'][-2] > 0 and 40 > df['adx'][-2] > 20 and df['rsi'][-2] < 30:
+    elif df['cmf'][-2] > 0 and 40 > df['adx'][-2] > 20 and df['lowerband'][-2] >= df['Close']:
                 
                     Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {

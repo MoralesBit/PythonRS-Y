@@ -43,7 +43,7 @@ def indicator(symbol):
         
     print(df["cmf"][-2])
     
-    if df["cmf"][-2] < 0 and df['adx'][-2] > 40 :
+    if df["cmf"][-2] < 0 and df['adx'][-2] > 40 and df['rsi'][-2] > 70:
                 
                     Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
@@ -57,7 +57,7 @@ def indicator(symbol):
                     }
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
     
-    elif df["cmf"][-2] > 0 and 40 > df['adx'][-2] > 20 :
+    elif df["cmf"][-2] > 0 and 40 > df['adx'][-2] > 20 and df['rsi'][-2] < 30:
                 
                     Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {

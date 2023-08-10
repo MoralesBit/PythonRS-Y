@@ -46,7 +46,7 @@ def indicator(symbol):
     
     df['adx'] = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
        
-    if df['cmf'][-2] < 0 and df['adx'][-2] > 40 and df['rsi'][-2] <= 25:
+    if df['cmf'][-2] < 0 and df['adx'][-2] > 40 and df['rsi'][-2] >= 75:
                 
                     Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
@@ -60,7 +60,7 @@ def indicator(symbol):
                     }
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
     
-    elif df['cmf'][-2] > 0 and 40 > df['adx'][-2] > 20 and df['rsi'][-2] >= 75:
+    elif df['cmf'][-2] > 0 and 40 > df['adx'][-2] > 20 and df['rsi'][-2] <= 25:
                 
                     Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {

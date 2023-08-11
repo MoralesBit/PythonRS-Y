@@ -30,23 +30,13 @@ def indicator(symbol):
   if not df.empty:
       
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
-    df['diff'] = ((df['High'] / df['Low'] -1) * 100)
-    
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=30, nbdevup=1.5, nbdevdn=1.5, matype=0)
-    df['upperband'] = upperband
-    df['middleband'] = middleband
-    df['lowerband'] = lowerband 
-   
-    df['max'] = ta.MAX(df['High'], timeperiod=14)
-    df['min'] = ta.MIN(df['Low'], timeperiod=14)
-    df['roc'] = ta.ROC(df['Close'], timeperiod=288)
+
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
     
     df['cmf'] = (((df["Close"] - df["Low"]) - (df["High"] - df["Close"])) / (df["High"] - df["Low"]))
     
     df['adx'] = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
-    
-    print(df['cmf'][-2])   
+       
     if df['cmf'][-2] < 0 and df['adx'][-2] >= 45 and df['rsi'][-2] >= 75:
                 
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")

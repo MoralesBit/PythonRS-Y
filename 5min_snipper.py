@@ -22,12 +22,15 @@ symbols = [
 
 def indicator(symbol):
   
-  url = f'https://fapi.binance.com/fapi/v1/klines?symbol={symbol}&interval=5m&startTime=2 days ago UTC+1&limit=500'
-  response = requests.get(url).json()
-  df = pd.DataFrame(response, columns=['Open time', 'Open', 'High', 'Low', 'Close', 'Volume', 'Close time', 'Quote asset volume', 'Number of trades', 'Taker buy base asset volume', 'Taker buy quote asset volume', 'Ignore'])
-  df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
-  df = df.set_index('Open time')
-  if not df.empty:
+    klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE, limit=1000)
+    df = pd.DataFrame(klines)
+    if df.empty:
+        return None
+    df.columns = ['Open time', 'Open', 'High', 'Low', 'Close', 'Volume', 'Close time', 'Quote asset volume',
+                  'Number of trades', 'Taker buy base asset volume', 'Taker buy quote asset volume', 'Ignore']
+    df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
+    
+    df = df.set_index('Open time')
       
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
 
@@ -64,10 +67,6 @@ def indicator(symbol):
                     }
                     }
                     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)  
-                                                                 
-    else:
-                print("NO")
-
                
 while True:
   current_time = ti.time()

@@ -60,7 +60,7 @@ def run_strategy():
                 continue
            
             #CONTRATENDENCIA
-            time.sleep(0.25)
+            time.sleep(0.5)
             if df_4h['ema_50'][-1] >= df_4h['Close'][-1]:
                 if [df_1h['ema_50'][-1] >= df_1h['Close'][-1]]:
                     if df['Open'][-2] >= df['upperband'][-2]:

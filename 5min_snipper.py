@@ -67,7 +67,7 @@ def run_strategy():
            
             if df['rsi'][-2] >= 70:
                 if ( df['Close'][-2]) < df['upperband'][-2]:
-                    if df['slowk'][-2] < df['slowd'][-2]:    
+                    if df['slowk'][-2] > df['slowd'][-2]:    
      
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Open'][-2]}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
@@ -89,7 +89,7 @@ def run_strategy():
            
             if ( df['Close'][-2]) > df['lowerband'][-2]:
                 if df['rsi'][-2] <= 30:
-                    if df['slowk'][-2] > df['slowd'][-2]:
+                    if df['slowk'][-2] < df['slowd'][-2]:
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Open'][-2]}\n📍 Picker  ▫️ 5 min")
                             PORLONG = {
                             "name": "LARGO 3POR",

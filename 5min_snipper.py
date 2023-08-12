@@ -79,7 +79,13 @@ def run_strategy():
    
                 
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
-            
+                        else:
+                            print("RSI NO")                    
+                    else:
+                        print("BB NO")                
+                else:
+                    print("1H NO")                       
+                    
             elif  df_4h['ema_50'][-1] <= df_4h['Close'][-1]:  
                 if [df_1h['ema_50'][-1] <= df_1h['Close'][-1]]:
                     if df['Open'][-2] <= df['lowerband'][-2]:
@@ -96,9 +102,12 @@ def run_strategy():
                             }
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)      
-                   
-            else:
-                print("No hay nada por aqui")
+                        else:
+                            print("RSI NO")                    
+                    else:
+                        print("BB NO")
+                else:
+                    print("1H NO")             
                         
         except Exception as e:
           

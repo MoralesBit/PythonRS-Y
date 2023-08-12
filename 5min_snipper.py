@@ -63,7 +63,7 @@ def run_strategy():
             time.sleep(0.5)
            
             if df['rsi'][-2] >= 70:
-                if (df['Open'][-2] > df['Close'][-2]) <= df['upperband'][-2]:
+                if (df['Open'][-2] > df['Close'][-2]) < df['upperband'][-2]:
                         
      
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Open'][-2]}\n📍 Picker ▫️ 5 min")
@@ -73,7 +73,7 @@ def run_strategy():
                             "side": "sell",
                             "symbol": symbol,
                             "open": {
-                            "price": float(df['Close'][-1]) 
+                            "price": float(df['Close'][-2]) 
                             }
                             }
    
@@ -84,7 +84,7 @@ def run_strategy():
                    
                     
            
-            if (df['Open'][-2] < df['Close'][-2]) >= df['lowerband'][-2]:
+            if (df['Open'][-2] < df['Close'][-2]) > df['lowerband'][-2]:
                 if df['rsi'][-2] <= 30:
                     
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Open'][-2]}\n📍 Picker  ▫️ 5 min")
@@ -94,7 +94,7 @@ def run_strategy():
                             "side": "buy",
                             "symbol": symbol,
                             "open": {
-                            "price": float(df['Close'][-1])
+                            "price": float(df['Close'][-2])
                             }
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)      

@@ -36,13 +36,12 @@ def calculate_indicators(symbol,interval):
     df['lowerband'] = lowerband
     
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
-        
-    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
-       
+  
     df['ema_50'] = df['Close'].ewm(span=50, adjust=False).mean()
     
     df['slowk'], df['slowd'] = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=14, slowk_matype=0, slowd_period=10, slowd_matype=0)
-     
+    
+    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float) 
    
     return df[-3:]
         
@@ -66,8 +65,8 @@ def run_strategy():
             time.sleep(0.5)
             if df_1h['Close'][-2] < df_1h['ema_50'][-2]: 
                 if df['rsi'][-2] >= 70:
-                    if ( df['Close'][-2]) < df['upperband'][-2]:
-                        if df['slowk'][-2] > df['slowd'][-2]:    
+                    if ( df['Close'][-2]) > df['upperband'][-2]:
+                           
      
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Open'][-2]}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
@@ -87,9 +86,9 @@ def run_strategy():
                    
                     
             if df_1h['Close'][-2] > df_1h['ema_50'][-2]:
-                if ( df['Close'][-2]) > df['lowerband'][-2]:
+                if ( df['Close'][-2]) < df['lowerband'][-2]:
                     if df['rsi'][-2] <= 30:
-                        if df['slowk'][-2] < df['slowd'][-2]:
+                        
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Open'][-2]}\n📍 Picker  ▫️ 5 min")
                             PORLONG = {
                             "name": "LARGO 3POR",

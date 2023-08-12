@@ -63,8 +63,8 @@ def run_strategy():
             time.sleep(1)
             if df['Open'][-2] >= df['upperband'][-2] and df['Low'][-2] < df['upperband'][-2]:
                 if df['rsi'][-2] >= 70:
-                    if [df_1h['ema_50'][-2] >= df_1h['Close'][-2]]:
-                        if df_4h['ema_50'][-2] >= df_4h['Close'][-2]:   
+                    if [df_1h['ema_50'][-1] >= df_1h['Close'][-1]]:
+                        if df_4h['ema_50'][-1] >= df_4h['Close'][-1]:   
                         
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-1]}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
@@ -82,8 +82,8 @@ def run_strategy():
             
             elif df['Open'][-2] <= df['lowerband'][-2]  and df['High'][-2] > df['lowerband'][-2]:
                 if df['rsi'][-2] <= 30:
-                    if [df_1h['ema_50'][-2] <= df_1h['Close'][-2]]:
-                        if df_4h['ema_50'][-2] <= df_4h['Close'][-2]:   
+                    if [df_1h['ema_50'][-1] <= df_1h['Close'][-1]]:
+                        if df_4h['ema_50'][-1] <= df_4h['Close'][-1]:   
                    
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-1]}\n📍 Picker  ▫️ 5 min")
                             PORLONG = {

@@ -1,28 +1,26 @@
-from binance.client import Client
-import pandas as pd
-import talib as ta
-import Telegram_bot as Tb
-import  schedule as schedule
-import time as ti
+import time
 import requests
 import numpy as np
+import pandas as pd
+import talib as ta
+from binance.client import Client
+import Telegram_bot as Tb
 
 Pkey = ''
 Skey = ''
-
 client = Client(api_key=Pkey, api_secret=Skey)
 
-futures_info = client.futures_exchange_info()
+def get_trading_symbols():
+    """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
+    futures_info = client.futures_exchange_info()
+    symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
+    #symbols = ["TOMOUSDT", "MTLUSDT", "QNTUSDT", "LDOUSDT","TRUUSDT", "HIGHUSDT", "SANDUSDT", "IDUSDT" , "MANAUSDT", "1000PEPEUSDT", "LITUSDT"]  
+    return symbols
 
-symbols = [
-    symbol['symbol'] for symbol in futures_info['symbols']
-    if symbol['status'] == "TRADING"
-  ]
-#symbols = ["BTCUSDT", "XRPUSDT", "BNBUSDT", "ADAUSDT","DOGEUSDT", "SOLUSDT", "TRXUSDT", "LTCUSDT" , "MATICUSDT", "BCHUSDT", "AVAXUSDT","1000SHIBUSDT","LINKUSDT","XLMUSDT","UNIUSDT","ATOMUSDT","XMRUSDT","FILUSDT"]  
-
-def indicator(symbol):
-  
-    klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE, limit=1000)
+   
+def calculate_indicators(symbol,interval):
+        
+    klines = client.futures_klines(symbol=symbol, interval=interval, limit=1000)
     df = pd.DataFrame(klines)
     if df.empty:
         return None
@@ -31,49 +29,83 @@ def indicator(symbol):
     df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
     
     df = df.set_index('Open time')
-      
-    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
-
+    
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+    df['upperband'] = upperband
+    df['middleband'] = middleband
+    df['lowerband'] = lowerband
+    
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
-    
-    df['cmf'] = (((df["Close"] - df["Low"]) - (df["High"] - df["Close"])) / (df["High"] - df["Low"]))
-    
-    df['adx'] = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+        
+    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
        
-    if df['cmf'][-2] < 0 and df['adx'][-2] >= 45 and df['rsi'][-2] >= 75:
+    df['ema_50'] = df['Close'].ewm(span=50, adjust=False).mean()
+   
+    return df[-3:]
+        
+def run_strategy():
+    """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
+    symbols = get_trading_symbols()
+       
+    for symbol in symbols:
+                    
+        print(symbol)
+        
+        try:
+            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
+            df_4h = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_4HOUR)
+            df_1h = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_1HOUR)  
+                                                                                              
+            if df is None:
+                continue
+           
+            #CONTRATENDENCIA
+            
+            if df['Close'][-2] > df['upperband'][-2]:
+                if df['rsi'][-2] > 70:
+                    if [df_1h['ema_50'][-2] > df_1h['Close'][-2]]:
+                        if df_4h['ema_50'][-2] > df_4h['Close'][-2]:   
+                        
+                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
+                            PORSHORT = {
+                        "name": "CORTO 3POR",
+                        "secret": "ao2cgree8fp",
+                        "side": "sell",
+                        "symbol": symbol,
+                        "open": {
+                        "price": float(df['Close'][-2]) 
+                        }
+                        }
+   
                 
-                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
-                    PICKERSHORT = {
-                    "name": "PICKER SHORT",
-                    "secret": "ao2cgree8fp",
-                    "side": "sell",
-                    "symbol": symbol,
-                    "open": {
-                    "price": float(df['Close'][-1]) 
-                    }
-                    }
-                    requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
-    
-    elif df['cmf'][-2] > 0 and df['adx'][-2] <= 15  and df['rsi'][-2] <= 30:
-                
-                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
-                    PICKERLONG = {
-                    "name": "PICKER LONG",
-                    "secret": "nwh2tbpay1r",
-                    "side": "buy",
-                    "symbol": symbol,
-                    "open": {
-                    "price": float(df['Close'][-1])
-                    }
-                    }
-                    requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)  
-               
+                            requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
+            
+            elif df['Close'][-2] < df['lowerband'][-2]:
+                if df['rsi'][-2] < 30:
+                    if [df_1h['ema_50'][-2] < df_1h['Close'][-2]]:
+                        if df_4h['ema_50'][-2] < df_4h['Close'][-2]:   
+                   
+                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker  ▫️ 5 min")
+                            PORLONG = {
+                        "name": "LARGO 3POR",
+                        "secret": "nwh2tbpay1r",
+                        "side": "buy",
+                        "symbol": symbol,
+                        "open": {
+                        "price": float(df['Close'][-2])
+                        }
+                        }
+                            requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)      
+                   
+            else:
+                print("No hay nada por aqui")
+                        
+        except Exception as e:
+          
+            print(f"Error en el símbolo {symbol}: {e}")
+
 while True:
-  current_time = ti.time()
-  seconds_to_wait = 300 - current_time % 300
-  ti.sleep(seconds_to_wait)   
-  
-  for symbol in symbols:
-      indicator(symbol)
-      print(symbol)
-      
+    current_time = time.time()
+    seconds_to_wait = 300 - current_time % 300
+    time.sleep(seconds_to_wait)    
+    run_strategy()

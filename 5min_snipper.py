@@ -40,6 +40,9 @@ def calculate_indicators(symbol,interval):
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
        
     df['ema_50'] = df['Close'].ewm(span=50, adjust=False).mean()
+    
+    df['slowk'], df['slowd'] = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=14, slowk_matype=0, slowd_period=10, slowd_matype=0)
+     
    
     return df[-3:]
         
@@ -53,8 +56,8 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            df_4h = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_4HOUR)
-            df_1h = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_1HOUR)  
+            #df_4h = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_4HOUR)
+            #df_1h = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_1HOUR)  
                                                                                               
             if df is None:
                 continue
@@ -63,8 +66,8 @@ def run_strategy():
             time.sleep(0.5)
            
             if df['rsi'][-2] >= 70:
-                if (df['Open'][-2] > df['Close'][-2]) < df['upperband'][-2]:
-                        
+                if ( df['Close'][-2]) < df['upperband'][-2]:
+                    if df['slowk'][-2] < df['slowd'][-2]:    
      
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Open'][-2]}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
@@ -84,9 +87,9 @@ def run_strategy():
                    
                     
            
-            if (df['Open'][-2] < df['Close'][-2]) > df['lowerband'][-2]:
+            if ( df['Close'][-2]) > df['lowerband'][-2]:
                 if df['rsi'][-2] <= 30:
-                    
+                    if df['slowk'][-2] > df['slowd'][-2]:
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Open'][-2]}\n📍 Picker  ▫️ 5 min")
                             PORLONG = {
                             "name": "LARGO 3POR",

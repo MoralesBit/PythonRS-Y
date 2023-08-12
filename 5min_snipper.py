@@ -61,12 +61,12 @@ def run_strategy():
            
             #CONTRATENDENCIA
             time.sleep(0.5)
-            if df_4h['ema_50'][-1] > df_4h['Close'][-1]:
-                if [df_1h['ema_50'][-1] > df_1h['Close'][-1]]:
-                    if df['Close'][-2] >= df['upperband'][-2]:
-                        if df['rsi'][-2] >= 70:
+           
+            if df['rsi'][-2] >= 70:
+                if (df['Open'][-2] > df['Close'][-2]) <= df['upperband'][-2]:
+                        
      
-                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-1]}\n📍 Picker ▫️ 5 min")
+                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Open'][-2]}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
                             "name": "CORTO 3POR",
                             "secret": "ao2cgree8fp",
@@ -79,19 +79,15 @@ def run_strategy():
    
                 
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
-                        else:
-                            print("RSI NO")                    
-                    else:
-                        print("BB NO")                
                 else:
-                    print("1H NO")                       
+                            print("NO")                                
+                   
                     
-            elif  df_4h['ema_50'][-1] < df_4h['Close'][-1]:  
-                if [df_1h['ema_50'][-1] < df_1h['Close'][-1]]:
-                    if df['Close'][-2] <= df['lowerband'][-2]:
-                        if df['rsi'][-2] <= 30:
+           
+            if (df['Open'][-2] < df['Close'][-2]) >= df['lowerband'][-2]:
+                if df['rsi'][-2] <= 30:
                     
-                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-1]}\n📍 Picker  ▫️ 5 min")
+                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Open'][-2]}\n📍 Picker  ▫️ 5 min")
                             PORLONG = {
                             "name": "LARGO 3POR",
                             "secret": "nwh2tbpay1r",
@@ -102,12 +98,9 @@ def run_strategy():
                             }
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)      
-                        else:
-                            print("RSI NO")                    
-                    else:
-                        print("BB NO")
                 else:
-                    print("1H NO")             
+                            print("NO")                    
+                           
                         
         except Exception as e:
           

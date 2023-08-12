@@ -57,17 +57,17 @@ def run_strategy():
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
             #df_4h = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_4HOUR)
-            #df_1h = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_1HOUR)  
+            df_1h = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_1HOUR)  
                                                                                               
             if df is None:
                 continue
            
             #CONTRATENDENCIA
             time.sleep(0.5)
-           
-            if df['rsi'][-2] >= 70:
-                if ( df['Close'][-2]) < df['upperband'][-2]:
-                    if df['slowk'][-2] > df['slowd'][-2]:    
+            if df_1h['Close'][-2] < df_1h['ema_50'][-2]: 
+                if df['rsi'][-2] >= 70:
+                    if ( df['Close'][-2]) < df['upperband'][-2]:
+                        if df['slowk'][-2] > df['slowd'][-2]:    
      
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Open'][-2]}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
@@ -86,10 +86,10 @@ def run_strategy():
                             print("NO")                                
                    
                     
-           
-            if ( df['Close'][-2]) > df['lowerband'][-2]:
-                if df['rsi'][-2] <= 30:
-                    if df['slowk'][-2] < df['slowd'][-2]:
+            if df_1h['Close'][-2] > df_1h['ema_50'][-2]:
+                if ( df['Close'][-2]) > df['lowerband'][-2]:
+                    if df['rsi'][-2] <= 30:
+                        if df['slowk'][-2] < df['slowd'][-2]:
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Open'][-2]}\n📍 Picker  ▫️ 5 min")
                             PORLONG = {
                             "name": "LARGO 3POR",

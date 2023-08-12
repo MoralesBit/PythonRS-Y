@@ -62,9 +62,9 @@ def run_strategy():
            
             #CONTRATENDENCIA
             time.sleep(0.5)
-            if df_4h['ema_50'][-1] >= df_4h['Close'][-1]:
-                if [df_1h['ema_50'][-1] >= df_1h['Close'][-1]]:
-                    if df['Open'][-2] >= df['upperband'][-2]:
+            if df_4h['ema_50'][-1] > df_4h['Close'][-1]:
+                if [df_1h['ema_50'][-1] > df_1h['Close'][-1]]:
+                    if df['Close'][-2] >= df['upperband'][-2]:
                         if df['rsi'][-2] >= 70:
      
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-1]}\n📍 Picker ▫️ 5 min")
@@ -87,9 +87,9 @@ def run_strategy():
                 else:
                     print("1H NO")                       
                     
-            elif  df_4h['ema_50'][-1] <= df_4h['Close'][-1]:  
-                if [df_1h['ema_50'][-1] <= df_1h['Close'][-1]]:
-                    if df['Open'][-2] <= df['lowerband'][-2]:
+            elif  df_4h['ema_50'][-1] < df_4h['Close'][-1]:  
+                if [df_1h['ema_50'][-1] < df_1h['Close'][-1]]:
+                    if df['Close'][-2] <= df['lowerband'][-2]:
                         if df['rsi'][-2] <= 30:
                     
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-1]}\n📍 Picker  ▫️ 5 min")

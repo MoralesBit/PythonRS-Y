@@ -13,8 +13,8 @@ client = Client(api_key=Pkey, api_secret=Skey)
 def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
-    symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    #symbols = ["TOMOUSDT", "MTLUSDT", "QNTUSDT", "LDOUSDT","TRUUSDT", "HIGHUSDT", "SANDUSDT", "IDUSDT" , "MANAUSDT", "1000PEPEUSDT", "LITUSDT"]  
+    #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
+    symbols = ["HIGHUSDT", "BLZUSDT", "1000SHIBUSDT", "1000PEPEUSDT","TLMUSDT", "APEUSDT", "ANTUSDT", "OXTUSDT"]  
     return symbols
 
    
@@ -60,39 +60,39 @@ def run_strategy():
                 continue
            
             #CONTRATENDENCIA
-            
-            if df['Close'][-2] > df['upperband'][-2]:
-                if df['rsi'][-2] > 70:
-                    if [df_1h['ema_50'][-2] > df_1h['Close'][-2]]:
-                        if df_4h['ema_50'][-2] > df_4h['Close'][-2]:   
+            time.sleep(1)
+            if df['Close'][-2] >= df['upperband'][-2]:
+                if df['rsi'][-2] >= 70:
+                    if [df_1h['ema_50'][-2] >= df_1h['Close'][-2]]:
+                        if df_4h['ema_50'][-2] >= df_4h['Close'][-2]:   
                         
-                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
+                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-1]}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
                         "name": "CORTO 3POR",
                         "secret": "ao2cgree8fp",
                         "side": "sell",
                         "symbol": symbol,
                         "open": {
-                        "price": float(df['Close'][-2]) 
+                        "price": float(df['Close'][-1]) 
                         }
                         }
    
                 
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
             
-            elif df['Close'][-2] < df['lowerband'][-2]:
-                if df['rsi'][-2] < 30:
-                    if [df_1h['ema_50'][-2] < df_1h['Close'][-2]]:
-                        if df_4h['ema_50'][-2] < df_4h['Close'][-2]:   
+            elif df['Close'][-2] <= df['lowerband'][-2]:
+                if df['rsi'][-2] <= 30:
+                    if [df_1h['ema_50'][-2] <= df_1h['Close'][-2]]:
+                        if df_4h['ema_50'][-2] <= df_4h['Close'][-2]:   
                    
-                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker  ▫️ 5 min")
+                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-1]}\n📍 Picker  ▫️ 5 min")
                             PORLONG = {
                         "name": "LARGO 3POR",
                         "secret": "nwh2tbpay1r",
                         "side": "buy",
                         "symbol": symbol,
                         "open": {
-                        "price": float(df['Close'][-2])
+                        "price": float(df['Close'][-1])
                         }
                         }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)      

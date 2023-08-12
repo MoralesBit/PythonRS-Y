@@ -61,7 +61,7 @@ def run_strategy():
            
             #CONTRATENDENCIA
             time.sleep(1)
-            if df['Open'][-2] >= df['upperband'][-2] and df['Low'][-2] < df['upperband'][-2]:
+            if df['Open'][-2] >= df['upperband'][-2]:
                 if df['rsi'][-2] >= 70:
                     if [df_1h['ema_50'][-1] >= df_1h['Close'][-1]]:
                         if df_4h['ema_50'][-1] >= df_4h['Close'][-1]:   
@@ -80,7 +80,7 @@ def run_strategy():
                 
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
             
-            elif df['Open'][-2] <= df['lowerband'][-2]  and df['High'][-2] > df['lowerband'][-2]:
+            elif df['Open'][-2] <= df['lowerband'][-2]:
                 if df['rsi'][-2] <= 30:
                     if [df_1h['ema_50'][-1] <= df_1h['Close'][-1]]:
                         if df_4h['ema_50'][-1] <= df_4h['Close'][-1]:   

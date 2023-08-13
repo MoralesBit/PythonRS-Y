@@ -30,18 +30,16 @@ def calculate_indicators(symbol,interval):
     
     df = df.set_index('Open time')
     
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=3, nbdevdn=3, matype=0)
     df['upperband'] = upperband
     df['middleband'] = middleband
     df['lowerband'] = lowerband
     
-    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
-  
-    df['ema_50'] = df['Close'].ewm(span=50, adjust=False).mean()
-    
-    df['slowk'], df['slowd'] = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=14, slowk_matype=0, slowd_period=10, slowd_matype=0)
-    
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float) 
+    
+    df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
+    
+    df['cmf'] = (((df["Close"] - df["Low"]) - (df["High"] - df["Close"])) / (df["High"] - df["Low"]))
    
     return df[-3:]
         
@@ -55,20 +53,12 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            #df_4h = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_4HOUR)
-            df_1h = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_1HOUR)  
-                                                                                              
+                                                                                                        
             if df is None:
                 continue
-           
-            #CONTRATENDENCIA
-            time.sleep(0.5)
-            if df_1h['Close'][-2] < df_1h['ema_50'][-2]: 
-                if df['rsi'][-2] >= 70:
-                    if ( df['Close'][-2]) > df['upperband'][-2]:
-                           
-     
-                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Open'][-2]}\n📍 Picker ▫️ 5 min")
+            if df['diff'][-2] > 3:           
+                if ( df['Close'][-2]) > df['upperband'][-2]:
+                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n% Cambio: {df['diff'][-2]}\n MF: {df['cmf'][-2]}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
                             "name": "CORTO 3POR",
                             "secret": "ao2cgree8fp",
@@ -82,14 +72,11 @@ def run_strategy():
                 
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                 else:
-                            print("NO")                                
+                            print("NO UPPER")                                
                    
                     
-            if df_1h['Close'][-2] > df_1h['ema_50'][-2]:
                 if ( df['Close'][-2]) < df['lowerband'][-2]:
-                    if df['rsi'][-2] <= 30:
-                        
-                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Open'][-2]}\n📍 Picker  ▫️ 5 min")
+                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Open'][-2]}\n% Cambio: {df['diff'][-2]}\n MF: {df['cmf'][-2]}\n📍 Picker  ▫️ 5 min")
                             PORLONG = {
                             "name": "LARGO 3POR",
                             "secret": "nwh2tbpay1r",
@@ -101,7 +88,7 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)      
                 else:
-                            print("NO")                    
+                            print("NO LOWER")                    
                            
                         
         except Exception as e:

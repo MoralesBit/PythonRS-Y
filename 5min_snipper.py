@@ -43,7 +43,7 @@ def calculate_indicators(symbol,interval):
     
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
     
-    df['cmf'] = pd.Series(df['adl']).rolling(14).sum() / pd.Series(df['Volume']).rolling(14).sum()
+    df['cmf'] = pd.Series(df['adl']).rolling(20).sum() / pd.Series(df['Volume']).rolling(20).sum()
         
    
     return df[-3:]

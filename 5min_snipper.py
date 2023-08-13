@@ -76,7 +76,7 @@ def run_strategy():
                    
                     
                 if ( df['Close'][-2]) < df['lowerband'][-2]:
-                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Open'][-2]}\n% Cambio: {df['diff'][-2]}\n MF: {df['cmf'][-2]}\n📍 Picker  ▫️ 5 min")
+                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n% Cambio: {df['diff'][-2]}\n MF: {df['cmf'][-2]}\n📍 Picker  ▫️ 5 min")
                             PORLONG = {
                             "name": "LARGO 3POR",
                             "secret": "nwh2tbpay1r",

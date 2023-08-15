@@ -63,8 +63,10 @@ def run_strategy():
                            
             if df is None:
                 continue
-            if df_4h['rsi'][-2] >= 70:
-                if df['upperband'][-2] < df['Close'][-2]:
+            
+            if df['diff'][-2] > 3:
+                if df_4h['rsi'][-2] >= 70:
+               
                     
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
@@ -79,11 +81,11 @@ def run_strategy():
    
                 
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
-            else:
+                else:
                             print("NO UPPER")                                
                    
-            if df_4h['rsi'][-2] <= 30:
-                if df['lowerband'][-2] > df['Close'][-2]:
+                if df_4h['rsi'][-2] <= 30:
+                
                     
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORLONG = {
@@ -96,7 +98,7 @@ def run_strategy():
                             }
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)      
-            else:
+                else:
                             print("NO LOWER")                    
                            
                         

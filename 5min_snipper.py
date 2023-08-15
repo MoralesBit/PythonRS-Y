@@ -29,12 +29,7 @@ def calculate_indicators(symbol,interval):
     df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
     
     df = df.set_index('Open time')
-    
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
-    df['upperband'] = upperband
-    df['middleband'] = middleband
-    df['lowerband'] = lowerband
-    
+        
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
     
     df['adl'] = (((df["Close"] - df["Low"]) - (df["High"] - df["Close"])) / (df["High"] - df["Low"]))
@@ -46,6 +41,9 @@ def calculate_indicators(symbol,interval):
     df['cmf'] = pd.Series(df['adl']).rolling(20).sum() / pd.Series(df['Volume']).rolling(20).sum()
     
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
+    
+    df['sma14'] = ta.SMA(df['rsi'], timeperiod=14)
+    df['sma58'] = ta.SMA(df['rsi'], timeperiod=58)
        
     return df[-3:]
         
@@ -59,14 +57,13 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            df_4h = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_4HOUR)
+           
                            
             if df is None:
                 continue
             
-            if df['diff'][-2] > 3:
-                if df_4h['rsi'][-2] >= 70:
-               
+            if df['sma14'][-3] > df['sma58'] and df['sma14'][-2] < df['sma58'][-2]:
+                if df['cmf'][-2] > 0:              
                     
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
@@ -84,7 +81,8 @@ def run_strategy():
                 else:
                             print("NO UPPER")                                
                    
-                if df_4h['rsi'][-2] <= 30:
+                if df['sma14'][-3] < df['sma58'] and df['sma14'][-2] > df['sma58'][-2]:
+                    if df['cmf'][-2] < 0:
                 
                     
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")

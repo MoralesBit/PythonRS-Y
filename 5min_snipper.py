@@ -30,14 +30,10 @@ def calculate_indicators(symbol,interval):
     
     df = df.set_index('Open time')
     
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=3, nbdevdn=3, matype=0)
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
     df['upperband'] = upperband
     df['middleband'] = middleband
     df['lowerband'] = lowerband
-    upband, midband, lowband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
-    df['upband'] = upband
-    df['midband'] = midband
-    df['lowband'] = lowband
     
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
     
@@ -48,9 +44,8 @@ def calculate_indicators(symbol,interval):
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
     
     df['cmf'] = pd.Series(df['adl']).rolling(20).sum() / pd.Series(df['Volume']).rolling(20).sum()
-        
-    df['ema3'] = df['Close'].ewm(span=3, adjust=False).mean()
     
+   
     return df[-3:]
         
 def run_strategy():
@@ -63,11 +58,11 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-                                                                                                                 
+                                                                                                                   
             if df is None:
                 continue
-                                 
-            if (df['upband'][-2] == df['ema3'][-2]) and (df['cmf'][-2] > 0.20):
+            if (df['cmf'][-3] > 0) and (df['cmf'][-2] < 0):
+                if (df['middleband'][-2] >= df['Close'][-2]):
                     
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
@@ -82,11 +77,13 @@ def run_strategy():
    
                 
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
-            
+            else:
+                            print("NO UPPER")                                
+                   
                     
-            
-            if df['lowband'][-2] == df['ema3'][-2] and (df['cmf'][-2] < -0.20):
-                
+            if (df['cmf'][-3] < 0) and (df['cmf'][-2] > 0):
+                if (df['middleband'][-2] <= df['Close'][-2]):
+                    
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORLONG = {
                             "name": "LARGO 3POR",
@@ -98,40 +95,7 @@ def run_strategy():
                             }
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)      
-            
-                            
-            if df['diff'][-2] > 3:           
-                if ( df['Close'][-2]) > df['upperband'][-2]:
-                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n% Cambio: {round(df['diff'][-2],2)}\n MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
-                            PORSHORT = {
-                            "name": "CORTO 3POR",
-                            "secret": "ao2cgree8fp",
-                            "side": "sell",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2]) 
-                            }
-                            }
-   
-                
-                            requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
-                else:
-                            print("NO UPPER")                                
-                   
-                    
-                if ( df['Close'][-2]) < df['lowerband'][-2]:
-                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n% Cambio: {round(df['diff'][-2],2)}\n MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
-                            PORLONG = {
-                            "name": "LARGO 3POR",
-                            "secret": "nwh2tbpay1r",
-                            "side": "buy",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2])
-                            }
-                            }
-                            requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)      
-                else:
+            else:
                             print("NO LOWER")                    
                            
                         

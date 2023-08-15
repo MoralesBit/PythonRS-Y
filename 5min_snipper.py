@@ -45,6 +45,7 @@ def calculate_indicators(symbol,interval):
     
     df['cmf'] = pd.Series(df['adl']).rolling(20).sum() / pd.Series(df['Volume']).rolling(20).sum()
     
+    df['roc'] = ta.ROC(df['Close'], timeperiod=288)
    
     return df[-3:]
         
@@ -58,11 +59,15 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
+            dfbtc = calculate_indicators("BTCUSDT",interval=Client.KLINE_INTERVAL_5MINUTE)
+            
+           
                                                                                                                    
             if df is None:
                 continue
-            if (df['cmf'][-3] > 0) and (df['cmf'][-2] < 0):
-                if (df['middleband'][-2] >= df['Close'][-2]):
+            if (dfbtc['middleband'][-2] >= dfbtc['Close'][-2]):
+                if (df['cmf'][-3] > 0) and (df['cmf'][-2] < 0):
+                
                     
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
@@ -80,9 +85,9 @@ def run_strategy():
             else:
                             print("NO UPPER")                                
                    
-                    
-            if (df['cmf'][-3] < 0) and (df['cmf'][-2] > 0):
-                if (df['middleband'][-2] <= df['Close'][-2]):
+            if (dfbtc['middleband'][-2] <= dfbtc['Close'][-2]):        
+                if (df['cmf'][-3] < 0) and (df['cmf'][-2] > 0):
+                
                     
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORLONG = {

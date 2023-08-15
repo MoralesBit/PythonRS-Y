@@ -67,7 +67,7 @@ def run_strategy():
             if df is None:
                 continue
                                  
-            if df['upband'][-2] == df['ema3'][-2]:
+            if (df['upband'][-2] == df['ema3'][-2]) and (df['cmf'][-2] > 0.20):
                     
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
@@ -85,7 +85,8 @@ def run_strategy():
             
                     
             
-            if df['lowband'][-2] == df['ema3'][-2]:
+            if df['lowband'][-2] == df['ema3'][-2] and (df['cmf'][-2] < -0.20):
+                
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORLONG = {
                             "name": "LARGO 3POR",

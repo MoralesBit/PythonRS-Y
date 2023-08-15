@@ -64,7 +64,7 @@ def run_strategy():
             if df is None:
                 continue
             if df_4h['rsi'][-2] >= 70:
-                if df['cmf'][-3] > 0 and df['cmf'][-2] < 0:
+                if df['upperband'][-2] < df['Close'][-2]:
                     
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
@@ -83,7 +83,7 @@ def run_strategy():
                             print("NO UPPER")                                
                    
             if df_4h['rsi'][-2] <= 30:
-                if df['cmf'][-3] < 0 and df['cmf'][-2] > 0:
+                if df['lowerband'][-2] > df['Close'][-2]:
                     
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORLONG = {

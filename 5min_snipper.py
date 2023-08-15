@@ -34,6 +34,10 @@ def calculate_indicators(symbol,interval):
     df['upperband'] = upperband
     df['middleband'] = middleband
     df['lowerband'] = lowerband
+    upband, midband, lowband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+    df['upband'] = upband
+    df['midband'] = midband
+    df['lowband'] = lowband
     
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
     
@@ -62,9 +66,8 @@ def run_strategy():
                                                                                                                  
             if df is None:
                 continue
-            
-            if (df['Close'][-2]) > df['upperband'][-2]:           
-                if df['Close'][-2] == df['ema3'][-2]:
+                                 
+            if df['upband'][-2] == df['ema3'][-2]:
                     
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
@@ -79,12 +82,10 @@ def run_strategy():
    
                 
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
-            else:
-                            print("NO UPPER")                                
-                   
+            
                     
-            if ( df['Close'][-2]) < df['lowerband'][-2]:
-                if df['Close'][-2] == df['ema3'][-2]:
+            
+            if df['lowband'][-2] == df['ema3'][-2]:
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORLONG = {
                             "name": "LARGO 3POR",
@@ -96,8 +97,7 @@ def run_strategy():
                             }
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)      
-            else:
-                            print("NO LOWER") 
+            
                             
             if df['diff'][-2] > 3:           
                 if ( df['Close'][-2]) > df['upperband'][-2]:

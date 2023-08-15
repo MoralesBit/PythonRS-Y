@@ -59,11 +59,12 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
+            df_4h = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_4HOUR)
                            
             if df is None:
                 continue
-            if df['cmf'][-2] >= 0.3 and df['rsi'][-3] > 80 and df['rsi'][-2] <= 80:
-                
+            if df_4h['rsi'][-2] >= 70:
+                if df['cmf'][-3] > 0 and df['cmf'][-2] < 0:
                     
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
@@ -81,8 +82,8 @@ def run_strategy():
             else:
                             print("NO UPPER")                                
                    
-            if df['cmf'][-2] <= -0.3 and df['rsi'][-3] < 20 and df['rsi'][-2] >= 20:
-                
+            if df_4h['rsi'][-2] <= 30:
+                if df['cmf'][-3] < 0 and df['cmf'][-2] > 0:
                     
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORLONG = {

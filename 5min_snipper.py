@@ -44,10 +44,7 @@ def calculate_indicators(symbol,interval):
     
     df['cmf'] = pd.Series(df['adl']).rolling(20).sum() / pd.Series(df['Volume']).rolling(20).sum()
     
-    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
-    
-    df['sma14'] = ta.SMA(df['rsi'], timeperiod=14)
-    df['sma58'] = ta.SMA(df['rsi'], timeperiod=58)
+    df['ema50'] = df['Close'].ewm(span=50, adjust=False).mean()
        
     return df[-3:]
         
@@ -66,8 +63,8 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df['sma14'][-3] > df['sma58'][-3] and df['sma14'][-2] < df['sma58'][-2]:
-                if df['cmf'][-2] > 0:              
+            if df['ema50'][-2] > df['CLose'][-2]:
+                if df['cmf'][-2] > 0.15:              
                     if df['upperband'][-2] < df['Close'][-2]:
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
@@ -85,8 +82,8 @@ def run_strategy():
                 else:
                             print("NO UPPER")                                
                    
-                if df['sma14'][-3] < df['sma58'][-3] and df['sma14'][-2] > df['sma58'][-2]:
-                    if df['cmf'][-2] < 0:
+                if df['ema50'][-2] < df['CLose'][-2]:
+                    if df['cmf'][-2] < 0.15:
                         if df['lowerband'][-2] > df['Close'][-2]:
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORLONG = {

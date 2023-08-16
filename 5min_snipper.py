@@ -29,6 +29,10 @@ def calculate_indicators(symbol,interval):
     df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
     
     df = df.set_index('Open time')
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+    df['upperband'] = upperband
+    df['middleband'] = middleband
+    df['lowerband'] = lowerband
         
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
     
@@ -64,7 +68,7 @@ def run_strategy():
             
             if df['sma14'][-3] > df['sma58'][-3] and df['sma14'][-2] < df['sma58'][-2]:
                 if df['cmf'][-2] > 0:              
-                    
+                    if df['upperband'][-2] < df['Close'][-2]:
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORSHORT = {
                             "name": "CORTO 3POR",
@@ -83,8 +87,7 @@ def run_strategy():
                    
                 if df['sma14'][-3] < df['sma58'][-3] and df['sma14'][-2] > df['sma58'][-2]:
                     if df['cmf'][-2] < 0:
-                
-                    
+                        if df['lowerband'][-2] > df['Close'][-2]:
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORLONG = {
                             "name": "LARGO 3POR",

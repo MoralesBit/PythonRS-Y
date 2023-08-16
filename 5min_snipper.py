@@ -62,7 +62,7 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df['sma14'][-3] > df['sma58'][-2] and df['sma14'][-2] < df['sma58'][-2]:
+            if df['sma14'][-3] > df['sma58'][-3] and df['sma14'][-2] < df['sma58'][-2]:
                 if df['cmf'][-2] > 0:              
                     
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n📶 Cambio: {round(df['diff'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
@@ -81,7 +81,7 @@ def run_strategy():
                 else:
                             print("NO UPPER")                                
                    
-                if df['sma14'][-3] < df['sma58'][-2] and df['sma14'][-2] > df['sma58'][-2]:
+                if df['sma14'][-3] < df['sma58'][-3] and df['sma14'][-2] > df['sma58'][-2]:
                     if df['cmf'][-2] < 0:
                 
                     

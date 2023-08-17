@@ -75,7 +75,7 @@ def run_strategy():
                 continue
             
             if df['diff'][-3] > 2:
-                if df['upperband'][-3] <= df['Close'][-3]: 
+                if df['lowerband'][-3] <= df['Close'][-3]: 
                      
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['pointl'][-2]}")
                             PORSHORT = {
@@ -93,7 +93,7 @@ def run_strategy():
                 else:
                             print("NO UPPER")                                
                    
-                if df['lowerband'][-3] >= df['Close'][-3]:
+                if df['upperband'][-3] >= df['Close'][-3]:
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['pointl'][-2]}")
                             PORLONG = {
                             "name": "LARGO 3POR",

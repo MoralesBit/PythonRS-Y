@@ -83,7 +83,7 @@ def run_strategy():
                             print("NO UPPER")                                
                    
                 if df['ema100'][-2] < df['Close'][-2]:
-                    if df['cmf'][-2] < 0.15:
+                    if df['cmf'][-2] < -0.15:
                         if df['lowerband'][-2] > df['Close'][-2]:
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📶 Cambio: {round(df['ema100'][-2],2)}%\n🕳 MF: {round(df['cmf'][-2],2)}\n📍 Picker ▫️ 5 min")
                             PORLONG = {

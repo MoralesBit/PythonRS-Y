@@ -35,7 +35,11 @@ def calculate_indicators(symbol):
     df['middleband'] = middleband
     df['lowerband'] = lowerband
     
+    
+    
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
+ 
+    df['imbalances'] = (df['Close'] - ta.SMA(df['Close'] ,timeperiod=20)) /  ta.SMA(df['Close'] ,timeperiod=20)
  
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
     
@@ -70,14 +74,15 @@ def run_strategy():
        
         try:
             df = calculate_indicators(symbol)
-
+            print( df['imbalances'][-3])
+            
             if df is None:
                 continue
             
             if df['diff'][-3] > 2:
                 if df['lowerband'][-3] >= df['Close'][-3]: 
                      
-                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['pointl'][-2]}")
+                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['pointl'][-2],4)} \n💵 IMB: {round(df['imbalances'][-3],4)}")
                             PORSHORT = {
                             "name": "CORTO 3POR",
                             "secret": "ao2cgree8fp",
@@ -94,7 +99,7 @@ def run_strategy():
                             print("NO UPPER")                                
                    
                 if df['upperband'][-3] <= df['Close'][-3]:
-                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['pointl'][-2]}")
+                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['pointl'][-2],4)} \n💵 IMB: {round(df['imbalances'][-3],4)}")
                             PORLONG = {
                             "name": "LARGO 3POR",
                             "secret": "nwh2tbpay1r",

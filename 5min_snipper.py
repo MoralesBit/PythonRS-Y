@@ -20,7 +20,7 @@ def get_trading_symbols():
    
 def calculate_indicators(symbol,interval):
         
-    klines = client.futures_klines(symbol=symbol, interval=interval, limit=1000)
+    klines = client.futures_klines(symbol=symbol, interval=interval, limit=500)
     df = pd.DataFrame(klines)
     if df.empty:
         return None

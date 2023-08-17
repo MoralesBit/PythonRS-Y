@@ -18,9 +18,9 @@ def get_trading_symbols():
     return symbols
 
    
-def calculate_indicators(symbol,interval):
+def calculate_indicators(symbol):
         
-    klines = client.futures_klines(symbol=symbol, interval=interval, limit=1000)
+    klines = client.futures_klines(symbol=symbol,interval=Client.KLINE_INTERVAL_5MINUTE, limit=1000)
     df = pd.DataFrame(klines)
     if df.empty:
         return None
@@ -69,7 +69,7 @@ def run_strategy():
         print(symbol)
        
         try:
-            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
+            df = calculate_indicators(symbol)
 
             if df is None:
                 continue

@@ -58,16 +58,17 @@ def run_strategy():
                            
         print(symbol)
         
-        
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
             print(df['check'][-2])
+            print(df['cci'][-2])
+            print(df['scci'][-2])
                            
             if df is None:
                 continue
             
             if df['check'][-2]:
-                if df['scci'][-2] >= df['cci'][-2]:
+                if df['scci'][-2] > df['cci'][-2] > 0:
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}")
                             PORSHORT = {
                             "name": "CORTO 3POR",
@@ -83,7 +84,7 @@ def run_strategy():
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                                                 
                    
-                if df['scci'][-2] <= df['cci'][-2]:
+                if df['scci'][-2] < df['cci'][-2] < 0:
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}")
                             PORLONG = {
                             "name": "LARGO 3POR",

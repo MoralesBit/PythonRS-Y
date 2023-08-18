@@ -66,7 +66,7 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df['check'][-2] ==1:
+            if df['check'][-2]:
                 if df['scci'][-2] >= df['cci'][-2]:
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}")
                             PORSHORT = {
@@ -81,8 +81,7 @@ def run_strategy():
    
                 
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
-                else:
-                            print("NO UPPER")                                
+                                                
                    
                 if df['scci'][-2] <= df['cci'][-2]:
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}")

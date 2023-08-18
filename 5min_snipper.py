@@ -34,8 +34,14 @@ def calculate_indicators(symbol,interval):
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
       
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
+    
     df['cci']  = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
     df['scci'] = ta.SMA(df['cci'], timeperiod= 20)
+    
+    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
+    df['rsi_upcross'] = np.where( df['rsi'][-3] < 80 and  df['rsi'][-2] > 80,1,0)
+    df['rsi_downcross'] = np.where( df['rsi'][-3] > 20 and  df['rsi'][-2] < 20,1,0)
+    
     df['signal'] = np.where(df['diff'] >= 3,1,0)
     
     df['cci_downcross'] = np.where(df['scci'][-3] < df['cci'][-3] and df['scci'][-2] > df['cci'][-2],1,0)
@@ -62,7 +68,7 @@ def run_strategy():
         print(symbol)
         
         try:
-            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
+            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_1MINUTE)
             print(df['check'][-2])
                                        
             if df is None:
@@ -70,7 +76,7 @@ def run_strategy():
             
             if df['check'][-2]:
                 
-                if df['cci_downcross'][-2] == 1:
+                if df['rsi_upcross'][-2] == 1:
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}")
                             PORSHORT = {
                             "name": "CORTO 3POR",
@@ -86,7 +92,7 @@ def run_strategy():
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                                                 
                    
-                if df['cci_upcross'][-2] == 1:
+                if df['rsi_downcross'][-2] == 1:
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}")
                             PORLONG = {
                             "name": "LARGO 3POR",

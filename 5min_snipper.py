@@ -1,4 +1,5 @@
 import time
+import numpy as np
 import requests
 import pandas as pd
 import talib as ta
@@ -18,9 +19,9 @@ def get_trading_symbols():
     return symbols
 
    
-def calculate_indicators(symbol):
+def calculate_indicators(symbol,interval):
         
-    klines = client.futures_klines(symbol=symbol,interval=Client.KLINE_INTERVAL_5MINUTE, limit=1000)
+    klines = client.futures_klines(symbol=symbol, interval=interval, limit=1000)
     df = pd.DataFrame(klines)
     if df.empty:
         return None
@@ -29,40 +30,25 @@ def calculate_indicators(symbol):
     df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
     
     df = df.set_index('Open time')
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
-    
-    df['upperband'] = upperband
-    df['middleband'] = middleband
-    df['lowerband'] = lowerband
-    
-    
-    
+           
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
- 
-    df['imbalances'] = (df['Close'] - ta.SMA(df['Close'] ,timeperiod=20)) /  ta.SMA(df['Close'] ,timeperiod=20)
- 
+      
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
     
-    #long
-    df['4l'] =  abs((df['High'][-4] / df['Close'][-4] -1) * 100) 
-    df['2l'] =  abs((df['Open'][-2] / df['Low'][-2] -1) * 100) 
+    df['signal'] = np.where(df['diff'] >= 3,1,0)
     
-    #promedio long
-    df['proml'] = (df['4l'] + df['2l'])/2
-      
-    df['pointl'] = (1-df['proml'] /100)* df['Open'][-2]
+    check = np.isin(1, df['signal'][-10:])
     
-    #short
-    df['4s'] =  abs((df['Close'][-4] / df['Low'][-4] -1) * 100) 
-    df['2s'] =  abs((df['Open'][-2] / df['High'][-2] -1) * 100) 
+    if check:
+       check == 1 
+    else : 
+       check == 0
     
-    #promedio Short
-    
-    df['proms'] = (df['4s'] + df['2s'])/2
-    
-    df['points'] = (1-df['proms'] /100)* df['Open'][-2]
-        
-    return df[-4:]
+    df['check'] = check
+    df['cci']  = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
+    df['scci'] = ta.SMA(df['cci'], timeperiod= 20)
+           
+    return df[-3:]
         
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
@@ -71,25 +57,25 @@ def run_strategy():
     for symbol in symbols:
                            
         print(symbol)
-       
+        
+        
         try:
-            df = calculate_indicators(symbol)
-            print( df['imbalances'][-3])
-            
+            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
+            print(df['check'][-2])
+                           
             if df is None:
                 continue
             
-            if df['diff'][-3] > 2:
-                if df['lowerband'][-3] >= df['Close'][-3]: 
-                     
-                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['pointl'][-2],4)} \n💵 IMB: {round(df['imbalances'][-3],4)}")
+            if df['check'][-2] ==1:
+                if df['scci'][-2] >= df['cci'][-2]:
+                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}")
                             PORSHORT = {
                             "name": "CORTO 3POR",
                             "secret": "ao2cgree8fp",
                             "side": "sell",
                             "symbol": symbol,
                             "open": {
-                            "price": df['pointl'][-2]
+                            "price": float(df['Close'][-2]) 
                             }
                             }
    
@@ -98,15 +84,15 @@ def run_strategy():
                 else:
                             print("NO UPPER")                                
                    
-                if df['upperband'][-3] <= df['Close'][-3]:
-                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['pointl'][-2],4)} \n💵 IMB: {round(df['imbalances'][-3],4)}")
+                if df['scci'][-2] <= df['cci'][-2]:
+                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}")
                             PORLONG = {
                             "name": "LARGO 3POR",
                             "secret": "nwh2tbpay1r",
                             "side": "buy",
                             "symbol": symbol,
                             "open": {
-                            "price": df['pointl'][-2]
+                            "price": float(df['Close'][-2])
                             }
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)      

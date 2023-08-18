@@ -35,20 +35,24 @@ def calculate_indicators(symbol,interval):
       
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
     
+    #CCI
     df['cci']  = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
     df['scci'] = ta.SMA(df['cci'], timeperiod= 20)
     
+    df['cci_downcross'] = np.where(df['scci'][-3] < df['cci'][-3] and df['scci'][-2] > df['cci'][-2],1,0)
+    df['cci_upcross'] = np.where(df['scci'][-3] > df['cci'][-3] and df['scci'][-2] < df['cci'][-2],1,0)
+    
+    #RSI
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
     df['srsi'] = ta.SMA(df['rsi'], timeperiod= 20)
     
     df['rsi_upcross'] = np.where( df['rsi'][-3] < df['srsi'][-3] and  df['rsi'][-2] > df['srsi'][-2],1,0)
     df['rsi_downcross'] = np.where( df['rsi'][-3] > df['srsi'][-3] and  df['rsi'][-2] < df['srsi'][-2],1,0)
     
+    #SIGNAL
     df['signal'] = np.where(df['diff'] >= 3,1,0)
     
-    df['cci_downcross'] = np.where(df['scci'][-3] < df['cci'][-3] and df['scci'][-2] > df['cci'][-2],1,0)
-    df['cci_upcross'] = np.where(df['scci'][-3] > df['cci'][-3] and df['scci'][-2] < df['cci'][-2],1,0)
-    
+    #VERIFICACION
     check = np.isin(1, df['signal'][-20:])
     
     if check:
@@ -57,8 +61,7 @@ def calculate_indicators(symbol,interval):
        check == 0
     
     df['check'] = check
-   
-           
+              
     return df[-3:]
         
 def run_strategy():
@@ -116,6 +119,6 @@ def run_strategy():
 
 while True:
     current_time = time.time()
-    seconds_to_wait = 300 - current_time % 300
+    seconds_to_wait = 60 - current_time % 60
     time.sleep(seconds_to_wait)    
     run_strategy()

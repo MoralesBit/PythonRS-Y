@@ -77,7 +77,7 @@ def run_strategy():
             
             if df['check'][-2]:
                 
-                if (df['60downcross'][-2] == 1) and (df['40downcross'][-2] == 1):
+                if (df['60downcross'][-2] == 1) or (df['40downcross'][-2] == 1):
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}")
                             PORSHORT = {
                             "name": "CORTO 3POR",
@@ -91,7 +91,7 @@ def run_strategy():
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                                                 
                    
-                if (df['60upcross'][-2] == 1) and (df['40upcross'][-2] == 1):
+                if (df['60upcross'][-2] == 1) or (df['40upcross'][-2] == 1):
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}")
                             PORLONG = {
                             "name": "LARGO 3POR",

@@ -49,7 +49,7 @@ def calculate_indicators(symbol,interval):
     df['signal'] = np.where(df['diff'] >= 3,1,0)
     
     #VERIFICACION
-    check = np.isin(1, df['signal'][-20:])
+    check = np.isin(1, df['signal'][-30:])
     
     if check:
        check == 1 

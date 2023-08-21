@@ -48,8 +48,14 @@ def calculate_indicators(symbol,interval):
     df['srsi'] = ta.SMA(df['rsi'], timeperiod= 20)
         
     df['cross_down'] = np.where( 0.2 < df['cmf'][-3] and  0.2 > df['cmf'][-2],1,0)
+    #para longs (cruce hacia arriba)
     df['cross_up'] = np.where( -0.2 > df['srsi'][-3] and  -0.2 < df['srsi'][-2],1,0)
-        
+    #Para shorts (cruce hacia arriiba)
+    df['cross_up_to_short'] = np.where( 0.2 > df['srsi'][-3] and  0.2 < df['srsi'][-2],1,0)
+    
+    df['cmf_up'] = np.where( 0.2 < df['cmf'],1,0)
+    df['cmf_down'] = np.where( -0.2 > df['cmf'],1,0)
+    
     df['rsi_up'] = np.where( 70 < df['rsi'],1,0)
     df['rsi_down'] = np.where( 30 > df['rsi'],1,0)
     
@@ -86,7 +92,7 @@ def run_strategy():
             
             if df['check'][-2]:
                 
-                if (df['cross_down'][-2] == 1) :
+                if (df['cross_up_to_short'][-2] == 1) :
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORSHORT = {
                             "name": "CORTO 3POR",
@@ -100,7 +106,7 @@ def run_strategy():
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                                                 
                    
-                if (df['cross_up'][-2] == 1):
+                if (df['cross_up'][-2] == 1) :
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORLONG = {
                             "name": "LARGO 3POR",

@@ -34,6 +34,8 @@ def calculate_indicators(symbol,interval):
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
       
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
+    
+    df['mfi'] = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=58)
        
     #RSI
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
@@ -44,6 +46,9 @@ def calculate_indicators(symbol,interval):
     
     df['40upcross'] = np.where( 40 > df['srsi'][-3] and 40 < df['srsi'][-2],1,0)
     df['40downcross'] = np.where( 40 < df['srsi'][-3] and 40 > df['srsi'][-2],1,0)
+    
+    df['downcross'] = np.where( df['srsi'][-3] < df['mfi'][-3] and  df['srsi'][-2] > df['mfi'][-2],1,0)
+    df['upcross'] = np.where( df['srsi'][-3] > df['mfi'][-3] and df['srsi'][-2] < df['mfi'][-2],1,0)
     
     #SIGNAL
     df['signal'] = np.where(df['diff'] >= 3,1,0)
@@ -92,7 +97,7 @@ def run_strategy():
                                                 
                    
                 if (df['40upcross'][-2] == 1):
-                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORLONG = {
                             "name": "LARGO 3POR",
                             "secret": "nwh2tbpay1r",
@@ -102,7 +107,34 @@ def run_strategy():
                             "price": float(df['Close'][-2])
                             }
                             }
-                            requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)      
+                            requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
+                            
+                if (df['downcross'][-2] == 1):
+                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+                            PORSHORT = {
+                            "name": "CORTO 3POR",
+                            "secret": "ao2cgree8fp",
+                            "side": "sell",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2]) 
+                            }
+                            }
+                            requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
+                                                
+                   
+                if (df['upcross'][-2] == 1):
+                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+                            PORLONG = {
+                            "name": "LARGO 3POR",
+                            "secret": "nwh2tbpay1r",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
+                            requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)                  
                         
         except Exception as e:
           

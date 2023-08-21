@@ -93,7 +93,7 @@ def run_strategy():
                             "price": float(df['Close'][-2]) 
                             }
                             }
-                            requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
+                            #requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                                                 
                    
                 if (df['40upcross'][-2] == 1):
@@ -107,7 +107,7 @@ def run_strategy():
                             "price": float(df['Close'][-2])
                             }
                             }
-                            requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
+                            #requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
                             
                 if (df['downcross'][-2] == 1):
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")

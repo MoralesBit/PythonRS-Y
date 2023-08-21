@@ -33,10 +33,8 @@ def calculate_indicators(symbol,interval):
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
       
-    df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-    
-    df['mfi'] = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=58)
-       
+    df['diff'] = abs((df['Open'] / df['Close'] -1) * 100)
+
     #RSI
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
     df['srsi'] = ta.SMA(df['rsi'], timeperiod= 20)
@@ -46,12 +44,9 @@ def calculate_indicators(symbol,interval):
     
     df['40upcross'] = np.where( 40 > df['srsi'][-3] and 40 < df['srsi'][-2],1,0)
     df['40downcross'] = np.where( 40 < df['srsi'][-3] and 40 > df['srsi'][-2],1,0)
-    
-    df['downcross'] = np.where( df['srsi'][-3] < df['mfi'][-3] and  df['srsi'][-2] > df['mfi'][-2],1,0)
-    df['upcross'] = np.where( df['srsi'][-3] > df['mfi'][-3] and df['srsi'][-2] < df['mfi'][-2],1,0)
-    
+
     #SIGNAL
-    df['signal'] = np.where(df['diff'] >= 3,1,0)
+    df['signal'] = np.where(df['diff'] >= 2,1,0)
     
     #VERIFICACION
     check = np.isin(1, df['signal'][-30:])

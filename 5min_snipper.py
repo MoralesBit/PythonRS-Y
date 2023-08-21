@@ -86,8 +86,8 @@ def run_strategy():
             
             if df['check'][-2]:
                 
-                if (df['cmf_up'][-2] == 1) and (df['srsi_up'][-2] == 1):
-                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+                if (df['cmf_up'][-2] == 1):
+                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORSHORT = {
                             "name": "CORTO 3POR",
                             "secret": "ao2cgree8fp",
@@ -100,8 +100,8 @@ def run_strategy():
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                                                 
                    
-                if (df['cmf_down'][-2] == 1) and (df['srsi_down'][-2] == 1):
-                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+                if (df['cmf_down'][-2] == 1):
+                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORLONG = {
                             "name": "LARGO 3POR",
                             "secret": "nwh2tbpay1r",

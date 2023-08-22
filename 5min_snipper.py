@@ -79,9 +79,9 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df['cci_zone'][-2] == 1:
+            
                 
-                if (df['upcross'][-2] == 1) and (df['wma_signal_down'][-2] == 1):
+            if (df['upcross'][-2] == 1) and (df['wma_signal_down'][-2] == 1):
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORSHORT = {
                             "name": "CORTO 3POR",
@@ -95,7 +95,7 @@ def run_strategy():
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                                                 
                    
-                if (df['downcross'][-2] == 1)  and (df['wma_signal_up'][-2] == 1):
+            if (df['downcross'][-2] == 1)  and (df['wma_signal_up'][-2] == 1):
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORLONG = {
                             "name": "LARGO 3POR",

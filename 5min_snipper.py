@@ -37,20 +37,7 @@ def calculate_indicators(symbol,interval):
        
     df['cci_up'] = np.where( 100 < df['cmf'],1,0)
     df['cci_down'] = np.where( -100 > df['cmf'],1,0)
-    
-    #SIGNAL
-    df['signal'] = np.where(df['diff'] >= 2,1,0)
-    
-    #VERIFICACION
-    check = np.isin(1, df['signal'][-30:])
-    
-    if check:
-       check == 1 
-    else : 
-       check == 0
-    
-    df['check'] = check
-              
+                  
     return df[-3:]
         
 def run_strategy():
@@ -67,9 +54,7 @@ def run_strategy():
                                        
             if df is None:
                 continue
-            
-           
-                
+  
             if (df['cci_down'][-2] == 1) :
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORSHORT = {

@@ -13,8 +13,8 @@ client = Client(api_key=Pkey, api_secret=Skey)
 def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
-    symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    #symbols = ["HIGHUSDT", "BLZUSDT", "1000SHIBUSDT", "1000PEPEUSDT","TLMUSDT", "APEUSDT", "ANTUSDT", "OXTUSDT"]
+    #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
+    symbols = ["SFPUSDT", "UNFIUSDT", "LEVERUSDT", "BLZUSDT","XVGUSDT"]
     symbols.remove("ETHBTC")  
     return symbols
 
@@ -33,18 +33,11 @@ def calculate_indicators(symbol,interval):
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
       
-    df['diff'] = abs((df['Open'] / df['Close'] -1) * 100)
-
-    #RSI
-    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
-    df['srsi'] = ta.SMA(df['rsi'], timeperiod= 20)
+    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
+       
+    df['cci_up'] = np.where( 100 < df['cmf'],1,0)
+    df['cci_down'] = np.where( -100 > df['cmf'],1,0)
     
-    df['60upcross'] = np.where( 65 > df['srsi'][-3] and  65 < df['srsi'][-2],1,0)
-    df['60downcross'] = np.where( 65 < df['srsi'][-3] and  65 > df['srsi'][-2],1,0)
-    
-    df['40upcross'] = np.where( 35 > df['srsi'][-3] and 35 < df['srsi'][-2],1,0)
-    df['40downcross'] = np.where( 35 < df['srsi'][-3] and 35 > df['srsi'][-2],1,0)
-
     #SIGNAL
     df['signal'] = np.where(df['diff'] >= 2,1,0)
     
@@ -75,12 +68,12 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df['check'][-2]:
+           
                 
-                if (df['60downcross'][-2] == 1):
-                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+            if (df['cci_down'][-2] == 1) :
+                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORSHORT = {
-                            "name": "CORTO 3POR",
+                            "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",
                             "side": "sell",
                             "symbol": symbol,
@@ -91,10 +84,10 @@ def run_strategy():
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                                                 
                    
-                if (df['40upcross'][-2] == 1):
+            if (df['cci_up'][-2] == 1) :
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORLONG = {
-                            "name": "LARGO 3POR",
+                            "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",
                             "side": "buy",
                             "symbol": symbol,
@@ -102,9 +95,7 @@ def run_strategy():
                             "price": float(df['Close'][-2])
                             }
                             }
-                            requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
-                            
-                           
+                            requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)      
                         
         except Exception as e:
           
@@ -115,4 +106,3 @@ while True:
     seconds_to_wait = 60 - current_time % 60
     time.sleep(seconds_to_wait)    
     run_strategy()
-    #VERSION ESTABLE

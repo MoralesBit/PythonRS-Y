@@ -15,7 +15,7 @@ def get_trading_symbols():
     futures_info = client.futures_exchange_info()
     #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
     symbols = ["SFPUSDT", "UNFIUSDT", "LEVERUSDT", "BLZUSDT","XVGUSDT"]
-    symbols.remove("ETHBTC")  
+    #symbols.remove("ETHBTC")  
     return symbols
 
    

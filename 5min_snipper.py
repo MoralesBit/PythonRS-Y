@@ -36,7 +36,7 @@ def calculate_indicators(symbol,interval):
     df['diff'] = abs((df['Open'] / df['Close'] -1) * 100)
 
     #RSI
-    df['cci'] = ta.CCI(df['Close'], timeperiod=58)
+    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
         
     df['upcross'] = np.where( -100 > df['cci'][-3] and  -100 < df['cci'][-2],1,0)
     df['downcross'] = np.where( 100 < df['srsi'][-3] and  100 > df['srsi'][-2],1,0)

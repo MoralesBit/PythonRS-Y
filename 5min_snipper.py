@@ -34,12 +34,20 @@ def calculate_indicators(symbol,interval):
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
       
     df['diff'] = abs((df['Open'] / df['Close'] -1) * 100)
-
-    #RSI
+    
+    df['wma'] = ta.WMA(df['Close'],14)
+    
+    df['rsi'] = ta.RSI(df['Close'],14)
+    
     df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
         
-    df['upcross'] = np.where( -100 > df['cci'][-3] and  -100 < df['cci'][-2],1,0)
-    df['downcross'] = np.where( 100 < df['cci'][-3] and  100 > df['cci'][-2],1,0)
+    df['upcross'] = np.where( 70 > df['rsi'][-3] and  70 < df['rsi'][-2],1,0)
+    df['downcross'] = np.where( 30 < df['rsi'][-3] and  30 > df['rsi'][-2],1,0)
+    
+    df['cci_zone'] = np.where( 100 < df['cci'][-2] or  -100 > df['cci'][-2],1,0)
+    
+    df['wma_signal_up'] = np.where( df['wma'][-2] > df['wma'][-3],1,0)
+    df['wma_signal_down'] = np.where( df['wma'][-2] < df['wma'][-3],1,0)
     
     #SIGNAL
     df['signal'] = np.where(df['diff'] >= 1.5,1,0)
@@ -66,15 +74,14 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_1MINUTE)
-            print(df['check'][-2])
-                                       
+                                                   
             if df is None:
                 continue
             
-            if df['check'][-2]:
+            if df['cci_zone'][-2] == 1:
                 
-                if (df['downcross'][-2] == 1):
-                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+                if (df['upcross'][-2] == 1) and (df['wma_signal_down'][-2] == 1):
+                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORSHORT = {
                             "name": "CORTO 3POR",
                             "secret": "ao2cgree8fp",
@@ -87,8 +94,8 @@ def run_strategy():
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                                                 
                    
-                if (df['upcross'][-2] == 1):
-                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+                if (df['downcross'][-2] == 1)  and (df['wma_signal_up'][-2] == 1):
+                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORLONG = {
                             "name": "LARGO 3POR",
                             "secret": "nwh2tbpay1r",

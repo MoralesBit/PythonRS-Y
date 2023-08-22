@@ -42,7 +42,7 @@ def calculate_indicators(symbol,interval):
     df['downcross'] = np.where( 100 < df['cci'][-3] and  100 > df['cci'][-2],1,0)
     
     #SIGNAL
-    df['signal'] = np.where(df['diff'] >= 1,1,0)
+    df['signal'] = np.where(df['diff'] >= 1.5,1,0)
     
     #VERIFICACION
     check = np.isin(1, df['signal'][-30:])

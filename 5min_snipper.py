@@ -35,8 +35,8 @@ def calculate_indicators(symbol,interval):
       
     df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
        
-    df['cci_up'] = np.where( 100 < df['cmf'],1,0)
-    df['cci_down'] = np.where( -100 > df['cmf'],1,0)
+    df['cci_up'] = np.where( 100 < df['cci'],1,0)
+    df['cci_down'] = np.where( -100 > df['cci'],1,0)
                   
     return df[-3:]
         

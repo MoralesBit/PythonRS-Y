@@ -50,8 +50,7 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_1MINUTE)
-            print(df['check'][-2])
-                                       
+                                                   
             if df is None:
                 continue
   

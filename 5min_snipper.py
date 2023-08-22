@@ -37,13 +37,13 @@ def calculate_indicators(symbol,interval):
 
     #RSI
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
-    df['srsi'] = ta.SMA(df['rsi'], timeperiod= 14)
+    df['srsi'] = ta.SMA(df['rsi'], timeperiod= 20)
     
-    df['60upcross'] = np.where( 60 > df['srsi'][-3] and  60 < df['srsi'][-2],1,0)
-    df['60downcross'] = np.where( 60 < df['srsi'][-3] and  60 > df['srsi'][-2],1,0)
+    df['60upcross'] = np.where( 65 > df['srsi'][-3] and  65 < df['srsi'][-2],1,0)
+    df['60downcross'] = np.where( 65 < df['srsi'][-3] and  65 > df['srsi'][-2],1,0)
     
-    df['40upcross'] = np.where( 40 > df['srsi'][-3] and 40 < df['srsi'][-2],1,0)
-    df['40downcross'] = np.where( 40 < df['srsi'][-3] and 40 > df['srsi'][-2],1,0)
+    df['40upcross'] = np.where( 35 > df['srsi'][-3] and 35 < df['srsi'][-2],1,0)
+    df['40downcross'] = np.where( 35 < df['srsi'][-3] and 35 > df['srsi'][-2],1,0)
 
     #SIGNAL
     df['signal'] = np.where(df['diff'] >= 2,1,0)

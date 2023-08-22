@@ -55,7 +55,7 @@ def run_strategy():
                 continue
   
             if (df['cci_down'][-2] == 1) :
-                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 CCI: {df['cci'][-2]}\n📍 Picker")
                             PORSHORT = {
                             "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",
@@ -69,7 +69,7 @@ def run_strategy():
                                                 
                    
             if (df['cci_up'][-2] == 1) :
-                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 CCI: {df['cci'][-2]}\n📍 Picker")
                             PORLONG = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",

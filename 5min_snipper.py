@@ -38,11 +38,12 @@ def calculate_indicators(symbol,interval):
     df['wma'] = ta.WMA(df['Close'],14)
     
     df['rsi'] = ta.RSI(df['Close'],14)
+    df['srsi'] = ta.SMA(df['rsi'], timeperiod= 20)
     
     df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
         
-    df['upcross'] = np.where( 70 > df['rsi'][-3] and  70 < df['rsi'][-2],1,0)
-    df['downcross'] = np.where( 30 < df['rsi'][-3] and  30 > df['rsi'][-2],1,0)
+    df['upcross'] = np.where( 70 > df['srsi'][-3] and  70 < df['srsi'][-2],1,0)
+    df['downcross'] = np.where( 30 < df['srsi'][-3] and  30 > df['srsi'][-2],1,0)
     
     df['cci_zone'] = np.where( 100 < df['cci'][-2] or  -100 > df['cci'][-2],1,0)
     

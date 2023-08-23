@@ -81,7 +81,7 @@ def run_strategy():
                 continue
             
             
-            if df['ema_short'] == 1:    
+            if df['ema_short'][-2] == 1:    
                 if (df['downcross'][-2] == 1) and (df['wma_signal_down'][-2] == 1):
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORSHORT = {
@@ -95,7 +95,7 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                                                 
-            if df['ema_long'] == 1:       
+            if df['ema_long'][-2] == 1:       
                 if (df['upcross'][-2] == 1)  and (df['wma_signal_up'][-2] == 1):
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORLONG = {

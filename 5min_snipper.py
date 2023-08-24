@@ -75,7 +75,7 @@ def run_strategy():
         print(symbol)
         
         try:
-            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_1MINUTE)
+            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
                                                    
             if df is None:
                 continue

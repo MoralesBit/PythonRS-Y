@@ -33,15 +33,20 @@ def calculate_indicators(symbol,interval):
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
       
-    # Calcular los niveles Fibonacci
-    precio_high = float(max(df['Close']))
-    precio_low = float(min(df['Close']))
-    diff_precio = precio_high - precio_low
-    df['nivel_786'] = precio_high - (0.786)*(diff_precio)
-    df['nivel_382'] = precio_high - (0.382)*(diff_precio)
+    df['diff'] = abs((df['Open'] / df['Close'] -1) * 100)
     
-    df['signal_short'] = np.where(df['Close'] > df['nivel_786'],1,0)
-    df['signal_long'] = np.where(df['Close'] < df['nivel_382'],1,0)
+    df['roc'] = ta.ROC(df['Close'], timeperiod=288)
+    
+    df['mfi14'] = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
+    df['mfi50'] = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=50)  
+    
+    df['signal_long'] = np.where(df['mfi14'] > 80,1,0)
+    df['signal_short'] = np.where(df['mfi14'] < 20,1,0)
+    
+    df['upcross'] = np.where( df['mfi50'][-3] > df['mfi14'][-3] and  df['mfi50'][-2] < df['mfi14'][-2],1,0)
+    df['downcross'] = np.where( df['mfi50'][-3] < df['mfi14'][-3] and  df['mfi50'][-2] > df['mfi14'][-2],1,0)
+           
+   
               
     return df[-3:]
         
@@ -54,14 +59,15 @@ def run_strategy():
         print(symbol)
         
         try:
-            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
+            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_1MINUTE)
                                                    
             if df is None:
                 continue
             
             
-            if df['signal_short'][-2] == 1:    
-                
+            if df['roc'][-2] < -10:    
+                if (df['downcross'][-2] == 1):
+                    if  (df['signal_short'][-2] == 1):
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORSHORT = {
                             "name": "CORTO 3POR",
@@ -74,8 +80,9 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                                                 
-            if df['signal_long'][-2] == 1:       
-                
+            if df['roc'][-2] > 10:       
+                if (df['upcross'][-2] == 1):
+                    if  (df['signal_long'][-2] == 1):
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORLONG = {
                             "name": "LARGO 3POR",
@@ -96,7 +103,7 @@ def run_strategy():
 
 while True:
     current_time = time.time()
-    seconds_to_wait = 300 - current_time % 300
+    seconds_to_wait = 60 - current_time % 60
     time.sleep(seconds_to_wait)    
     run_strategy()
     #VERSION ESTABLE

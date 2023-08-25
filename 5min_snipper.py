@@ -46,7 +46,26 @@ def calculate_indicators(symbol,interval):
     df['upcross'] = np.where( df['mfi50'][-3] > df['mfi14'][-3] and  df['mfi50'][-2] < df['mfi14'][-2],1,0)
     df['downcross'] = np.where( df['mfi50'][-3] < df['mfi14'][-3] and  df['mfi50'][-2] > df['mfi14'][-2],1,0)
            
-   
+       
+    #VERIFICACION
+    check_up = np.isin(1, df['upcross'][-30:])
+    
+    if check_up:
+       check_up == 1 
+    else : 
+       check_up == 0
+    
+    df['check_up'] = check_up
+    
+     #VERIFICACION
+    check_dwn = np.isin(1, df['downcross'][-30:])
+    
+    if check_dwn:
+       check_dwn == 1 
+    else : 
+       check_dwn == 0
+    
+    df['check_dwn'] = check_dwn
               
     return df[-3:]
         
@@ -65,8 +84,8 @@ def run_strategy():
                 continue
             
             
-            if df['roc'][-2] < -10:    
-                if (df['downcross'][-2] == 1):
+            if df['roc'][-2] < -5:    
+                if (df['check_dwn'][-2] == 1):
                     if  (df['signal_short'][-2] == 1):
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORSHORT = {
@@ -80,8 +99,8 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                                                 
-            if df['roc'][-2] > 10:       
-                if (df['upcross'][-2] == 1):
+            if df['roc'][-2] > 5:       
+                if (df['check_up'][-2] == 1):
                     if  (df['signal_long'][-2] == 1):
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORLONG = {

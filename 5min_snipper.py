@@ -33,36 +33,15 @@ def calculate_indicators(symbol,interval):
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
       
-    df['diff'] = abs((df['Open'] / df['Close'] -1) * 100)
+    # Calcular los niveles Fibonacci
+    precio_high = float(max(df['Close']))
+    precio_low = float(min(df['Close']))
+    diff_precio = precio_high - precio_low
+    df['nivel_786'] = precio_high - (0.786)*(diff_precio)
+    df['nivel_382'] = precio_high - (0.382)*(diff_precio)
     
-    df['wma'] = ta.WMA(df['Close'],14)
-    
-    df['rsi'] = ta.RSI(df['Close'],14)
-    df['srsi'] = ta.SMA(df['rsi'], timeperiod= 20)
-    
-    df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
-    
-    df['ema_long'] = np.where(df['Close'] > df['ema200'],1,0)
-    df['ema_short'] = np.where(df['Close'] < df['ema200'],1,0)
-           
-    df['upcross'] = np.where( df['srsi'][-3] > df['rsi'][-3] and  df['srsi'][-2] < df['rsi'][-2],1,0)
-    df['downcross'] = np.where( df['srsi'][-3] < df['rsi'][-3] and  df['srsi'][-2] > df['rsi'][-2],1,0)
-    
-    df['wma_signal_up'] = np.where( df['wma'][-2] > df['wma'][-3],1,0)
-    df['wma_signal_down'] = np.where( df['wma'][-2] < df['wma'][-3],1,0)
-    
-    #SIGNAL
-    df['signal'] = np.where(df['diff'] >= 1.5,1,0)
-    
-    #VERIFICACION
-    check = np.isin(1, df['signal'][-30:])
-    
-    if check:
-       check == 1 
-    else : 
-       check == 0
-    
-    df['check'] = check
+    df['signal_short'] = np.where(df['Close'] > df['nivel_786'],1,0)
+    df['signal_long'] = np.where(df['Close'] < df['nivel_382'],1,0)
               
     return df[-3:]
         
@@ -81,9 +60,9 @@ def run_strategy():
                 continue
             
             
-            if df['ema_short'][-2] == 1:    
-                if (df['downcross'][-2] == 1) and (df['wma_signal_down'][-2] == 1):
-                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+            if df['signal_short'][-2] == 1:    
+                
+                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORSHORT = {
                             "name": "CORTO 3POR",
                             "secret": "ao2cgree8fp",
@@ -95,9 +74,9 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                                                 
-            if df['ema_long'][-2] == 1:       
-                if (df['upcross'][-2] == 1)  and (df['wma_signal_up'][-2] == 1):
-                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+            if df['signal_long'][-2] == 1:       
+                
+                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORLONG = {
                             "name": "LARGO 3POR",
                             "secret": "nwh2tbpay1r",

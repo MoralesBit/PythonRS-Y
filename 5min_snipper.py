@@ -35,37 +35,31 @@ def calculate_indicators(symbol,interval):
       
     df['diff'] = abs((df['Open'] / df['Close'] -1) * 100)
     
-    df['roc'] = ta.ROC(df['Close'], timeperiod=288)
+    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=14)
     
-    df['mfi14'] = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
-    df['mfi50'] = ta.MFI(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=50)  
+    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
     
-    df['signal_long'] = np.where(df['mfi14'] > 80,1,0)
-    df['signal_short'] = np.where(df['mfi14'] < 20,1,0)
+    acceleration=0.02 
+    maximum=0.20
     
-    df['upcross'] = np.where( df['mfi50'][-3] > df['mfi14'][-3] and  df['mfi50'][-2] < df['mfi14'][-2],1,0)
-    df['downcross'] = np.where( df['mfi50'][-3] < df['mfi14'][-3] and  df['mfi50'][-2] > df['mfi14'][-2],1,0)
+    df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
+      
+    df['short_signal'] = np.where( df['Close'][-3] > df['psar'][-3] and  df['Close'][-2] < df['psar'][-2],1,0)
+    df['long_signal'] = np.where( df['Close'][-3] < df['psar'][-3] and  df['Close'][-2] > df['psar'][-2],1,0)
            
        
+    #SIGNAL
+    df['signal'] = np.where(df['diff'] >= 2,1,0)
+    
     #VERIFICACION
-    check_up = np.isin(1, df['upcross'][-30:])
+    check = np.isin(1, df['signal'][-30:])
     
-    if check_up:
-       check_up == 1 
+    if check:
+       check == 1 
     else : 
-       check_up == 0
+       check == 0
     
-    df['check_up'] = check_up
-    
-     #VERIFICACION
-    check_dwn = np.isin(1, df['downcross'][-30:])
-    
-    if check_dwn:
-       check_dwn == 1 
-    else : 
-       check_dwn == 0
-    
-    df['check_dwn'] = check_dwn
+    df['check'] = check
               
     return df[-3:]
         
@@ -78,17 +72,18 @@ def run_strategy():
         print(symbol)
         
         try:
-            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            print(df['check_up'][-2]) 
-            print(df['check_dwn'][-2])                                      
+            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_1MINUTE)
+            print(df['psar'][-3]) 
+            print(df['psar'][-2])
+                                                
             if df is None:
                 continue
             
             
-             
-            if (df['check_dwn'][-2]):
-                    if  (df['signal_short'][-2] == 1):
-                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+            if df['check'][-2]: 
+            
+                    if  (df['short_signal'][-2] == 1):
+                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORSHORT = {
                             "name": "CORTO 3POR",
                             "secret": "ao2cgree8fp",
@@ -101,9 +96,9 @@ def run_strategy():
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                                                 
                    
-            if (df['check_up'][-2]):
-                    if  (df['signal_long'][-2] == 1):
-                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+            
+                    if  (df['long_signal'][-2] == 1):
+                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORLONG = {
                             "name": "LARGO 3POR",
                             "secret": "nwh2tbpay1r",

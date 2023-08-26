@@ -81,7 +81,11 @@ def run_strategy():
             
             
             if df['check'][-2]: 
-                Tb.telegram_canal_prueba(f"📍 Buscando Alerta en {symbol}")
+                mensaje_mostrado = False
+                if symbol and not mensaje_mostrado:
+                    Tb.telegram_canal_prueba(f"📍 Buscando Alerta en {symbol}")
+                    mensaje_mostrado = True
+                    
                 if  (df['short_signal'][-2] == 1):
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORSHORT = {

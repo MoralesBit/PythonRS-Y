@@ -78,7 +78,7 @@ def run_strategy():
         print(symbol)
         
         try:
-            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_1MINUTE)
+            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
             print(df['check_up'][-2]) 
             print(df['check_dwn'][-2])                                      
             if df is None:

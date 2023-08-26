@@ -73,16 +73,16 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_1MINUTE)
-            print(df['psar'][-3]) 
-            print(df['psar'][-2])
+             
+            print(df['check'][-2])
                                                 
             if df is None:
                 continue
             
             
             if df['check'][-2]: 
-            
-                    if  (df['short_signal'][-2] == 1):
+                Tb.telegram_canal_prueba(f"📍 Buscando Alerta en {symbol}")
+                if  (df['short_signal'][-2] == 1):
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORSHORT = {
                             "name": "CORTO 3POR",
@@ -97,7 +97,7 @@ def run_strategy():
                                                 
                    
             
-                    if  (df['long_signal'][-2] == 1):
+                if  (df['long_signal'][-2] == 1):
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORLONG = {
                             "name": "LARGO 3POR",

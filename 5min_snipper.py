@@ -85,8 +85,8 @@ def run_strategy():
                 continue
             
             
-            if df['roc'][-2] < -5:    
-                if (df['check_dwn'][-2]):
+             
+            if (df['check_dwn'][-2]):
                     if  (df['signal_short'][-2] == 1):
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORSHORT = {
@@ -100,8 +100,8 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                                                 
-            if df['roc'][-2] > 5:       
-                if (df['check_up'][-2]):
+                   
+            if (df['check_up'][-2]):
                     if  (df['signal_long'][-2] == 1):
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORLONG = {

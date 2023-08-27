@@ -34,37 +34,20 @@ def calculate_indicators(symbol,interval):
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
       
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-    
-    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowk_matype=0, slowd_period=14, slowd_matype=0)
-    df['slowk'] = slowk
-    df['slowd'] = slowd
-    
-    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
+   
+    df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
     
     acceleration=0.02 
     maximum=0.20
     
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
-      
-    df['short_signal'] = np.where( df['slowk'][-3] > df['slowd'][-3] and df['slowk'][-2] < df['slowd'][-2] and df['slowk'][-2] > 65 ,1,0)
-    df['long_signal'] = np.where( df['slowk'][-3] < df['slowd'][-3] and df['slowk'][-2] > df['slowd'][-2] and df['slowk'][-2] < 35 ,1,0)
-    df['psar_short'] = np.where( df['psar'] < df['Close'],1,0) 
-    df['psar_long'] = np.where( df['psar'] > df['Close'],1,0) 
-           
-       
-    #SIGNAL
-    df['signal'] = np.where(df['diff'] >= 2,1,0)
     
-    #VERIFICACION
-    check = np.isin(1, df['signal'][-30:])
+    df['p_short'] = np.where( df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2],1,0) 
+    df['p_long'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
     
-    if check:
-       check == 1 
-    else : 
-       check == 0
-    
-    df['check'] = check
-              
+    df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
+    df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
+
     return df[-3:]
         
 def run_strategy():
@@ -76,42 +59,41 @@ def run_strategy():
         print(symbol)
         
         try:
-            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_1MINUTE)
-             
-            print(df['check'][-2])
-                                                
+            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
+                                                 
             if df is None:
                 continue
             
-            if df['check'][-2]: 
-                    
-                if  (df['short_signal'][-2] == 1) and (df['psar_short'][-2] == 1):
-                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
-                            PORSHORT = {
-                            "name": "CORTO 3POR",
-                            "secret": "ao2cgree8fp",
-                            "side": "sell",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2]) 
-                            }
-                            }
-                            requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
-                                                
-                   
+              
+            if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1 :
+                        Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
+                        FISHINGSHORT = {
+                        "name": "FISHING SHORT",
+                        "secret": "azsdb9x719",
+                        "side": "sell",
+                        "symbol": symbol,
+                        "open": {
+                        "price": float(df['Close'][-2])
+                        }
+                        }
+   
+                        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
+   
+              
             
-                if  (df['long_signal'][-2] == 1) and (df['psar_long'][-2] == 1):
-                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
-                            PORLONG = {
-                            "name": "LARGO 3POR",
-                            "secret": "nwh2tbpay1r",
-                            "side": "buy",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2])
-                            }
-                            }
-                            requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
+            if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1 :                                                  
+                        Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
+                        FISHINGLONG = {
+                        "name": "FISHING LONG",
+                        "secret": "0kivpja7tz89",
+                        "side": "buy",
+                        "symbol": symbol,
+                        "open": {
+                        "price": float(df['Close'][-2])
+                        }
+                        }
+                        
+                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)  
                             
                            
                         
@@ -121,7 +103,7 @@ def run_strategy():
 
 while True:
     current_time = time.time()
-    seconds_to_wait = 60 - current_time % 60
+    seconds_to_wait = 300 - current_time % 300
     time.sleep(seconds_to_wait)    
     run_strategy()
     #VERSION ESTABLE

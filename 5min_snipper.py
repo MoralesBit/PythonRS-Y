@@ -35,6 +35,10 @@ def calculate_indicators(symbol,interval):
       
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
     
+    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowk_matype=0, slowd_period=14, slowd_matype=0)
+    df['slowk'] = slowk
+    df['slowd'] = slowd
+    
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
     
     acceleration=0.02 
@@ -42,8 +46,10 @@ def calculate_indicators(symbol,interval):
     
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
       
-    df['short_signal'] = np.where( df['Close'][-3] > df['psar'][-3] and  df['Close'][-2] < df['psar'][-2],1,0)
-    df['long_signal'] = np.where( df['Close'][-3] < df['psar'][-3] and  df['Close'][-2] > df['psar'][-2],1,0)
+    df['short_signal'] = np.where( df['slowk'][-3] > df['slowd'][-3] and  df['slowk'][-2] < df['slowd'][-2],1,0)
+    df['long_signal'] = np.where( df['slowk'][-3] < df['slowd'][-3] and  df['slowk'][-2] > df['slowd'][-2],1,0)
+    df['psar_short'] = np.where( df['psar'] < df['Close'],1,0) 
+    df['psar_long'] = np.where( df['psar'] > df['Close'],1,0) 
            
        
     #SIGNAL
@@ -77,15 +83,10 @@ def run_strategy():
             if df is None:
                 continue
             
-            
             if df['check'][-2]: 
-                mensaje_mostrado = False
-                if symbol and not mensaje_mostrado:
-                    Tb.telegram_canal_prueba(f"📍 Buscando Alerta en {symbol}")
-                    mensaje_mostrado = True
                     
-                if  (df['short_signal'][-2] == 1):
-                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+                if  (df['short_signal'][-2] == 1) and (df['psar_short'][-2] == 1):
+                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORSHORT = {
                             "name": "CORTO 3POR",
                             "secret": "ao2cgree8fp",
@@ -99,8 +100,8 @@ def run_strategy():
                                                 
                    
             
-                if  (df['long_signal'][-2] == 1):
-                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+                if  (df['long_signal'][-2] == 1) and (df['psar_long'][-2] == 1):
+                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
                             PORLONG = {
                             "name": "LARGO 3POR",
                             "secret": "nwh2tbpay1r",

@@ -50,7 +50,7 @@ def calculate_indicators(symbol,interval):
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
-    df['roc_signal'] = np.where(df['roc'] > 5 or df['roc'] < -5 ,1,0)
+    df['roc_signal'] = np.where(df['roc'][-2] > 5 or df['roc'][-2] < -5 ,1,0)
 
     return df[-3:]
         

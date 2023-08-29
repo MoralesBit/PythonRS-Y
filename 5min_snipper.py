@@ -105,7 +105,8 @@ def run_strategy():
                         }
                         
                         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)  
-                            
+            
+            time.sleep(1)                 
                            
                         
         except Exception as e:

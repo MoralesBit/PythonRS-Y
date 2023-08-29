@@ -67,7 +67,7 @@ def run_strategy():
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
             df_btc = calculate_indicators("BTCUSDT",interval=Client.KLINE_INTERVAL_5MINUTE)
-            df_1d = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_1DAY)      
+            #df_1d = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_1DAY)      
                                                      
             if df is None:
                 continue
@@ -75,7 +75,7 @@ def run_strategy():
             
             if df_btc['cci'][-2] < 0:       
                 if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1 :
-                    if df_1d['roc_signal'][-1] == 1: 
+                    #if df_1d['roc_signal'][-1] == 1: 
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
@@ -92,7 +92,7 @@ def run_strategy():
               
             if df_btc['cci'][-2] > 0: 
                 if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1 :
-                    if df_1d['roc_signal'][-1] == 1:                                               
+                    #if df_1d['roc_signal'][-1] == 1:                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGLONG = {
                         "name": "FISHING LONG",

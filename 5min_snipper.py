@@ -57,7 +57,6 @@ def calculate_indicators(symbol,interval):
     
     df['roc_signal'] = np.where(df['roc'][-1] > 5 or df['roc'][-1] < -5 ,1,0)
     
-    
     return df[-3:]
         
 def run_strategy():
@@ -71,15 +70,13 @@ def run_strategy():
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
             df_btc = calculate_indicators("BTCUSDT",interval=Client.KLINE_INTERVAL_5MINUTE)
-            #df_1d = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_1DAY)      
                                                      
             if df is None:
                 continue
             
-            
             if df_btc['cci'][-2] < 0 and df_btc['p_btc_long'][-2] == 1:       
                 if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1 :
-                    if df['roc_signal'][-1] == 1 : 
+                    #if df['roc_signal'][-1] == 1 : 
                         Tb.telegram_send_messagete(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
@@ -92,11 +89,10 @@ def run_strategy():
                         }
    
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-   
               
             if df_btc['cci'][-2] > 0 and df_btc['p_btc_short'][-2] == 1: 
                 if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1 :
-                    if df['roc_signal'][-1] == 1 :                                               
+                    #if df['roc_signal'][-1] == 1 :                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGLONG = {
                         "name": "FISHING LONG",

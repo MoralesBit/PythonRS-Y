@@ -50,7 +50,7 @@ def calculate_indicators(symbol,interval):
     
     df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=14)
     
-    df['roc'] = ta.ROC(df['Close'], timeperiod=1)
+    df['roc'] = ta.ROC(df['Close'], timeperiod=12)
     
     df['roc_signal'] = np.where(df['roc'][-1] > 5 or df['roc'][-1] < -5 ,1,0)
 
@@ -75,8 +75,8 @@ def run_strategy():
             
             if df_btc['cci'][-2] < 0:       
                 if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1 :
-                    #if df_1d['roc_signal'][-1] == 1: 
-                        Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
+                    if df['roc_signal'][-1] == 1: 
+                        Tb.telegram_send_messagete(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
                         "secret": "azsdb9x719",
@@ -92,7 +92,7 @@ def run_strategy():
               
             if df_btc['cci'][-2] > 0: 
                 if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1 :
-                    #if df_1d['roc_signal'][-1] == 1:                                               
+                    if df['roc_signal'][-1] == 1:                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGLONG = {
                         "name": "FISHING LONG",

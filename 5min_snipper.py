@@ -45,6 +45,9 @@ def calculate_indicators(symbol,interval):
     df['p_short'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
     df['p_long'] = np.where( df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2],1,0) 
     
+    df['p_btc_short'] = np.where( df['psar'][-2] > df['Close'][-2] ,1,0) 
+    df['p_btc_long'] = np.where( df['psar'][-2] < df['Close'][-2] ,1,0)
+    
     df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
     df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
     
@@ -54,10 +57,7 @@ def calculate_indicators(symbol,interval):
     
     df['roc_signal'] = np.where(df['roc'][-1] > 5 or df['roc'][-1] < -5 ,1,0)
     
-    df['adx'] = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
-    df['adx_long'] = np.where(df['adx'][-3] < df['adx'][-2] ,1,0)
-    df['adx_short'] = np.where(df['adx'][-3] > df['adx'][-2] ,1,0)
-
+    
     return df[-3:]
         
 def run_strategy():
@@ -77,7 +77,7 @@ def run_strategy():
                 continue
             
             
-            if df_btc['cci'][-2] < 0 and df_btc['adx_long'][-2] == 1:       
+            if df_btc['cci'][-2] < 0 and df_btc['p_btc_long'][-2] == 1:       
                 if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1 :
                     if df['roc_signal'][-1] == 1 : 
                         Tb.telegram_send_messagete(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
@@ -94,7 +94,7 @@ def run_strategy():
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
    
               
-            if df_btc['cci'][-2] > 0 and df_btc['adx_short'][-2] == 1: 
+            if df_btc['cci'][-2] > 0 and df_btc['p_btc_short'][-2] == 1: 
                 if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1 :
                     if df['roc_signal'][-1] == 1 :                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")

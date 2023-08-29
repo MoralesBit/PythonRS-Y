@@ -72,7 +72,7 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df_btc['p_btc_long'][-2] == 1:       
+            if df_btc['p_btc_short'][-2] == 1:       
                 if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1 :
                     #if df['roc_signal'][-1] == 1 : 
                         Tb.telegram_send_messagete(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
@@ -88,7 +88,7 @@ def run_strategy():
    
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
               
-            if df_btc['p_btc_short'][-2] == 1: 
+            if df_btc['p_btc_long'][-2] == 1: 
                 if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1 :
                     #if df['roc_signal'][-1] == 1 :                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
@@ -102,7 +102,39 @@ def run_strategy():
                         }
                         }
                         
-                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)  
+                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
+            
+            if df_btc['p_btc_short'][-2] == 1: 
+                if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1 :
+                    #if df['roc_signal'][-1] == 1 :    
+                
+                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+                            PORSHORT = {
+                            "name": "CORTO 3POR",
+                            "secret": "ao2cgree8fp",
+                            "side": "sell",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2]) 
+                            }
+                            }
+                            requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
+                                                
+            if df_btc['p_btc_long'][-2] == 1:       
+                if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1 :
+                    #if df['roc_signal'][-1] == 1 :        
+                
+                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
+                            PORLONG = {
+                            "name": "LARGO 3POR",
+                            "secret": "nwh2tbpay1r",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
+                            requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)              
             
             #time.sleep(0.5)                 
                            

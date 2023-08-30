@@ -51,7 +51,7 @@ def calculate_indicators(symbol,interval):
     df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
     df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
     
-    df['roc'] = ta.ROC(df['Close'], timeperiod=12)
+    df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
     df['roc_long'] = np.where(df['roc'][-2] > 7,1,0)
     df['roc_short'] = np.where(df['roc'][-2] < -7,1,0)

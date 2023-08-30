@@ -59,6 +59,9 @@ def calculate_indicators(symbol,interval):
     df['a_long'] =  np.where(df['adx'][-3] < df['adx'][-2],1,0)
     df['a_short'] =  np.where(df['adx'][-3] > df['adx'][-2],1,0)
     
+    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=14)
+    df['cci_signal'] = np.where(df['cci'][-2] > 0,1,0)
+    
     return df[-3:]
         
 def run_strategy():
@@ -76,9 +79,9 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df_btc['p_btc_short'][-2] == 1 and df_btc['a_short'][-2] == 1:       
-                if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1 :
-                    #if df['roc_signal'][-1] == 1 : 
+            if df_btc['cci_signal'][-2] == 0:       
+                if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1 and df['a_short'][-2] == 1:
+                    if df['roc_signal'][-1] == 1 : 
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
@@ -91,9 +94,9 @@ def run_strategy():
                         }
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
               
-            if df_btc['p_btc_long'][-2] == 1 and df_btc['a_long'][-2] == 1: 
-                if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1 :
-                    #if df['roc_signal'][-1] == 1 :                                               
+            if df_btc['cci_signal'][-2] == 1:   
+                if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1 and df['a_long'][-2] == 1:
+                    if df['roc_signal'][-1] == 1 :                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGLONG = {
                         "name": "FISHING LONG",
@@ -105,37 +108,7 @@ def run_strategy():
                         }
                         }
                         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
-            
-            if df_btc['p_btc_short'][-2] == 1 and df_btc['a_short'][-2] == 1: 
-                if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1 :
-                    #if df['roc_signal'][-1] == 1 :    
-                        Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
-                        PORSHORT = {
-                        "name": "CORTO 3POR",
-                        "secret": "ao2cgree8fp",
-                        "side": "sell",
-                        "symbol": symbol,
-                        "open": {
-                        "price": float(df['Close'][-2]) 
-                        }
-                        }
-                        requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
-                                                
-            if df_btc['p_btc_long'][-2] == 1 and df_btc['a_long'][-2] == 1 :       
-                if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1 :
-                    #if df['roc_signal'][-1] == 1 :        
-                
-                        Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio Entrada: {df['Close'][-2]}\n📍 Picker")
-                        PORLONG = {
-                        "name": "LARGO 3POR",
-                        "secret": "nwh2tbpay1r",
-                        "side": "buy",
-                        "symbol": symbol,
-                        "open": {
-                        "price": float(df['Close'][-2])
-                        }
-                        }
-                        requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)              
+                   
             
             #time.sleep(0.5)                 
                            

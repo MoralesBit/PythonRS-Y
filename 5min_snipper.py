@@ -53,8 +53,8 @@ def calculate_indicators(symbol,interval):
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=12)
     
-    df['roc_long'] = np.where(df['roc'][-1] > 7,1,0)
-    df['roc_short'] = np.where(df['roc'][-1] < -7,1,0)
+    df['roc_long'] = np.where(df['roc'][-2] > 7,1,0)
+    df['roc_short'] = np.where(df['roc'][-2] < -7,1,0)
     
     df['adx'] = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
     df['a_long'] =  np.where(df['adx'][-3] < df['adx'][-2],1,0)
@@ -75,14 +75,14 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            df_btc = calculate_indicators("BTCUSDT",interval=Client.KLINE_INTERVAL_5MINUTE)
+            print(df['roc'][-2])
                                                      
             if df is None:
                 continue
             
                    
             if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1:
-                    if df['roc_short'][-1] == 1 : 
+                    if df['roc_short'][-2] == 1 : 
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
@@ -97,7 +97,7 @@ def run_strategy():
               
                
             if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1:
-                    if df['roc_long'][-1] == 1 :                                               
+                    if df['roc_long'][-2] == 1 :                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGLONG = {
                         "name": "FISHING LONG",

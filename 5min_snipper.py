@@ -80,7 +80,7 @@ def run_strategy():
                 continue
             
             if df_btc['cci_signal'][-2] == 0:       
-                if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1 and df['a_short'][-2] == 1:
+                if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1 and df['cci_signal'][-2] == 0:
                     #if df['roc_signal'][-1] == 1 : 
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGSHORT = {
@@ -95,7 +95,7 @@ def run_strategy():
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
               
             if df_btc['cci_signal'][-2] == 1:   
-                if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1 and df['a_long'][-2] == 1:
+                if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1 and df['cci_signal'][-2] == 1:
                     #if df['roc_signal'][-1] == 1 :                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGLONG = {

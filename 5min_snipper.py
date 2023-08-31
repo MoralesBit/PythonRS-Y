@@ -37,32 +37,6 @@ def calculate_indicators(symbol,interval):
    
     df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
     
-    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
-    
-    df['rsilong'] =  np.where(df['rsi'][-3] < 50 and df['rsi'][-2] > 50 ,1,0)
-    df['rsishort'] =  np.where(df['rsi'][-3] > 50 and df['rsi'][-2] < 50 ,1,0) 
-    
-    #VERIFICACION
-    checkl = np.isin(1, df['rsilong'][-30:])
-    
-    if checkl:
-       checkl == 1 
-    else : 
-       checkl == 0
-    
-    df['checkl'] = checkl    
-    
-    #VERIFICACION
-    checks = np.isin(1, df['rsishort'][-30:])
-    
-    if checks:
-       checks == 1 
-    else : 
-       checks == 0
-    
-    df['checks'] = checks 
-    
-    
     acceleration=0.02 
     maximum=0.20
     
@@ -70,9 +44,6 @@ def calculate_indicators(symbol,interval):
     
     df['p_short'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
     df['p_long'] = np.where( df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2],1,0) 
-    
-    df['p_btc_short'] = np.where( df['psar'][-2] > df['Close'][-2] ,1,0) 
-    df['p_btc_long'] = np.where( df['psar'][-2] < df['Close'][-2] ,1,0)
     
     df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
     df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
@@ -82,8 +53,12 @@ def calculate_indicators(symbol,interval):
     df['roc_long'] = np.where(df['roc'][-2] > 5,1,0)
     df['roc_short'] = np.where(df['roc'][-2] < -5,1,0)
     
-    df['adx'] = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
-    df['adx_signal'] =  np.where(df['adx'][-2] > 20 ,1,0)
+    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=14, slowk_matype=0, slowd_period=3, slowd_matype=0)
+    df['slowk'] = slowk
+    df['slowd'] = slowd  
+    
+    df['k_long'] = np.where(df['slowk'][-2] < 40,1,0)
+    df['k_short'] = np.where(df['slowk'][-2] < 60,1,0)
     
     return df[-3:]
         
@@ -102,9 +77,9 @@ def run_strategy():
             if df is None:
                 continue
             
-                  
+                   
             if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1:
-                    if df['roc_short'][-2] == 1: 
+                    if df['roc_short'][-2] == 1 and df['k_short'][-2] == 1:
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
@@ -117,9 +92,9 @@ def run_strategy():
                         }
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
               
-            
+               
             if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1:
-                    if df['roc_long'][-2] == 1 and df['rsilong'][-2] == 1:                                               
+                    if df['roc_long'][-2] == 1 and df['k_long'][-2] == 1:                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGLONG = {
                         "name": "FISHING LONG",

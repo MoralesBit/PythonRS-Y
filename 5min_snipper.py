@@ -102,7 +102,7 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df['checkl'][-2] == 1:      
+            if df['checks'][-2] == 1:      
                 if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1:
                     if df['roc_short'][-2] == 1: 
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
@@ -117,7 +117,7 @@ def run_strategy():
                         }
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
               
-            if df['checks'][-2] == 1: 
+            if df['checkl'][-2] == 1: 
                 if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1:
                     if df['roc_long'][-2] == 1 and df['rsilong'][-2] == 1:                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")

@@ -39,8 +39,8 @@ def calculate_indicators(symbol,interval):
     
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
     df['rsi_sma'] = ta.SMA(df['rsi'], timeperiod=14)
-    df['rsilong'] =  np.where(df['rsi_sma'][-3] > 45 and df['rsi'][-2] < 45  ,1,0)
-    df['rsishort'] =  np.where(df['rsi_sma'][-3] < 55 and df['rsi_sma'][-2] > 55  ,1,0)     
+    df['rsilong'] =  np.where(df['rsi_sma'][-3] > 55 and df['rsi'][-2] < 55  ,1,0)
+    df['rsishort'] =  np.where(df['rsi_sma'][-3] < 45 and df['rsi_sma'][-2] > 45  ,1,0)     
     
     #VERIFICACION
     checkl = np.isin(1, df['rsilong'][-14:])

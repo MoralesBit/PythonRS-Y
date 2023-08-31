@@ -82,8 +82,8 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df['checks'][-2] == 1:       
-                if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1:
+                  
+            if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1:
                     if df['roc_short'][-2] == 1 and df['rsishort'][-2] == 1: 
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGSHORT = {

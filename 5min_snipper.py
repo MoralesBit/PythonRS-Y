@@ -39,9 +39,29 @@ def calculate_indicators(symbol,interval):
     
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
     
-    df['rsilong'] =  np.where(df['rsi'][-3] < 50 ,1,0)
-    df['rsishort'] =  np.where(df['rsi'][-3] > 50 ,1,0)     
- 
+    df['rsilong'] =  np.where(df['rsi'][-3] < 50 and df['rsi'][-2] > 50 ,1,0)
+    df['rsishort'] =  np.where(df['rsi'][-3] > 50 and df['rsi'][-2] < 50 ,1,0) 
+    
+    #VERIFICACION
+    checkl = np.isin(1, df['rsilong'][-30:])
+    
+    if checkl:
+       checkl == 1 
+    else : 
+       checkl == 0
+    
+    df['checkl'] = checkl    
+    
+    #VERIFICACION
+    checks = np.isin(1, df['rsishort'][-30:])
+    
+    if checks:
+       checks == 1 
+    else : 
+       checks == 0
+    
+    df['checks'] = checks 
+    
     
     acceleration=0.02 
     maximum=0.20
@@ -82,9 +102,9 @@ def run_strategy():
             if df is None:
                 continue
             
-                  
-            if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1:
-                    if df['roc_short'][-2] == 1 and df['rsishort'][-2] == 1: 
+            if df['checkl'][-2] == 1:      
+                if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1:
+                    if df['roc_short'][-2] == 1: 
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
@@ -97,8 +117,8 @@ def run_strategy():
                         }
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
               
-              
-            if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1:
+            if df['checks'][-2] == 1: 
+                if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1:
                     if df['roc_long'][-2] == 1 and df['rsilong'][-2] == 1:                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGLONG = {

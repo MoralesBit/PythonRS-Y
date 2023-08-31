@@ -37,6 +37,11 @@ def calculate_indicators(symbol,interval):
    
     df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
     
+    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
+    df['srsi'] = ta.SMA(df['rsi'], timeperiod=14)
+    df['rsi_long'] = np.where(df['srsi'] < 55,1,0)
+    df['rsi_short'] = np.where(df['srsi'][-2] > 45,1,0)
+        
     acceleration=0.02 
     maximum=0.20
     
@@ -78,7 +83,7 @@ def run_strategy():
             
                    
             if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1:
-                    if df['roc_short'][-2] == 1 : 
+                    if df['roc_short'][-2] == 1 and df['rsi_short'][-2] == 1: 
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
@@ -93,7 +98,7 @@ def run_strategy():
               
                
             if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1:
-                    if df['roc_long'][-2] == 1 :                                               
+                    if df['roc_long'][-2] == 1 and df['rsi_long'][-2] == 1:                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGLONG = {
                         "name": "FISHING LONG",

@@ -50,15 +50,10 @@ def calculate_indicators(symbol,interval):
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
-    df['roc_long'] = np.where(df['roc'][-2] > 5,1,0)
-    df['roc_short'] = np.where(df['roc'][-2] < -5,1,0)
+    df['roc_long'] = np.where(df['roc'][-2] > 6,1,0)
+    df['roc_short'] = np.where(df['roc'][-2] < -6,1,0)
     
-    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=14, slowk_matype=0, slowd_period=3, slowd_matype=0)
-    df['slowk'] = slowk
-    df['slowd'] = slowd  
-    
-    df['k_long'] = np.where(df['slowk'][-2] < 40,1,0)
-    df['k_short'] = np.where(df['slowk'][-2] < 60,1,0)
+    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
     
     return df[-3:]
         
@@ -79,7 +74,7 @@ def run_strategy():
             
                    
             if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
-                    if df['roc_short'][-2] == 1 :
+                if df['roc_short'][-2] == 1 :
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
@@ -93,8 +88,8 @@ def run_strategy():
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
               
                
-            if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
-                    if df['roc_long'][-2] == 1 :                                               
+            elif df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
+                if df['roc_long'][-2] == 1 :                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Fishing Pisha ▫️ 5 min")
                         FISHINGLONG = {
                         "name": "FISHING LONG",
@@ -106,7 +101,9 @@ def run_strategy():
                         }
                         }
                         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
-                   
+            
+            else :
+                print("NEXT")       
             
             #time.sleep(0.5)                 
                            

@@ -55,8 +55,8 @@ def calculate_indicators(symbol,interval):
     
     df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
     df['cci_signal'] = np.where(df['cci'][-2] > 0,1,0)
-    df['cci_cross_long'] = np.where(df['cci'][-3] > 0 and df['cci'][-2] <0,1,0)
-    df['cci_cross_short'] = np.where(df['cci'][-3] > 0 and df['cci'][-2] <0,1,0)
+    df['cci_cross_long'] = np.where(df['cci'][-3] > 0 and df['cci'][-2] < 0,1,0)
+    df['cci_cross_short'] = np.where(df['cci'][-3] < 0 and df['cci'][-2] > 0,1,0)
     
     #VERIFICACION
     checks = np.isin(1, df['p_short'][-5:])

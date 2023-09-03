@@ -101,32 +101,14 @@ def run_strategy():
                 if df['ema_short'][-2] == 1:
                     if df['roc_short'][-2] == 1 and df['cci_cross_short'][-2] == 1 :
                         Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
-                        FISHINGSHORT = {
-                        "name": "FISHING SHORT",
-                        "secret": "azsdb9x719",
-                        "side": "sell",
-                        "symbol": symbol,
-                        "open": {
-                        "price": float(df['Close'][-2])
-                        }
-                        }
-                        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
+                      
               
                 
             if df['check_long'][-2] == 1:
                 if df['ema_long'][-2] == 1:
                     if df['roc_long'][-2] == 1  and df['cci_cross_long'][-2] == 1:                                               
                         Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
-                        FISHINGLONG = {
-                        "name": "FISHING LONG",
-                        "secret": "0kivpja7tz89",
-                        "side": "buy",
-                        "symbol": symbol,
-                        "open": {
-                        "price": float(df['Close'][-2])
-                        }
-                        }
-                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
+              
             
             else :
                 print("NEXT")       

@@ -98,7 +98,7 @@ def run_strategy():
                 continue
             
             if df['check_short'][-2] == 1:      
-                if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
+                if df['cci_cross_short'][-2] == 1 and df['ema_short'][-2] == 1:
                         Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         PORSHORT = {
                             "name": "CORTO 3POR",
@@ -115,7 +115,7 @@ def run_strategy():
               
                 
             if df['check_long'][-2] == 1:
-                 if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:                                             
+                 if df['cci_cross_long'][-2] == 1 and df['ema_long'][-2] == 1:                                             
                         Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         PORLONG = {
                             "name": "LARGO 3POR",

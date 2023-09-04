@@ -98,8 +98,7 @@ def run_strategy():
                 continue
             
             if df['check_short'][-2] == 1:      
-                if df['ema_short'][-2] == 1:
-                    if df['roc_short'][-2] == 1 and df['cci_cross_short'][-2] == 1 :
+                
                         Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
@@ -114,8 +113,7 @@ def run_strategy():
               
                 
             if df['check_long'][-2] == 1:
-                if df['ema_long'][-2] == 1:
-                    if df['roc_long'][-2] == 1  and df['cci_cross_long'][-2] == 1:                                               
+                                                             
                         Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         FISHINGLONG = {
                         "name": "FISHING LONG",

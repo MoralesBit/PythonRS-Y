@@ -72,15 +72,15 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            #dfbtc = calculate_indicators("BTCUSDT",interval=Client.KLINE_INTERVAL_5MINUTE)
+            dfbtc = calculate_indicators("BTCUSDT",interval=Client.KLINE_INTERVAL_5MINUTE)
             # revisando si seguir ema de BTC
             print(df['roc'][-2])
                                                      
             if df is None:
                 continue
             
-                  
-            if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
+            if dfbtc['ema_short'][-2] == 1:      
+                if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
                     if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 and df['rsi_signal_short'][-2] == 1:
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         FISHINGSHORT = {
@@ -95,7 +95,8 @@ def run_strategy():
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
               
                 
-            if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
+            else :
+                if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
                     if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1 and df['rsi_signal_long'][-2] == 1:                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         FISHINGLONG = {
@@ -109,11 +110,9 @@ def run_strategy():
                         }
                         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
             
-            else :
-                print("NEXT")       
+                   
             
-            #time.sleep(0.5)                 
-                           
+            
                         
         except Exception as e:
           

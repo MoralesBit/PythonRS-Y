@@ -34,6 +34,10 @@ def calculate_indicators(symbol,interval):
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
       
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
+    
+    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
+    df['rsi_signal_long'] = np.where(df['rsi'] < 60,1,0)
+    df['rsi_signal_short'] = np.where(df['rsi'] > 40,1,0)
    
     df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
     
@@ -50,8 +54,8 @@ def calculate_indicators(symbol,interval):
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
-    df['roc_long'] = np.where(df['roc'][-2] > 6,1,0)
-    df['roc_short'] = np.where(df['roc'][-2] < -6,1,0)
+    df['roc_long'] = np.where(df['roc'][-2] > 8,1,0)
+    df['roc_short'] = np.where(df['roc'][-2] < -8,1,0)
     
     df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
     df['cci_signal'] = np.where(df['cci'][-2] > 0,1,0)
@@ -77,7 +81,7 @@ def run_strategy():
             
                   
             if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
-                    if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 :
+                    if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 and df['rsi_signal_short'] == 1:
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
@@ -92,7 +96,7 @@ def run_strategy():
               
                 
             if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
-                    if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1:                                               
+                    if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1 and df['rsi_signal_long'] == 1:                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         FISHINGLONG = {
                         "name": "FISHING LONG",

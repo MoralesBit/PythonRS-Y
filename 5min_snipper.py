@@ -81,7 +81,7 @@ def run_strategy():
             
                   
             if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
-                    if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 and df['rsi_signal_short'] == 1:
+                    if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 and df['rsi_signal_short'][-2] == 1:
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
@@ -96,7 +96,7 @@ def run_strategy():
               
                 
             if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
-                    if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1 and df['rsi_signal_long'] == 1:                                               
+                    if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1 and df['rsi_signal_long'][-2] == 1:                                               
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         FISHINGLONG = {
                         "name": "FISHING LONG",

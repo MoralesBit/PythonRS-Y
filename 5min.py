@@ -13,9 +13,9 @@ client = Client(api_key=Pkey, api_secret=Skey)
 def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
-    symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    #symbols = ["AMBUSDT", "BLZUSDT"]
-    symbols.remove("ETHBTC")  
+    #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
+    symbols = ["FLMUSDT"]
+    #symbols.remove("ETHBTC")  
     return symbols
 
    
@@ -61,7 +61,7 @@ def run_strategy():
         print(symbol)
         
         try:
-            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_1MINUTE)
+            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
            
                                                    
             if df is None:
@@ -69,10 +69,33 @@ def run_strategy():
            
             if df['diff_short'][-1] == 1 and df['cci_short'][-1] == 1 and df['restro_signal_short'][-1]:
                 Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
-             
+                PORSHORT = {
+                            "name": "CORTO 3POR",
+                            "secret": "ao2cgree8fp",
+                            "side": "sell",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2]) 
+                            }
+                            }
+   
+                
+                requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
+                        
             if df['diff_short'][-1] == 1 and df['cci_short'][-1] == 1  and df['restro_signal_long'][-1]:
                 Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
-            time.sleep(1)            
+                PORLONG = {
+                            "name": "LARGO 3POR",
+                            "secret": "nwh2tbpay1r",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
+                requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
+            
+            time.sleep(0.25)            
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

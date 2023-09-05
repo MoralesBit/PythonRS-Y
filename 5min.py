@@ -43,7 +43,7 @@ def calculate_indicators(symbol,interval):
     df['restro_signal_long'] = np.where(0.60 > df['retro_long'][-1] > 0.5,1,0)
     
     df['trix'] = ta.TRIX(df['Close'])
-    df['trix_signal'] = np.where(df['trix'][-2] < df['trix'][-1],1,0)
+    df['trix_signal'] = np.where(df['trix'][-3] < df['trix'][-2] < df['trix'][-1],1,0)
     
       
     #df['rsi'] = ta.RSI(df['Close'], timeperiod=14)

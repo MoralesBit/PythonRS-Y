@@ -38,9 +38,9 @@ def calculate_indicators(symbol,interval):
    
     
     df['retro_short'] = abs((df['High'] / df['Close'] -1) * 100) 
-    df['retro_signal_short'] = np.where(0.60 > df['retro_short'][-1] > 0.5,1,0)
+    df['retro_signal_short'] = np.where(1> df['retro_short'][-1] > 0.5,1,0)
     df['retro_long'] = abs((df['Low'] / df['Close'] -1) * 100) 
-    df['retro_signal_long'] = np.where(0.60 > df['retro_long'][-1] > 0.5,1,0)
+    df['retro_signal_long'] = np.where(1 > df['retro_long'][-1] > 0.5,1,0)
     
     acceleration=0.02 
     maximum=0.20

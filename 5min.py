@@ -34,14 +34,16 @@ def calculate_indicators(symbol,interval):
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
       
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-    df['diff_signal'] = np.where(df['diff'] > 3,1,0)
+    df['diff_signal'] = np.where(df['diff'] > 4,1,0)
    
     
     df['retro_short'] = abs((df['High'] / df['Close'] -1) * 100) 
-    df['restro_signal_short'] = np.where(0.30 > df['retro_short'][-1] > 0.15,1,0)
+    df['restro_signal_short'] = np.where(0.60 > df['retro_short'][-1] > 0.5,1,0)
     df['retro_long'] = abs((df['Low'] / df['Close'] -1) * 100) 
-    df['restro_signal_long'] = np.where(0.30 > df['retro_long'][-1] > 0.15,1,0)
+    df['restro_signal_long'] = np.where(0.60 > df['retro_long'][-1] > 0.5,1,0)
     
+    df['trix'] = ta.TRIX(df['Close'])
+    df['trix_signal'] = np.where(df['trix'][-2] < df['trix'][-1],1,0)
     
       
     #df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
@@ -69,7 +71,7 @@ def run_strategy():
             if df is None:
                 continue
            
-            if df['diff_signal'][-1] == 1 and df['restro_signal_short'][-1]:
+            if df['diff_signal'][-1] == 1 and df['restro_signal_short'][-1] and df['trix_signal'][-1] == 0:
                 Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🚀 Fast & Fury ")
                 PORSHORT = {
                             "name": "PICKER SHORT",
@@ -84,7 +86,7 @@ def run_strategy():
                 
                 requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                         
-            if df['diff_signal'][-1] == 1 and df['restro_signal_long'][-1]:
+            if df['diff_signal'][-1] == 1 and df['restro_signal_long'][-1] and df['trix_signal'][-1] == 1:
                 Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n🚀 Fast & Fury")
                 PORLONG = {
                             "name": "PICKER LONG",

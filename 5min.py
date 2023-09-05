@@ -34,13 +34,13 @@ def calculate_indicators(symbol,interval):
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
       
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-    df['diff_signal'] = np.where(df['diff'] > 1.5,1,0)
+    df['diff_signal'] = np.where(df['diff'] > 1,1,0)
    
     
-    df['retro_short'] = abs((df['High'] / df['Close'] -1) * 100) 
-    df['retro_signal_short'] = np.where(1> df['retro_short'][-1] > 0.5,1,0)
-    df['retro_long'] = abs((df['Low'] / df['Close'] -1) * 100) 
-    df['retro_signal_long'] = np.where(1 > df['retro_long'][-1] > 0.5,1,0)
+    df['retro_short'] = abs((df['High'] / df['Open'] -1) * 100) 
+    df['retro_signal_short'] = np.where(df['retro_short'][-1] > 0.5,1,0)
+    df['retro_long'] = abs((df['Low'] / df['Open'] -1) * 100) 
+    df['retro_signal_long'] = np.where(df['retro_long'][-1] > 0.5,1,0)
     
     acceleration=0.02 
     maximum=0.20

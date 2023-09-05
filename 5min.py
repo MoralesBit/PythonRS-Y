@@ -46,7 +46,7 @@ def calculate_indicators(symbol,interval):
     maximum=0.20
     
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
-    df['psar_signal'] = np.where(df['psar'][-2] > df['Close'], 1,0)  
+    df['psar_signal'] = np.where(df['psar'] > df['Close'], 1,0)  
       
     #df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
       

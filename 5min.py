@@ -14,7 +14,7 @@ def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
     #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    symbols = ["FLMUSDT"]
+    symbols = ["PERPUSDT"]
     #symbols.remove("ETHBTC")  
     return symbols
 
@@ -38,9 +38,9 @@ def calculate_indicators(symbol,interval):
    
     
     df['retro_short'] = abs((df['High'] / df['Close'] -1) * 100) 
-    df['restro_signal_short'] = np.where(0.60 > df['retro_short'][-1] > 0.5,1,0)
+    df['retro_signal_short'] = np.where(0.60 > df['retro_short'][-1] > 0.5,1,0)
     df['retro_long'] = abs((df['Low'] / df['Close'] -1) * 100) 
-    df['restro_signal_long'] = np.where(0.60 > df['retro_long'][-1] > 0.5,1,0)
+    df['retro_signal_long'] = np.where(0.60 > df['retro_long'][-1] > 0.5,1,0)
     
     acceleration=0.02 
     maximum=0.20
@@ -74,7 +74,7 @@ def run_strategy():
             if df is None:
                 continue
            
-            if df['diff_signal'][-1] == 1 and df['restro_signal_short'][-1] and df['psar_signal'][-1] == 1:
+            if df['diff_signal'][-1] == 1 and df['retro_signal_short'][-1] and df['psar_signal'][-1] == 1:
                 Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🚀 Fast and Fury")
                 PORSHORT = {
                             "name": "PICKER SHORT",
@@ -89,7 +89,7 @@ def run_strategy():
                 
                 requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                         
-            if df['diff_signal'][-1] == 1 and df['restro_signal_long'][-1] and df['psar_signal'][-1] == 0:
+            if df['diff_signal'][-1] == 1 and df['retro_signal_long'][-1] and df['psar_signal'][-1] == 0:
                 Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n🚀 Fast and Fury")
                 PORLONG = {
                             "name": "PICKER LONG",

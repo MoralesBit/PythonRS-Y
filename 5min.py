@@ -62,7 +62,7 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            print(df['diff'][-2])
+            print(df['diff'][-1])
                                                    
             if df is None:
                 continue
@@ -95,7 +95,7 @@ def run_strategy():
                             }
                 requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
             
-            time.sleep(0.25)            
+            time.sleep(0.2)            
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

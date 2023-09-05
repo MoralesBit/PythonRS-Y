@@ -63,8 +63,8 @@ def run_strategy():
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
             print(df['diff'][-1])
-            print("diff_short", df['retro_short'][-1])
-            print("diff_long", df['retro_long'][-1])
+            print(df['retro_short'][-1])
+            print(df['retro_long'][-1])
                                                    
             if df is None:
                 continue

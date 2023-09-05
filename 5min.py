@@ -40,7 +40,7 @@ def calculate_indicators(symbol,interval):
     df['retro_short'] = abs((df['High'] / df['Close'] -1) * 100) 
     df['restro_signal_short'] = np.where(df['retro_short'] > 0.15,1,0)
     df['retro_long'] = abs((df['Low'] / df['Close'] -1) * 100) 
-    df['restro_signal_short'] = np.where(df['retro_long'] > 0.15,1,0)
+    df['restro_signal_long'] = np.where(df['retro_long'] > 0.15,1,0)
     
     
       
@@ -63,6 +63,8 @@ def run_strategy():
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
             print(df['diff'][-1])
+            print("diff_short", df['restro_signal_short'][-1])
+            print("diff_long", df['restro_signal_long'][-1])
                                                    
             if df is None:
                 continue
@@ -95,7 +97,7 @@ def run_strategy():
                             }
                 requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 
             
-            time.sleep(0.2)            
+            time.sleep(0.25)            
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

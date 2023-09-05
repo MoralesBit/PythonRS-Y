@@ -89,16 +89,15 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            dfbtc = calculate_indicators("BTCUSDT",interval=Client.KLINE_INTERVAL_5MINUTE)
+            #dfbtc = calculate_indicators("BTCUSDT",interval=Client.KLINE_INTERVAL_5MINUTE)
             # revisando si seguir ema de BTC
-            print(df['roc'][-2])
-                                                     
+                                                   
             if df is None:
                 continue
             
             #if dfbtc['ema_short'][-2] == 1:      
             if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
-                    if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 and df['ema_short_20'][-2] == 1:
+                if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 and df['ema_short_20'][-2] == 1:
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
@@ -114,7 +113,7 @@ def run_strategy():
                 
             
             if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
-                    if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1 and df['ema_long_20'][-2] == 1:                                             
+                if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1 and df['ema_long_20'][-2] == 1:                                             
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         FISHINGLONG = {
                         "name": "FISHING LONG",
@@ -129,7 +128,7 @@ def run_strategy():
             
             if df['BB_signal_short'][-2] == 1 :
                 if df['diff_signal'][-2] == 1 and df['rsi_signal_short'][-2] == 1:
-                        Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
+                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         PORSHORT = {
                             "name": "CORTO 3POR",
                             "secret": "ao2cgree8fp",
@@ -146,7 +145,7 @@ def run_strategy():
                 
             if df['BB_signal_long'][-2] == 1 :
                 if df['diff_signal'][-2] == 1 and df['rsi_signal_long'][-2] == 1:                                            
-                        Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
+                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         PORLONG = {
                             "name": "LARGO 3POR",
                             "secret": "nwh2tbpay1r",
@@ -157,9 +156,7 @@ def run_strategy():
                             }
                             }
                         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)         
-            
-            
-                        
+                                  
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

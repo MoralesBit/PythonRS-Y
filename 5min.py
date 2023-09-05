@@ -34,7 +34,7 @@ def calculate_indicators(symbol,interval):
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
       
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-    df['diff_signal'] = np.where(df['diff'] > 4,1,0)
+    df['diff_signal'] = np.where(df['diff'] > 3,1,0)
    
     
     df['retro_short'] = abs((df['High'] / df['Close'] -1) * 100) 
@@ -67,6 +67,7 @@ def run_strategy():
             print(df['diff'][-1])
             print(df['retro_short'][-1])
             print(df['retro_long'][-1])
+            print(df['trix'][-1])
                                                    
             if df is None:
                 continue

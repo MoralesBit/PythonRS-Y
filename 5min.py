@@ -42,9 +42,11 @@ def calculate_indicators(symbol,interval):
     df['retro_long'] = abs((df['Low'] / df['Close'] -1) * 100) 
     df['restro_signal_long'] = np.where(0.60 > df['retro_long'][-1] > 0.5,1,0)
     
-    df['trix'] = ta.TRIX(df['Close'])
-    df['trix_signal'] = np.where(df['trix'][-3] < df['trix'][-2] < df['trix'][-1],1,0)
+    acceleration=0.02 
+    maximum=0.20
     
+    df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
+    df['psar_signal'] = np.where(df['psar'][-2] > df['Close'], 1,0)  
       
     #df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
       
@@ -67,12 +69,12 @@ def run_strategy():
             print(df['diff'][-1])
             print(df['retro_short'][-1])
             print(df['retro_long'][-1])
-            print(df['trix'][-1])
+            print(df['psar_signal'][-1])
                                                    
             if df is None:
                 continue
            
-            if df['diff_signal'][-1] == 1 and df['restro_signal_short'][-1] and df['trix_signal'][-1] == 0:
+            if df['diff_signal'][-1] == 1 and df['restro_signal_short'][-1] and df['psar_signal'][-1] == 1:
                 Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🚀 Fast and Fury")
                 PORSHORT = {
                             "name": "PICKER SHORT",
@@ -87,7 +89,7 @@ def run_strategy():
                 
                 requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                         
-            if df['diff_signal'][-1] == 1 and df['restro_signal_long'][-1] and df['trix_signal'][-1] == 1:
+            if df['diff_signal'][-1] == 1 and df['restro_signal_long'][-1] and df['psar_signal'][-1] == 0:
                 Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n🚀 Fast and Fury")
                 PORLONG = {
                             "name": "PICKER LONG",

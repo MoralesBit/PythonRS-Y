@@ -33,51 +33,22 @@ def calculate_indicators(symbol,interval):
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
       
-    df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-   
-    df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
+    df['diff'] = ((df['High'] / df['Low'] -1) * 100)
+    df['diff_short'] = np.where(df['diff'] > 3,1,0)
+    df['diff_long'] = np.where(df['diff'] < -3,1,0)
     
-    acceleration=0.02 
-    maximum=0.20
+    df['retro_short'] = abs((df['High'] / df['Close'] -1) * 100) 
+    df['restro_signal_short'] = np.where(df['retro_short'] > 0.15,1,0)
+    df['retro_long'] = abs((df['Low'] / df['Close'] -1) * 100) 
+    df['restro_signal_short'] = np.where(df['retro_long'] > 0.15,1,0)
     
-    df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
     
-    df['p_short'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
-    df['p_long'] = np.where( df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2],1,0) 
-    
-    df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
-    df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
-    
-    df['roc'] = ta.ROC(df['Close'], timeperiod=288)
-    
-    df['roc_long'] = np.where(df['roc'][-2] > 6,1,0)
-    df['roc_short'] = np.where(df['roc'][-2] < -6,1,0)
-    
+      
+    #df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
+      
     df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
-    df['cci_signal'] = np.where(df['cci'][-2] > 0,1,0)
-    df['cci_cross_long'] = np.where(df['cci'][-3] > 0 and df['cci'][-2] < 0,1,0)
-    df['cci_cross_short'] = np.where(df['cci'][-3] < 0 and df['cci'][-2] > 0,1,0)
-    
-    #VERIFICACION
-    checks = np.isin(1, df['p_short'][-10:])
-    
-    if checks:
-       checks == 1 
-    else : 
-       checks == 0
-    
-    df['check_short'] = checks
-    
-    #VERIFICACION
-    checkl = np.isin(1, df['p_long'][-10:])
-    
-    if checkl:
-       checkl == 1 
-    else : 
-       checkl == 0
-    
-    df['check_long'] = checkl
-    
+    df['cci_short'] = np.where(df['cci'][-2] > 250,1,0)
+    df['cci_long'] = np.where(df['cci'][-2] < -250,1,0)
     
     return df[-3:]
         
@@ -90,57 +61,25 @@ def run_strategy():
         print(symbol)
         
         try:
-            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            
-            print(df['roc'][-2])
-                                                     
+            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_1MINUTE)
+           
+                                                   
             if df is None:
                 continue
-            
-            if df['check_short'][-2] == 1:      
-                if df['cci_cross_short'][-2] == 1 and df['ema_short'][-2] == 1:
-                        Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
-                        PORSHORT = {
-                            "name": "CORTO 3POR",
-                            "secret": "ao2cgree8fp",
-                            "side": "sell",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2]) 
-                            }
-                            }
-   
-                
-                        requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
-              
-                
-            if df['check_long'][-2] == 1:
-                 if df['cci_cross_long'][-2] == 1 and df['ema_long'][-2] == 1:                                             
-                        Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
-                        PORLONG = {
-                            "name": "LARGO 3POR",
-                            "secret": "nwh2tbpay1r",
-                            "side": "buy",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2])
-                            }
-                            }
-                        requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)  
-            
-            else :
-                print("NEXT")       
-            
-            #time.sleep(0.5)                 
-                           
-                        
+           
+            if df['diff_short'][-1] == 1 and df['cci_short'][-1] == 1 and df['restro_signal_short'][-1]:
+                Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
+        
+            if df['diff_short'][-1] == 1 and df['cci_short'][-1] == 1  and df['restro_signal_long'][-1]:
+                Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
+                       
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")
 
 while True:
     current_time = time.time()
-    seconds_to_wait = 300 - current_time % 300
+    seconds_to_wait = 1 - current_time % 1
     time.sleep(seconds_to_wait)    
     run_strategy()
     #VERSION ESTABLE

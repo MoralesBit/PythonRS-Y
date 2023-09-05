@@ -82,7 +82,7 @@ def run_strategy():
                             "side": "sell",
                             "symbol": symbol,
                             "open": {
-                            "price": float(df['Close'][-1]) 
+                            "price": float(df['Open'][-1]) 
                             }
                             }
    
@@ -97,7 +97,7 @@ def run_strategy():
                             "side": "buy",
                             "symbol": symbol,
                             "open": {
-                            "price": float(df['Close'][-1])
+                            "price": float(df['Open'][-1])
                             }
                             }
                 requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG) 

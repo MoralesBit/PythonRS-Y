@@ -69,10 +69,10 @@ def run_strategy():
            
             if df['diff_short'][-1] == 1 and df['cci_short'][-1] == 1 and df['restro_signal_short'][-1]:
                 Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
-        
+             
             if df['diff_short'][-1] == 1 and df['cci_short'][-1] == 1  and df['restro_signal_long'][-1]:
                 Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
-                       
+            time.sleep(1)            
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

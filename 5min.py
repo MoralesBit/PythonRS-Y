@@ -38,9 +38,9 @@ def calculate_indicators(symbol,interval):
     df['diff_long'] = np.where(df['diff'] < -3,1,0)
     
     df['retro_short'] = abs((df['High'] / df['Close'] -1) * 100) 
-    df['restro_signal_short'] = np.where(df['retro_short'] > 0.15,1,0)
+    df['restro_signal_short'] = np.where(0.20 < df['retro_long'] > 0.15,1,0)
     df['retro_long'] = abs((df['Low'] / df['Close'] -1) * 100) 
-    df['restro_signal_long'] = np.where(df['retro_long'] > 0.15,1,0)
+    df['restro_signal_long'] = np.where(0.20 < df['retro_long'] > 0.15,1,0)
     
     
       

@@ -73,7 +73,7 @@ def run_strategy():
                 continue
            
             if df['diff_signal'][-1] == 1 and df['restro_signal_short'][-1] and df['trix_signal'][-1] == 0:
-                Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🚀 Fast & Fury ")
+                Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🚀 Fast and Fury")
                 PORSHORT = {
                             "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",
@@ -88,7 +88,7 @@ def run_strategy():
                 requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                         
             if df['diff_signal'][-1] == 1 and df['restro_signal_long'][-1] and df['trix_signal'][-1] == 1:
-                Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n🚀 Fast & Fury")
+                Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n🚀 Fast and Fury")
                 PORLONG = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",

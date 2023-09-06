@@ -19,9 +19,9 @@ def get_trading_symbols():
     return symbols
 
    
-def calculate_indicators(symbol,interval):
+def calculate_indicators(symbol):
         
-    klines = client.futures_klines(symbol=symbol, interval=interval, limit=1000)
+    klines = client.futures_klines(symbol=symbol, interval = Client.KLINE_INTERVAL_5MINUTE, limit=1000)
     df = pd.DataFrame(klines)
     if df.empty:
         return None
@@ -36,23 +36,16 @@ def calculate_indicators(symbol,interval):
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
     df['diff_signal'] = np.where(df['diff'] > 3,1,0)
     
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'],
-                                                timeperiod=20,
-                                                nbdevup=3,
-                                                nbdevdn=3,
-                                                matype=0)
-    df['upperband'] = upperband
-    df['middleband'] = middleband
-    df['lowerband'] = lowerband
+    #VERIFICACION
+    check = np.isin(1, df['diff_signal'][-10:])
     
-    df['BB_signal_short'] = np.where(df['upperband'] < df['Close'],1,0)
-    df['BB_signal_long'] = np.where(df['lowerband'] > df['Close'],1,0)
+    if check:
+       check == 1 
+    else : 
+       check == 0
     
-    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
-    df['rsi_signal_short'] = np.where(df['rsi'] > 70,1,0)
-    df['rsi_signal_long'] = np.where(df['rsi'] < 30,1,0)
-    
-    df['ema20'] = df['Close'].ewm(span=20, adjust=False).mean()
+    df['check'] = check
+ 
     df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
     
     acceleration=0.02 
@@ -60,24 +53,20 @@ def calculate_indicators(symbol,interval):
     
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
     
-    df['p_short'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
-    df['p_long'] = np.where( df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2],1,0) 
+    df['p_long'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
+    df['p_short'] = np.where( df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2],1,0) 
     
     df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
     df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
     
-    df['ema_short_20'] = np.where( df['ema20'] < df['Close'],1,0)
-    df['ema_long_20'] = np.where( df['ema20'] > df['Close'],1,0)
+    df['trix'] = ta.TRIX(df['Close'])
+    df['trix_long'] = np.where( df['trix'][-2] < 0 and df['trix'][-3] < df['trix'][-2] ,1,0)
+    df['trix_short'] = np.where( df['trix'][-2] > 0 and df['trix'][-3] > df['trix'][-2] ,1,0)
     
-    df['roc'] = ta.ROC(df['Close'], timeperiod=288)
-    
-    df['roc_long'] = np.where(df['roc'][-2] > 5,1,0)
-    df['roc_short'] = np.where(df['roc'][-2] < -5,1,0)
-    
-    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
-    df['cci_signal'] = np.where(df['cci'][-2] > 0,1,0)
-    
-    return df[-3:]
+    df['trix_contra_short'] = np.where( df['trix'][-2] > 0 and df['trix'][-4] < df['trix'][-3] > df['trix'][-2] ,1,0)
+    df['trix_contra_long'] = np.where( df['trix'][-2] < 0 and df['trix'][-4] > df['trix'][-3] < df['trix'][-2] ,1,0)
+        
+    return df[-4:]
         
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
@@ -88,7 +77,7 @@ def run_strategy():
         print(symbol)
         
         try:
-            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
+            df = calculate_indicators(symbol)
             #dfbtc = calculate_indicators("BTCUSDT",interval=Client.KLINE_INTERVAL_5MINUTE)
             # revisando si seguir ema de BTC
                                                    
@@ -96,9 +85,9 @@ def run_strategy():
                 continue
             
             #if dfbtc['ema_short'][-2] == 1:      
-            if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
-                if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 and df['ema_short_20'][-2] == 1:
-                        Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
+            if df['trix_short'][-2] == 1 and  df['ema_short'][-2] == 1:
+                if df['p_short'][-2] == 1:
+                        Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],2)}% \n⏳ 5M")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
                         "secret": "azsdb9x719",
@@ -112,9 +101,9 @@ def run_strategy():
               
                 
             
-            if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
-                if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1 and df['ema_long_20'][-2] == 1:                                             
-                        Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
+            if df['trix_long'][-2] == 1 and  df['ema_long'][-2] == 1:
+                if df['p_long'][-2] == 1:                                           
+                        Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],2)}% \n⏳ 5M")
                         FISHINGLONG = {
                         "name": "FISHING LONG",
                         "secret": "0kivpja7tz89",
@@ -126,9 +115,9 @@ def run_strategy():
                         }
                         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
             
-            if df['BB_signal_short'][-2] == 1 :
-                if df['diff_signal'][-2] == 1 and df['rsi_signal_short'][-2] == 1:
-                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
+            if df['check'][-2] ==1:
+                if df['trix_contra_short'][-2] == 1:
+                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],2)}% \n⏳ 5M")
                         PORSHORT = {
                             "name": "CORTO 3POR",
                             "secret": "ao2cgree8fp",
@@ -143,9 +132,9 @@ def run_strategy():
                         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
               
                 
-            if df['BB_signal_long'][-2] == 1 :
-                if df['diff_signal'][-2] == 1 and df['rsi_signal_long'][-2] == 1:                                            
-                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
+            if df['check'][-2] ==1:
+                if df['trix_contra_long'][-2] == 1:                                            
+                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],2)}% \n⏳ 5M")
                         PORLONG = {
                             "name": "LARGO 3POR",
                             "secret": "nwh2tbpay1r",

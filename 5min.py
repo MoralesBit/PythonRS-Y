@@ -33,27 +33,17 @@ def calculate_indicators(symbol,interval):
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
       
-    df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-    df['diff_signal'] = np.where(df['diff'] > 1,1,0)
-   
+    df['retro'] = abs((df['Open'] / df['Close'] -1) * 100) 
+    df['retro_signal'] = np.where(df['retro'][-1] > 1,1,0)
     
-    df['retro_short'] = abs((df['High'] / df['Open'] -1) * 100) 
-    df['retro_signal_short'] = np.where(df['retro_short'][-1] > 0.5,1,0)
-    df['retro_long'] = abs((df['Low'] / df['Open'] -1) * 100) 
-    df['retro_signal_long'] = np.where(df['retro_long'][-1] > 0.5,1,0)
+    df['posicion_signal'] = np.where(df['Close'] < df['Open'],1,0)
     
     acceleration=0.02 
     maximum=0.20
     
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
     df['psar_signal'] = np.where(df['psar'] > df['Close'], 1,0)  
-      
-    #df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
-      
-    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
-    df['cci_short'] = np.where(df['cci'][-2] > 250,1,0)
-    df['cci_long'] = np.where(df['cci'][-2] < -250,1,0)
-    
+
     return df[-3:]
         
 def run_strategy():
@@ -66,15 +56,11 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            print(df['diff'][-1])
-            print(df['retro_short'][-1])
-            print(df['retro_long'][-1])
-            print(df['psar_signal'][-1])
-                                                   
+                                                            
             if df is None:
                 continue
            
-            if df['diff_signal'][-1] == 1 and df['retro_signal_short'][-1] and df['psar_signal'][-1] == 1:
+            if df['psar_signal'][-1] == 1 and df['retro_signal'][-1] == 1 and df['posicion_signal'][-1] == 0:
                 Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🚀 Fast and Fury")
                 PORSHORT = {
                             "name": "PICKER SHORT",
@@ -89,7 +75,7 @@ def run_strategy():
                 
                 requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                         
-            if df['diff_signal'][-1] == 1 and df['retro_signal_long'][-1] and df['psar_signal'][-1] == 0:
+            if df['psar_signal'][-1] == 0 and df['retro_signal'][-1] == 1 and df['posicion_signal'][-1] ==1:
                 Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n🚀 Fast and Fury")
                 PORLONG = {
                             "name": "PICKER LONG",

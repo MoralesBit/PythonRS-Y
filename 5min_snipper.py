@@ -70,7 +70,12 @@ def calculate_indicators(symbol):
     
     df['macd_long'] = np.where( df['hist'] < 0,1,0)
     df['macd_short'] = np.where( df['hist'] > 0,1,0)
-        
+    
+    df['roc'] = ta.ROC(df['Close'], timeperiod=288)
+    
+    df['roc_long'] = np.where(df['roc'][-2] > 5,1,0)
+    df['roc_short'] = np.where(df['roc'][-2] < -5,1,0)    
+    
     return df[-4:]
         
 def run_strategy():

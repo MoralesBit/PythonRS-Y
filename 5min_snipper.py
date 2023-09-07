@@ -68,8 +68,8 @@ def calculate_indicators(symbol, interval):
     df['signal'] = signal
     df['hist'] = hist
     
-    df['macd_long'] = np.where( df['hist'] < 0,1,0)
-    df['macd_short'] = np.where( df['hist'] > 0,1,0)
+    df['macd_long'] = np.where( df['hist'] > 0,1,0)
+    df['macd_short'] = np.where( df['hist'] < 0,1,0)
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     

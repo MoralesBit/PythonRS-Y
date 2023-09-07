@@ -19,9 +19,9 @@ def get_trading_symbols():
     return symbols
 
    
-def calculate_indicators(symbol):
+def calculate_indicators(symbol, interval):
         
-    klines = client.futures_klines(symbol=symbol, interval = Client.KLINE_INTERVAL_5MINUTE, limit=1000)
+    klines = client.futures_klines(symbol=symbol, interval=interval, limit=1000)
     df = pd.DataFrame(klines)
     if df.empty:
         return None
@@ -87,7 +87,7 @@ def run_strategy():
         print(symbol)
         
         try:
-            df = calculate_indicators(symbol)
+            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
             dfbtc = calculate_indicators("BTCUSDT",interval=Client.KLINE_INTERVAL_5MINUTE)
             # revisando si seguir ema de BTC
                                                    

@@ -95,7 +95,7 @@ def run_strategy():
                 continue
             
             if dfbtc['ema_short'][-2] == 1:      
-                if df['macd_short'][-2] == 1 and  df['ema_short'][-2] == 1:
+                if df['macd_short'][-2] == 1 and  df['ema_short'][-2] == 1 and df['roc_short'][-2] == 1:
                     if df['p_short'][-2] == 1:
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],2)}% \n⏳ 5M")
                         FISHINGSHORT = {
@@ -111,7 +111,7 @@ def run_strategy():
               
                 
             
-            elif df['macd_long'][-2] == 1 and  df['ema_long'][-2] == 1:
+            elif df['macd_long'][-2] == 1 and  df['ema_long'][-2] == 1 and df['roc_long'][-2] == 1:
                 if df['p_long'][-2] == 1:                                           
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],2)}% \n⏳ 5M")
                         FISHINGLONG = {

@@ -34,7 +34,7 @@ def calculate_indicators(symbol,interval):
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
       
     df['retro'] = abs((df['Open'] / df['Close'] -1) * 100) 
-    df['retro_signal'] = np.where(df['retro'][-1] > 1,1,0)
+    df['retro_signal'] = np.where(df['retro'][-1] > 0.5,1,0)
     
     df['posicion_signal'] = np.where(df['Close'] < df['Open'],1,0)
     

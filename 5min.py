@@ -42,7 +42,19 @@ def calculate_indicators(symbol,interval):
     maximum=0.20
     
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
-    df['psar_signal'] = np.where(df['psar'] > df['Close'], 1,0)  
+    df['psar_signal'] = np.where(df['psar'] > df['Close'], 1,0)
+    
+    macd, signal, hist = ta.MACD(df['Close'], 
+                                    fastperiod=12, 
+                                    slowperiod=26, 
+                                    signalperiod=9)
+  
+    df['macd'] = macd
+    df['signal'] = signal
+    df['hist'] = hist
+    
+    df['macd_long'] = np.where( df['hist'][-2] < df['hist'][-1],1,0)
+    df['macd_short'] = np.where( df['hist'][-2] > df['hist'][-1],1,0)  
 
     return df[-3:]
         
@@ -60,7 +72,7 @@ def run_strategy():
             if df is None:
                 continue
            
-            if df['psar_signal'][-1] == 1 and df['retro_signal'][-1] == 1 and df['posicion_signal'][-1] == 0:
+            if df['macd_short'][-1] == 1 and df['retro_signal'][-1] == 1 and df['posicion_signal'][-1] == 0:
                 Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🚀 Fast and Fury")
                 PORSHORT = {
                             "name": "PICKER SHORT",
@@ -75,7 +87,7 @@ def run_strategy():
                 
                 requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
                         
-            if df['psar_signal'][-1] == 0 and df['retro_signal'][-1] == 1 and df['posicion_signal'][-1] ==1:
+            if df['macd_long'][-1] == 0 and df['retro_signal'][-1] == 1 and df['posicion_signal'][-1] ==1:
                 Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n🚀 Fast and Fury")
                 PORLONG = {
                             "name": "PICKER LONG",

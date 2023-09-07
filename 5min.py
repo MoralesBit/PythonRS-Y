@@ -14,7 +14,7 @@ def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
     #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    symbols = ["PERPUSDT"]
+    symbols = ["XVSUSDT"]
     #symbols.remove("ETHBTC")  
     return symbols
 

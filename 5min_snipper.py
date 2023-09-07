@@ -88,15 +88,15 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol)
-            #dfbtc = calculate_indicators("BTCUSDT",interval=Client.KLINE_INTERVAL_5MINUTE)
+            dfbtc = calculate_indicators("BTCUSDT",interval=Client.KLINE_INTERVAL_5MINUTE)
             # revisando si seguir ema de BTC
                                                    
             if df is None:
                 continue
             
-            #if dfbtc['ema_short'][-2] == 1:      
-            if df['macd_short'][-2] == 1 and  df['ema_short'][-2] == 1:
-                if df['p_short'][-2] == 1:
+            if dfbtc['ema_short'][-2] == 1:      
+                if df['macd_short'][-2] == 1 and  df['ema_short'][-2] == 1:
+                    if df['p_short'][-2] == 1:
                         Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],2)}% \n⏳ 5M")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
@@ -111,7 +111,7 @@ def run_strategy():
               
                 
             
-            if df['macd_long'][-2] == 1 and  df['ema_long'][-2] == 1:
+            elif df['macd_long'][-2] == 1 and  df['ema_long'][-2] == 1:
                 if df['p_long'][-2] == 1:                                           
                         Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],2)}% \n⏳ 5M")
                         FISHINGLONG = {

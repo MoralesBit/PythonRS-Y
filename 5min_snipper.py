@@ -31,7 +31,7 @@ def calculate_indicators(symbol,interval):
     
     df = df.set_index('Open time')
            
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=350, nbdevup=2.5, nbdevdn=2.5, matype=0)
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=350, nbdevup=2.5, nbdevdn=2.5)
     df['upperband'] = upperband
     df['middleband'] = middleband
     df['lowerband'] = lowerband

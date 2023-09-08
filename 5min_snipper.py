@@ -60,8 +60,8 @@ def calculate_indicators(symbol,interval):
     df['p_short'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
     df['p_long'] = np.where( df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2],1,0) 
     
-    df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
-    df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
+    df['ema_short'] = np.where( df['e200'] > df['Close'],1,0)
+    df['ema_long'] = np.where( df['e200'] < df['Close'],1,0)
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     

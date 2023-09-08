@@ -68,7 +68,7 @@ def run_strategy():
             if df['down'][-2] == 1:      
                     if df['p_short'][-2] == 1:
                             
-                            Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],2)}% \n⏳ 5M")
+                            Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5M")
                             FISHINGSHORT = {
                             "name": "FISHING SHORT",
                             "secret": "azsdb9x719",
@@ -84,7 +84,7 @@ def run_strategy():
                     if df['p_long'][-2] == 1:
                         
                                                                        
-                            Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],2)}% \n⏳ 5M")
+                            Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5M")
                             FISHINGLONG = {
                             "name": "FISHING LONG",
                             "secret": "0kivpja7tz89",

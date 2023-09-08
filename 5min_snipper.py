@@ -78,7 +78,7 @@ def calculate_indicators(symbol, interval):
     df['hist'] = hist
     
     df['macd_long'] = np.where(df['macd'][-3] < df['signal'][-3] and df['macd'][-2] > df['signal'][-2] ,1,0)
-    df['macd_short'] = np.where( df['macd'][-3] > df['signal'][-3] and df['macd'][-2] < df['signal'][-2] ,1,0)
+    df['macd_short'] = np.where(df['macd'][-3] > df['signal'][-3] and df['macd'][-2] < df['signal'][-2] ,1,0)
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
@@ -145,6 +145,24 @@ def run_strategy():
                     if df['check'][-2] == 1:
                         if df['macd_long'][-2] == 1:
                             
+                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],2)}% \n⏳ 5M")
+                            PORLONG = {
+                            "name": "LARGO 3POR",
+                            "secret": "nwh2tbpay1r",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
+                            requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)  
+              
+                
+            if df['roc_long'][-2] == 1:       
+                if df['ema_long'][-2] == 1:
+                    if df['check'][-2] == 1:
+                        if df['macd_short'][-2] == 1:
+                            
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],2)}% \n⏳ 5M")
                             PORSHORT = {
                             "name": "CORTO 3POR",
@@ -158,23 +176,8 @@ def run_strategy():
    
                 
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PORSHORT)
-              
-                
-            if df['roc_long'][-2] == 1:       
-                if df['ema_long'][-2] == 1:
-                    if df['check'][-2] == 1:
-                        if df['macd_short'][-2] == 1:                                            
-                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],2)}% \n⏳ 5M")
-                            PORLONG = {
-                            "name": "LARGO 3POR",
-                            "secret": "nwh2tbpay1r",
-                            "side": "buy",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2])
-                            }
-                            }
-                            requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PORLONG)         
+                                                                        
+                                   
                                   
         except Exception as e:
           

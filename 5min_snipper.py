@@ -31,12 +31,12 @@ def calculate_indicators(symbol,interval):
     
     df = df.set_index('Open time')
            
-    df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
-    
     upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=350, nbdevup=2.5, nbdevdn=2.5, matype=0)
     df['upperband'] = upperband
     df['middleband'] = middleband
     df['lowerband'] = lowerband
+   
+    df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
     
     df['up'] = np.where(df['Close'] >= df['upperband'], 1,0)
     df['down'] = np.where(df['Close'] <= df['lowerband'], 1,0)

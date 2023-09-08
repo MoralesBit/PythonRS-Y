@@ -32,6 +32,11 @@ def calculate_indicators(symbol,interval):
     df = df.set_index('Open time')
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
+    
+    df['e200'] = df['Close'].ewm(span=200, adjust=False).mean()
+    df['e50'] = df['Close'].ewm(span=50, adjust=False).mean()
+    df['e_signal'] = np.where(df['e50'] > df['e200'] or df['e50'] < df['e200'], 1,0 )
+    df['position'] = np.where(df['Close'] < df['e50'] or df['Close'] > df['e50'], 1,0 )
       
     df['rsi']  = ta.RSI(df['Close'], timeperiod=14)
     
@@ -81,6 +86,38 @@ def run_strategy():
                 continue
             if df['roc_signal'][-2] == 1:
                 
+                if df['e_signal'][-2] == 1:      
+                    if df['position'][-2] == 1:
+                        if df['p_short'][-2] == 1:
+                            
+                            Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],2)}% \n⏳ 5M")
+                            FISHINGSHORT = {
+                            "name": "FISHING SHORT",
+                            "secret": "azsdb9x719",
+                            "side": "sell",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
+                            requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
+              
+                if df['e_signal'][-2] == 1:      
+                    if df['position'][-2] == 1:
+                        if df['p_long'][-2] == 1:
+                                                                       
+                            Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],2)}% \n⏳ 5M")
+                            FISHINGLONG = {
+                            "name": "FISHING LONG",
+                            "secret": "0kivpja7tz89",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
+                            requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
+                            
                 if df['check_rsi'][-2] == 1:      
                     if df['p_short'][-2] == 1: 
                     

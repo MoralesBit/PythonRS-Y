@@ -36,10 +36,12 @@ def calculate_indicators(symbol,interval):
     df['middleband'] = middleband
     df['lowerband'] = lowerband
     
-    df['up'] = np.where(float(df['Close']) >= df['upperband'], 1,0)
-    df['down'] = np.where(float(df['Close']) <= df['lowerband'], 1,0)
-           
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
+    
+    df['up'] = np.where(df['Close'] > df['upperband'], 1,0)
+    df['down'] = np.where(df['Close'] < df['lowerband'], 1,0)
+           
+    
            
     acceleration=0.02 
     maximum=0.20

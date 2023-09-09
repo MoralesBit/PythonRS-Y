@@ -48,12 +48,13 @@ def calculate_indicators(symbol, interval):
     df['middleband'] = middleband
     df['lowerband'] = lowerband
     
-    df['up'] = np.where(float(df['Close'][-2]) > df['upperband'[-2]], 1, 0)
-    df['down'] = np.where(float(df['Close'][-2]) < df['lowerband'][-2], 1, 0)
+    df['up'] = np.where((df['Close'][-2]) > df['upperband'[-2]], 1, 0)
+    df['down'] = np.where((df['Close'][-2]) < df['lowerband'][-2], 1, 0)
 
     df[['Open', 'High', 'Low', 'Close', 'Volume']] = df[['Open', 'High', 'Low', 'Close', 'Volume']].astype(float)
 
-    
+    df['up'] = np.where((df['Close'][-2]) > df['upperband'[-2]], 1, 0)
+    df['down'] = np.where((df['Close'][-2]) < df['lowerband'][-2], 1, 0)
 
     acceleration = 0.02
     maximum = 0.20

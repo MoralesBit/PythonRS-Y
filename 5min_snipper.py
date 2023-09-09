@@ -40,8 +40,7 @@ def calculate_indicators(symbol,interval):
     
     df['up'] = np.where(df['Close'] > df['upperband'], 1,0)
     df['down'] = np.where(df['Close'] < df['lowerband'], 1,0)
-           
-    
+    df['BBigu'] = np.where( df['upperband'] == df['lowerband'],1,0) 
            
     acceleration=0.02 
     maximum=0.20
@@ -66,8 +65,8 @@ def run_strategy():
                               
             if df is None:
                 continue
-           
-            if df['down'][-2] == 1:      
+            if df['BBigu'][-2] == 0:
+                if df['down'][-2] == 1:      
                     if df['p_short'][-2] == 1:
                             
                             Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5M \nBBup:{round(df['upperband'][-2],3)}\nBBlw:{round(df['lowerband'][-2],3)}")
@@ -82,7 +81,7 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
               
-            if df['up'][-2] == 1:      
+                if df['up'][-2] == 1:      
                     if df['p_long'][-2] == 1:
                         
                                                                        

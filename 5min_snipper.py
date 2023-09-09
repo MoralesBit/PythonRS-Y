@@ -30,16 +30,16 @@ def calculate_indicators(symbol,interval):
     df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
     
     df = df.set_index('Open time')
-           
-    #df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
     
     upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=350, nbdevup=2.5, nbdevdn=2.5, matype=0)
     df['upperband'] = upperband
     df['middleband'] = middleband
     df['lowerband'] = lowerband
     
-    df['up'] = np.where(df['Close'] >= df['upperband'], 1,0)
-    df['down'] = np.where(df['Close'] <= df['lowerband'], 1,0)
+    df['up'] = np.where(float(df['Close']) >= df['upperband'], 1,0)
+    df['down'] = np.where(float(df['Close']) <= df['lowerband'], 1,0)
+           
+    df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
            
     acceleration=0.02 
     maximum=0.20
@@ -68,7 +68,7 @@ def run_strategy():
             if df['down'][-2] == 1:      
                     if df['p_short'][-2] == 1:
                             
-                            Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5M")
+                            Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5M \nBBup:{df['upperband'][-2]} \nBBlw:{df['lowerband'][-2]}")
                             FISHINGSHORT = {
                             "name": "FISHING SHORT",
                             "secret": "azsdb9x719",
@@ -84,7 +84,7 @@ def run_strategy():
                     if df['p_long'][-2] == 1:
                         
                                                                        
-                            Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5M")
+                            Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5M \nBBup:{df['upperband'][-2]} \nBBlw:{df['lowerband'][-2]}")
                             FISHINGLONG = {
                             "name": "FISHING LONG",
                             "secret": "0kivpja7tz89",

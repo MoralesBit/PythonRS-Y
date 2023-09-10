@@ -46,7 +46,7 @@ def calculate_indicators(symbol, interval):
     #df['ema_short'] = np.where(df['Close'] > df['ema22'] > df['ema200'] , 1, 0)
 
     acceleration=0.02
-    maximum=0.20
+    maximum=1
 
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
 
@@ -65,16 +65,18 @@ def run_strategy():
 
         try:
             df = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
+            df_btc = calculate_indicators("BTCUSDT", interval=Client.KLINE_INTERVAL_5MINUTE)
 
             if df is None:
                 continue
 
-            if df['cross_down'][-2] == 1:
-                if df['p_short'][-2] == 1:      
-                    if df['sma_signal'][-2] == 1:
+            if df_btc['p_short'][-2] == 1:
+                if df['cross_down'][-2] == 1:
+                    if df['p_short'][-2] == 1:      
+                        if df['sma_signal'][-2] == 1:
                         
-                        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}"
-                        Tb.telegram_send_message(message)
+                            message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}"
+                            Tb.telegram_send_message(message)
 
                         FISHINGSHORT = {
                             "name": "FISHING SHORT",
@@ -88,12 +90,13 @@ def run_strategy():
 
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
 
-            if df['cross_up'][-2] == 1:
-                if df['p_long'][-2] == 1:      
-                    if df['sma_signal'][-2] == 0: 
+            if df_btc['p_long'][-2] == 1:
+                if df['cross_up'][-2] == 1:
+                    if df['p_long'][-2] == 1:      
+                        if df['sma_signal'][-2] == 0: 
                                                
-                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}"
-                        Tb.telegram_send_message(message)
+                            message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}"
+                            Tb.telegram_send_message(message)
 
                         FISHINGLONG = {
                             "name": "FISHING LONG",
@@ -117,6 +120,6 @@ def run_strategy():
 while True:
     current_time = time.time()
     seconds_to_wait = 300 - current_time % 300
-    time.sleep(seconds_to_wait)
+    #time.sleep(seconds_to_wait)
     run_strategy()
     # VERSION ESTABLE

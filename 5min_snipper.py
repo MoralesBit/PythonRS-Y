@@ -39,11 +39,11 @@ def calculate_indicators(symbol, interval):
     df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
     df['ema22'] = df['Close'].ewm(span=22, adjust=False).mean()
     
-    df['cross_down'] = np.where(df['Close'][-3] > df['ema22'][-3] and  df['Close'][-2] < df['ema22'][-2] , 1, 0)
-    df['cross_up'] = np.where(df['Close'][-3] < df['ema22'][-3] and  df['Close'][-2] > df['ema22'][-2] , 1, 0)
+    df['cross_down'] = np.where(df['Close'][-3] > df['ema22'][-3] and  df['Close'][-2] < df['ema22'][-2] and df['ema200'][-2] > df['ema22'][-2], 1, 0)
+    df['cross_up'] = np.where(df['Close'][-3] < df['ema22'][-3] and  df['Close'][-2] > df['ema22'][-2] and df['ema200'][-2] < df['ema22'][-2], 1, 0)
     
-    df['ema_long'] = np.where(df['Close'] > df['ema22'] > df['ema200'] , 1, 0)
-    df['ema_short'] = np.where(df['Close'] > df['ema22'] > df['ema200'] , 1, 0)
+    #df['ema_long'] = np.where(df['Close'] > df['ema22'] > df['ema200'] , 1, 0)
+    #df['ema_short'] = np.where(df['Close'] > df['ema22'] > df['ema200'] , 1, 0)
 
     acceleration=0.02
     maximum=0.20

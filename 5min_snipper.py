@@ -17,7 +17,6 @@ def get_trading_symbols():
     symbols.remove("ETHBTC")
     return symbols
 
-
 def calculate_indicators(symbol, interval):
     klines = client.futures_klines(symbol=symbol, interval=interval, limit=500)
     df = pd.DataFrame(klines)
@@ -31,24 +30,28 @@ def calculate_indicators(symbol, interval):
     df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
     df = df.set_index('Open time')
 
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=350, nbdevup=2.5, nbdevdn=2.5)
-    df['upperband'] = upperband
-    df['middleband'] = middleband
-    df['lowerband'] = lowerband
-
     df[['Open', 'High', 'Low', 'Close', 'Volume']] = df[['Open', 'High', 'Low', 'Close', 'Volume']].astype(float)
-
-    df['up'] = np.where(df['Close'] > df['upperband'], 1, 0)
-    df['down'] = np.where(df['Close'] < df['lowerband'], 1, 0)
-    df['BBigu'] = np.where(df['upperband'] == df['lowerband'], 1, 0)
+    
+    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
+    df['sma'] = ta.SMA(df['rsi'], timeperiod=20)
+    df['sma_signal'] = np.where(df['sma'] < 50, 1, 0)
+    
+    df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
+    df['ema22'] = df['Close'].ewm(span=22, adjust=False).mean()
+    
+    df['cross_down'] = np.where(df['Close'][-3] > df['ema22'][-3] and  df['Close'][-2] < df['ema22'][-2] , 1, 0)
+    df['cross_up'] = np.where(df['Close'][-3] < df['ema22'][-3] and  df['Close'][-2] > df['ema22'][-2] , 1, 0)
+    
+    df['ema_long'] = np.where(df['Close'] > df['ema22'] > df['ema200'] , 1, 0)
+    df['ema_short'] = np.where(df['Close'] > df['ema22'] > df['ema200'] , 1, 0)
 
     acceleration=0.02
     maximum=0.20
 
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
 
-    df['p_short'] = np.where(df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2], 1, 0)
-    df['p_long'] = np.where(df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2], 1, 0)
+    df['p_short'] = np.where(df['psar'] > df['Close'], 1, 0)
+    df['p_long'] = np.where(df['psar'] < df['Close'], 1, 0)
 
     return df[-3:]
 
@@ -66,10 +69,11 @@ def run_strategy():
             if df is None:
                 continue
 
-            if df['BBigu'][-2] == 0:
-                if df['down'][-2] == 1:      
-                    if df['p_short'][-2] == 1:
-                        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5M \nBBup:{round(df['upperband'][-2],3)}\nBBlw:{round(df['lowerband'][-2],3)}"
+            if df['cross_down'][-2] == 1:
+                if df['p_short'][-2] == 1:      
+                    if df['sma_signal'][-2] == 1:
+                        
+                        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}"
                         Tb.telegram_send_message(message)
 
                         FISHINGSHORT = {
@@ -84,9 +88,11 @@ def run_strategy():
 
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
 
-                if df['up'][-2] == 1:      
-                    if df['p_long'][-2] == 1:                        
-                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5M \nBBup:{round(df['upperband'][-2],3)}\nBBlw:{round(df['lowerband'][-2],3)}"
+            if df['cross_up'][-2] == 1:
+                if df['p_long'][-2] == 1:      
+                    if df['sma_signal'][-2] == 0: 
+                                               
+                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}"
                         Tb.telegram_send_message(message)
 
                         FISHINGLONG = {

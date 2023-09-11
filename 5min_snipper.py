@@ -45,8 +45,7 @@ def calculate_indicators(symbol, interval):
     df['cross_down'] = np.where(df['Close'][-3] > df['ema22'][-3] and  df['Close'][-2] < df['ema22'][-2] and df['ema200'][-2] > df['ema22'][-2], 1, 0)
     df['cross_up'] = np.where(df['Close'][-3] < df['ema22'][-3] and  df['Close'][-2] > df['ema22'][-2] and df['ema200'][-2] < df['ema22'][-2], 1, 0)
     
-    df['p_cross_short'] = np.where(df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2], 1, 0)
-    df['p_cross_long'] = np.where(df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2], 1, 0)
+   
     #df['ema_long'] = np.where(df['Close'] > df['ema22'] > df['ema200'] , 1, 0)
     #df['ema_short'] = np.where(df['Close'] > df['ema22'] > df['ema200'] , 1, 0)
 
@@ -57,6 +56,9 @@ def calculate_indicators(symbol, interval):
 
     df['p_short'] = np.where(df['psar'] > df['Close'], 1, 0)
     df['p_long'] = np.where(df['psar'] < df['Close'], 1, 0)
+    
+    df['p_cross_short'] = np.where(df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2], 1, 0)
+    df['p_cross_long'] = np.where(df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2], 1, 0)
 
     return df[-3:]
 

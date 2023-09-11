@@ -59,6 +59,9 @@ def calculate_indicators(symbol, interval):
     
     df['p_cross_short'] = np.where(df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2], 1, 0)
     df['p_cross_long'] = np.where(df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2], 1, 0)
+    
+    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
+    df['cci_signal'] = np.where(df['cci'][-2] > 0,1,0)
 
     return df[-3:]
 
@@ -105,7 +108,7 @@ def run_strategy():
                 
             if df_btc['p_short'][-2] == 1:
                 if df['cross_down'][-2] == 1:
-                    if df['p_short'][-2] == 1:      
+                    if df['p_short'][-2] == 1 and df['cci_signal'][-2] == 0:      
                         if df['sma_signal'][-2] == 1:
                         
                             message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}"
@@ -125,7 +128,7 @@ def run_strategy():
 
             if df_btc['p_long'][-2] == 1:
                 if df['cross_up'][-2] == 1:
-                    if df['p_long'][-2] == 1:      
+                    if df['p_long'][-2] == 1 and df['cci_signal'][-2] == 1:    
                         if df['sma_signal'][-2] == 0: 
                                                
                             message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}"

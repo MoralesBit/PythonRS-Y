@@ -14,7 +14,7 @@ def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
     symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929"]  # Lista de monedas a eliminar
+    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT"]  # Lista de monedas a eliminar
     for coin in coins_to_remove:
         if coin in symbols:
             symbols.remove(coin)
@@ -45,6 +45,8 @@ def calculate_indicators(symbol, interval):
     df['cross_down'] = np.where(df['Close'][-3] > df['ema22'][-3] and  df['Close'][-2] < df['ema22'][-2] and df['ema200'][-2] > df['ema22'][-2], 1, 0)
     df['cross_up'] = np.where(df['Close'][-3] < df['ema22'][-3] and  df['Close'][-2] > df['ema22'][-2] and df['ema200'][-2] < df['ema22'][-2], 1, 0)
     
+    df['p_cross_short'] = np.where(df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2], 1, 0)
+    df['p_cross_long'] = np.where(df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2], 1, 0)
     #df['ema_long'] = np.where(df['Close'] > df['ema22'] > df['ema200'] , 1, 0)
     #df['ema_short'] = np.where(df['Close'] > df['ema22'] > df['ema200'] , 1, 0)
 
@@ -72,7 +74,28 @@ def run_strategy():
 
             if df is None:
                 continue
-
+            if df_btc['p_cross_short'][-2] == 1:
+                message = f"Cierran los LONG"
+                Tb.telegram_canal_prueba(message)
+                CLOSELONG= {
+                "name": "CLOSE LONG",
+                "secret": "luj6ewrkwje",
+                "side": "buy",
+                "symbol": symbol
+                }
+                requests.post('https://hook.finandy.com/p-0RG59xlYnRP-A-qVUK', json=CLOSELONG)
+                
+            if df_btc['p_cross_long'][-2] == 1:
+                message = f"Cierran los SHORT"
+                Tb.telegram_canal_prueba(message)
+                CLOSESHORT= {
+                "name": "CLOSE LONG",
+                "secret": "5vzf98rzhrf",
+                "side": "buy",
+                "symbol": symbol
+                }
+                requests.post('https://hook.finandy.com/B5IDjcrXh2P_5OE-qVUK', json=CLOSESHORT)
+                
             if df_btc['p_short'][-2] == 1:
                 if df['cross_down'][-2] == 1:
                     if df['p_short'][-2] == 1:      

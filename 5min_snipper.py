@@ -89,6 +89,7 @@ def run_strategy():
                 "symbol": symbol
                 }
                 requests.post('https://hook.finandy.com/p-0RG59xlYnRP-A-qVUK', json=CLOSELONG)
+                sent_message = True
                 
             if df_btc['p_cross_long'][-2] == 1 and not sent_message:
                 message = f"Cierran los SHORT"
@@ -100,6 +101,7 @@ def run_strategy():
                 "symbol": symbol
                 }
                 requests.post('https://hook.finandy.com/B5IDjcrXh2P_5OE-qVUK', json=CLOSESHORT)
+                sent_message = True
                 
             if df_btc['p_short'][-2] == 1:
                 if df['cross_down'][-2] == 1:

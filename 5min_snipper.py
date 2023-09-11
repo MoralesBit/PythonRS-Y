@@ -106,7 +106,7 @@ def run_strategy():
                             message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}"
                             Tb.telegram_send_message(message)
 
-                        FISHINGSHORT = {
+                            FISHINGSHORT = {
                             "name": "FISHING SHORT",
                             "secret": "azsdb9x719",
                             "side": "sell",
@@ -114,9 +114,9 @@ def run_strategy():
                             "open": {
                                 "price": float(df['Close'][-2])
                             }
-                        }
+                            }
 
-                        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
+                            requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
 
             if df_btc['p_long'][-2] == 1:
                 if df['cross_up'][-2] == 1:
@@ -126,7 +126,7 @@ def run_strategy():
                             message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}"
                             Tb.telegram_send_message(message)
 
-                        FISHINGLONG = {
+                            FISHINGLONG = {
                             "name": "FISHING LONG",
                             "secret": "0kivpja7tz89",
                             "side": "buy",
@@ -134,9 +134,9 @@ def run_strategy():
                             "open": {
                                 "price": float(df['Close'][-2])
                             }
-                        }
+                            }
 
-                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
+                            requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
 
             else:
                 print("NEXT")

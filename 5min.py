@@ -117,6 +117,14 @@ def calculate_indicators(symbol, interval):
     
     df['short'] = np.where(df['nivel_062'][-3] < df['Close'][-3] and df['nivel_062'][-2] > df['Close'][-2],1,0)
     df['long'] = np.where(df['nivel_236'][-3] > df['Close'][-3] and df['nivel_236'][-2] < df['Close'][-2],1,0)
+    
+    acceleration=0.02
+    maximum=1
+
+    df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
+
+    df['p_short'] = np.where(df['psar'] > df['Close'], 1, 0)
+    df['p_long'] = np.where(df['psar'] < df['Close'], 1, 0)
         
     return df[-3:]
 
@@ -131,12 +139,12 @@ def run_strategy():
 
         try:
             df = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
-            print(df['fibo'][-2])
+            
 
             if df is None:
                 continue
    
-            if df['short'][-2] == 1:
+            if df['short'][-2] == 1 and df['p_short'][-2] == 1:
                         
                             message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}"
                             Tb.telegram_canal_3por(message)
@@ -153,7 +161,7 @@ def run_strategy():
 
                             requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
 
-            if df['long'][-2] == 1:
+            if df['long'][-2] == 1 and df['p_long'][-2] == 1:
                                                
                             message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}"
                             Tb.telegram_canal_3por(message)
@@ -182,5 +190,5 @@ def run_strategy():
 while True:
     current_time = time.time()
     seconds_to_wait = 300 - current_time % 300
-    #time.sleep(seconds_to_wait)
+    time.sleep(seconds_to_wait)
     run_strategy()

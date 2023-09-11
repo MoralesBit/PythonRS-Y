@@ -14,7 +14,7 @@ def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
     symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT"]  # Lista de monedas a eliminar
+    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229"]  # Lista de monedas a eliminar
     for coin in coins_to_remove:
         if coin in symbols:
             symbols.remove(coin)
@@ -80,7 +80,7 @@ def run_strategy():
             if df is None:
                 continue
             
-            sent_message = False
+            
             
             if df_btc['p_cross_short'][-2] == 1 and not sent_message:
                 message = f"Cierran los LONG"
@@ -158,4 +158,5 @@ while True:
     seconds_to_wait = 300 - current_time % 300
     time.sleep(seconds_to_wait)
     run_strategy()
+    sent_message = False
     # VERSION ESTABLE

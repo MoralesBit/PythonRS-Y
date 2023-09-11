@@ -76,7 +76,10 @@ def run_strategy():
 
             if df is None:
                 continue
-            if df_btc['p_cross_short'][-2] == 1:
+            
+            sent_message = False
+            
+            if df_btc['p_cross_short'][-2] == 1 and not sent_message:
                 message = f"Cierran los LONG"
                 Tb.telegram_canal_prueba(message)
                 CLOSELONG= {
@@ -87,7 +90,7 @@ def run_strategy():
                 }
                 requests.post('https://hook.finandy.com/p-0RG59xlYnRP-A-qVUK', json=CLOSELONG)
                 
-            if df_btc['p_cross_long'][-2] == 1:
+            if df_btc['p_cross_long'][-2] == 1 and not sent_message:
                 message = f"Cierran los SHORT"
                 Tb.telegram_canal_prueba(message)
                 CLOSESHORT= {

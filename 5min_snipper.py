@@ -14,8 +14,10 @@ def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
     symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    #symbols = ["AMBUSDT", "BLZUSDT"]
-    symbols.remove("ETHBTC")  
+    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
+    for coin in coins_to_remove:
+        if coin in symbols:
+            symbols.remove(coin)
     return symbols
 
    
@@ -82,7 +84,7 @@ def run_strategy():
             if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
                     if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1:
                         
-                        Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
+                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
                         "secret": "azsdb9x719",
@@ -97,7 +99,7 @@ def run_strategy():
             if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
                     if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 :    
                                                            
-                        Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
+                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
                         FISHINGLONG = {
                         "name": "FISHING LONG",
                         "secret": "0kivpja7tz89",

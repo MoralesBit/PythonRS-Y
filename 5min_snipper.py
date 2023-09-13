@@ -34,12 +34,7 @@ def calculate_indicators(symbol,interval):
     df = df.set_index('Open time')
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
-      
-    df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-    
-    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
-    df['rsi_signal_long'] = np.where(df['rsi'][-2] < 55,1,0)
-   
+     
     df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
     
     acceleration=0.02 
@@ -58,8 +53,9 @@ def calculate_indicators(symbol,interval):
     df['roc_long'] = np.where(df['roc'][-2] > 8,1,0)
     df['roc_short'] = np.where(df['roc'][-2] < -8,1,0)
     
-    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
-    df['cci_signal'] = np.where(df['cci'][-2] > 0,1,0)
+    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
+    df['cci_signal_short'] = np.where(df['cci'][-2] < 50,1,0)
+    df['cci_signal_long'] = np.where(df['cci'][-2] > -50,1,0)
     
     return df[-3:]
         
@@ -73,50 +69,47 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            #dfbtc = calculate_indicators("BTCUSDT",interval=Client.KLINE_INTERVAL_5MINUTE)
-            # revisando si seguir ema de BTC
-            print(df['roc'][-2])
                                                      
             if df is None:
                 continue
             
-                  
+            price_entry_short = (df['Close'][-2])*1.025
+            price_entre_long =  (df['Close'][-2]) - (df['Close'][-2])*0.025
+            
             if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
-                    if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1:
+                    if df['roc_long'][-2] == 1  and df['cci_signal_short'][-2] == 1:
                         
-                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
+                        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
+                        Tb.telegram_canal_3por(message)
+                        
                         FISHINGSHORT = {
                         "name": "FISHING SHORT",
                         "secret": "azsdb9x719",
                         "side": "sell",
                         "symbol": symbol,
                         "open": {
-                        "price": float(df['Close'][-2])
+                        "price": price_entry_short
                         }
                         }
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
               
             if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
-                    if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 :    
-                                                           
-                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
+                    if df['roc_short'][-2] == 1 and df['cci_signal_long'][-2] == 0 :    
+                        
+                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
+                        Tb.telegram_canal_3por(message)
+                                      
                         FISHINGLONG = {
                         "name": "FISHING LONG",
                         "secret": "0kivpja7tz89",
                         "side": "buy",
                         "symbol": symbol,
                         "open": {
-                        "price": float(df['Close'][-2])
+                        "price": price_entre_long
                         }
                         }
                         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
-            
-            else :
-                print("NEXT")       
-            
-            #time.sleep(0.5)                 
-                           
-                        
+       
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

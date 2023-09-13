@@ -53,9 +53,8 @@ def calculate_indicators(symbol,interval):
     df['roc_long'] = np.where(df['roc'][-2] > 8,1,0)
     df['roc_short'] = np.where(df['roc'][-2] < -8,1,0)
     
-    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
-    df['cci_signal_short'] = np.where(df['cci'][-2] < 50,1,0)
-    df['cci_signal_long'] = np.where(df['cci'][-2] > -50,1,0)
+    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
+    df['cci_signal'] = np.where(df['cci'][-2] > 0,1,0)
     
     return df[-3:]
         
@@ -72,43 +71,77 @@ def run_strategy():
                                                      
             if df is None:
                 continue
-            
-            price_entry_short = (df['Close'][-2])*1.025
-            price_entre_long =  (df['Close'][-2]) - (df['Close'][-2])*0.025
-            
+  
             if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
-                    if df['roc_long'][-2] == 1  and df['cci_signal_short'][-2] == 1:
+                    if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1:
                         
                         message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
                         Tb.telegram_canal_3por(message)
+                   
+                        Contratendencia_short = {
+                        "name": "PICKER SHORT",
+                        "secret": "ao2cgree8fp",
+                        "side": "sell",
+                        "symbol": symbol,
+                        "open": {
+                        "price": float(df['Close'][-1]) 
+                        }
+                        }
+            
+                        requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=Contratendencia_short)
                         
-                        FISHINGSHORT = {
+            if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
+                if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 :  
+                        
+                        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
+                        Tb.telegram_send_message(message)
+                                  
+                        Tendencia_short = {
                         "name": "FISHING SHORT",
                         "secret": "azsdb9x719",
                         "side": "sell",
                         "symbol": symbol,
                         "open": {
-                        "price": price_entry_short
+                        "price": float(df['Close'][-2])
                         }
                         }
-                        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
+                        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=Tendencia_short) 
               
             if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
-                    if df['roc_short'][-2] == 1 and df['cci_signal_long'][-2] == 0 :    
+                    if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 :    
                         
                         message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
                         Tb.telegram_canal_3por(message)
-                                      
-                        FISHINGLONG = {
+                        
+                        Contratendencia_long = {
+                            "name": "PICKER LONG",
+                            "secret": "nwh2tbpay1r",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
+                        requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=Contratendencia_long)
+                        
+            if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
+                if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1: 
+                        
+                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
+                        Tb.telegram_send_message(message)
+                                              
+                        Tendencia_Long = {
                         "name": "FISHING LONG",
                         "secret": "0kivpja7tz89",
                         "side": "buy",
                         "symbol": symbol,
                         "open": {
-                        "price": price_entre_long
+                        "price": float(df['Close'][-2])
                         }
                         }
-                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
+                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long) 
+                        
+                         
        
         except Exception as e:
           
@@ -119,4 +152,4 @@ while True:
     seconds_to_wait = 300 - current_time % 300
     time.sleep(seconds_to_wait)    
     run_strategy()
-    #VERSION ESTABLE
+    #VERSION ESTABLE TENDENCIA Y CONTRATENDENCIA

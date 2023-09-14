@@ -50,15 +50,11 @@ def calculate_indicators(symbol,interval):
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
-    df['roc_long'] = np.where(df['roc'][-2] > 7,1,0)
-    df['roc_short'] = np.where( df['roc'][-2] < -7,1,0)
+    df['roc_long'] = np.where(df['roc'][-2] > 10,1,0)
+    df['roc_short'] = np.where( df['roc'][-2] < -10,1,0)
     
-    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
-    df['cci_signal'] = np.where(df['cci'][-2] > 0,1,0)
-    
-    df['vwma'] = ta.WMA(df['Volume'], timeperiod=20)
-    df['vwma_signal'] = np.where(df['Volume'] > df['Close'],1,0)
-    
+    df['diff'] = abs((df['Close'] / df['psar'] -1) * 100)
+     
     return df[-3:]
         
 def run_strategy():
@@ -74,48 +70,11 @@ def run_strategy():
                                                      
             if df is None:
                 continue
-  
-            #if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
-            #    if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 0:
-            #        if  df['vwma_signal'][-2] == 1: 
-                          
-            #            message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
-            #            Tb.telegram_canal_3por(message)
-                   
-            #            Contratendencia_short = {
-            #            "name": "PICKER SHORT",
-            #            "secret": "ao2cgree8fp",
-            #            "side": "sell",
-            #            "symbol": symbol,
-            #            "open": {
-            #            "price": float(df['Close'][-1]) 
-            #            }
-            #            }
-            
-            #            requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=Contratendencia_short)
-            
-            #if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
-            #        if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 :     
-                    
-            #            message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
-            #            Tb.telegram_canal_3por(message)
-                        
-            #            Contratendencia_long = {
-            #                "name": "PICKER LONG",
-            #                "secret": "nwh2tbpay1r",
-            #                "side": "buy",
-            #                "symbol": symbol,
-            #                "open": {
-            #                "price": float(df['Close'][-2])
-            #                }
-            #                }
-            #            requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=Contratendencia_long)            
-                        
-            if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
-                if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 :  
-                    if  df['vwma_signal'][-2] == 1:
+           
+            if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1:
+                if df['roc_long'][-2] == 1:  
                             
-                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
+                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
                         Tb.telegram_send_message(message)
                                               
                         Tendencia_Long = {
@@ -129,11 +88,10 @@ def run_strategy():
                         }
                         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
                                  
-            if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
-                if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1:   
-                    if  df['vwma_signal'][-2] == 0:
+            if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1:
+                if df['roc_short'][-2] == 1:   
                             
-                        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
+                        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
                         Tb.telegram_send_message(message)
                                   
                         Tendencia_short = {
@@ -162,4 +120,4 @@ while True:
     seconds_to_wait = 300 - current_time % 300
     time.sleep(seconds_to_wait)    
     run_strategy()
-    #VERSION ESTABLE TENDENCIA Y CONTRATENDENCIA
+    #VERSION ESTABLE ULTRA TENDENCIA

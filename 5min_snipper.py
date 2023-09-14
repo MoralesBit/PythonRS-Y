@@ -90,39 +90,39 @@ def run_strategy():
             
                         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=Contratendencia_short)
                         
-            #if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1:
-                #if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1: 
+            if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
+                    if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1: 
                         
-                #        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
-                #        Tb.telegram_send_message(message)
+                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
+                        Tb.telegram_send_message(message)
                                               
-                #        Tendencia_Long = {
-                #        "name": "FISHING LONG",
-                #        "secret": "0kivpja7tz89",
-                #        "side": "buy",
-                #        "symbol": symbol,
-                #        "open": {
-                #        "price": float(df['Close'][-2])
-                #        }
-                #        }
-                #        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
+                        Tendencia_Long = {
+                        "name": "FISHING LONG",
+                        "secret": "0kivpja7tz89",
+                        "side": "buy",
+                        "symbol": symbol,
+                        "open": {
+                        "price": float(df['Close'][-2])
+                        }
+                        }
+                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
                                  
-            #if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1:
-                #if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 :  
-                #        
-                #        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
-                #        Tb.telegram_send_message(message)
+            if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
+                    if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 :   
+                        
+                        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
+                        Tb.telegram_send_message(message)
                                   
-                #        Tendencia_short = {
-                #        "name": "FISHING SHORT",
-                #        "secret": "azsdb9x719",
-                #        "side": "sell",
-                #        "symbol": symbol,
-                #        "open": {
-                #        "price": float(df['Close'][-2])
-                #        }
-                #        }
-                #        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=Tendencia_short) 
+                        Tendencia_short = {
+                        "name": "FISHING SHORT",
+                        "secret": "azsdb9x719",
+                        "side": "sell",
+                        "symbol": symbol,
+                        "open": {
+                        "price": float(df['Close'][-2])
+                        }
+                        }
+                        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=Tendencia_short) 
               
             if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
                     if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 :     
@@ -154,4 +154,4 @@ while True:
     seconds_to_wait = 300 - current_time % 300
     time.sleep(seconds_to_wait)    
     run_strategy()
-    #VERSION ESTABLE 
+    #VERSION ESTABLE TENDENCIA Y CONTRATENDENCIA

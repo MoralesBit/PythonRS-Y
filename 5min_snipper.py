@@ -55,7 +55,7 @@ def calculate_indicators(symbol,interval):
     
     df['diff'] = abs((df['Close'] / df['psar'] -1) * 100)
     
-    df['vwma'] = ta.WMA(df['Volume'], timeperiod=20)
+    df['vwma'] = ta.WMA(df['Close'], timeperiod=20)
     df['vwma_long'] = np.where(df['vwma'][-3] > df['Close'][-3] and df['vwma'][-2] < df['Close'][-2],1,0)
     df['vwma_short'] = np.where(df['vwma'][-3] < df['Close'][-3] and df['vwma'][-2] > df['Close'][-2],1,0)
      
@@ -71,7 +71,7 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-                                                     
+            print(df['vwma'][-2])                                         
             if df is None:
                 continue
            
@@ -116,6 +116,6 @@ def run_strategy():
 while True:
     current_time = time.time()
     seconds_to_wait = 300 - current_time % 300
-    time.sleep(seconds_to_wait)    
+    #time.sleep(seconds_to_wait)    
     run_strategy()
     #VERSION ESTABLE

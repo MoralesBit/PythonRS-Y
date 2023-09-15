@@ -50,10 +50,14 @@ def calculate_indicators(symbol,interval):
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
-    df['roc_long'] = np.where(df['roc'][-2] > 10,1,0)
-    df['roc_short'] = np.where( df['roc'][-2] < -10,1,0)
+    df['roc_long'] = np.where(df['roc'][-2] > 5,1,0)
+    df['roc_short'] = np.where( df['roc'][-2] < -5,1,0)
     
     df['diff'] = abs((df['Close'] / df['psar'] -1) * 100)
+    
+    df['adx']= ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
+    df['adx_long'] = np.where( df['adx'][-2] < 20,1,0)
+    df['adx_short'] = np.where( df['adx'][-2] > 40,1,0)
      
     return df[-3:]
         
@@ -72,7 +76,7 @@ def run_strategy():
                 continue
            
             if df['p_long'][-2] == 1 and df['ema_long'][-2] == 1:
-                if df['roc_long'][-2] == 1:  
+                if df['roc_long'][-2] == 1 and df['adx_long'][-2] == 1:  
                             
                         message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
                         Tb.telegram_send_message(message)
@@ -89,7 +93,7 @@ def run_strategy():
                         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
                                  
             if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1:
-                if df['roc_short'][-2] == 1:   
+                if df['roc_short'][-2] == 1 and df['adx_short'][-2] == 1:   
                             
                         message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
                         Tb.telegram_send_message(message)
@@ -120,4 +124,4 @@ while True:
     seconds_to_wait = 300 - current_time % 300
     time.sleep(seconds_to_wait)    
     run_strategy()
-    #VERSION ESTABLE ULTRA TENDENCIA
+    #VERSION ESTABLE

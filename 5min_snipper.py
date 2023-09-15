@@ -116,6 +116,6 @@ def run_strategy():
 while True:
     current_time = time.time()
     seconds_to_wait = 300 - current_time % 300
-    #time.sleep(seconds_to_wait)    
+    time.sleep(seconds_to_wait)    
     run_strategy()
     #VERSION ESTABLE

@@ -77,9 +77,9 @@ def run_strategy():
                 continue
   
             if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
-                    if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1 and df['adx_long'][-2] == 1:
+                    if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1 and df['adx_short'][-2] == 1:
                         
-                        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
+                        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}%"
                         Tb.telegram_canal_3por(message)
                         
                         FISHINGSHORT = {
@@ -94,9 +94,9 @@ def run_strategy():
                         requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
               
             if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
-                    if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 and df['adx_short'][-2] == 1:     
+                    if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 and df['adx_long'][-2] == 1:     
                         
-                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M"
+                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}%"
                         Tb.telegram_canal_3por(message)
                                       
                         FISHINGLONG = {

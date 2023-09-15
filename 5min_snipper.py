@@ -14,7 +14,7 @@ def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
     symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
+    coins_to_remove = ["DOGEUSDT","AXSUSDT","ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
     for coin in coins_to_remove:
         if coin in symbols:
             symbols.remove(coin)
@@ -37,29 +37,28 @@ def calculate_indicators(symbol,interval):
      
     df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
     
-    acceleration=0.02 
+    acceleration=0.08 
     maximum=0.20
     
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
     
-    df['p_short'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
-    df['p_long'] = np.where( df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2],1,0) 
+    df['p_short'] = np.where(df['psar'][-2] > df['Close'][-2],1,0) 
+    df['p_long'] = np.where(df['psar'][-2] < df['Close'][-2],1,0) 
     
     df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
     df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
-    df['roc_long'] = np.where(df['roc'][-2] > 8,1,0)
-    df['roc_short'] = np.where(df['roc'][-2] < -8,1,0)
+    df['roc_long'] = np.where(df['roc'][-2] > 5,1,0)
+    df['roc_short'] = np.where( df['roc'][-2] < -5,1,0)
     
-    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
-    df['cci_signal'] = np.where(df['cci'][-2] > 0,1,0)
+    df['diff'] = abs((df['Close'] / df['psar'] -1) * 100)
     
-    df['adx']= ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
-    df['adx_long'] = np.where( df['adx'][-2] < 20,1,0)
-    df['adx_short'] = np.where( df['adx'][-2] > 40,1,0)
-    
+    df['vwma'] = ta.WMA(df['Volume'], timeperiod=20)
+    df['vwma_long'] = np.where(df['Volume'][-3] > df['Close'][-3] and df['Volume'][-2] < df['Close'][-2],1,0)
+    df['vwma_short'] = np.where(df['Volume'][-3] < df['Close'][-3] and df['Volume'][-2] > df['Close'][-2],1,0)
+     
     return df[-3:]
         
 def run_strategy():
@@ -75,31 +74,14 @@ def run_strategy():
                                                      
             if df is None:
                 continue
-  
-            if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
-                    if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1 and df['adx_short'][-2] == 1:
-                        
-                        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}%"
-                        Tb.telegram_canal_3por(message)
-                        
-                        FISHINGSHORT = {
-                        "name": "FISHING SHORT",
-                        "secret": "azsdb9x719",
-                        "side": "sell",
-                        "symbol": symbol,
-                        "open": {
-                        "price": float(df['Close'][-2])
-                        }
-                        }
-                        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
-              
-            if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
-                    if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 and df['adx_long'][-2] == 1:     
-                        
-                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}%"
-                        Tb.telegram_canal_3por(message)
-                                      
-                        FISHINGLONG = {
+           
+            if df['roc_long'][-2] == 1 and df['ema_long'][-2] == 1:
+                if df['vwma_long'][-2] == 1 and df['p_long'][-2] == 1:  
+                            
+                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
+                        Tb.telegram_send_message(message)
+                                              
+                        Tendencia_Long = {
                         "name": "FISHING LONG",
                         "secret": "0kivpja7tz89",
                         "side": "buy",
@@ -108,8 +90,25 @@ def run_strategy():
                         "price": float(df['Close'][-2])
                         }
                         }
-                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
-       
+                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
+                                 
+            if df['roc_short'][-2] == 1  and df['ema_short'][-2] == 1:
+                if df['vwma_short'][-2] == 1 and df['p_short'][-2] == 1:   
+                            
+                        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
+                        Tb.telegram_send_message(message)
+                                  
+                        Tendencia_short = {
+                        "name": "FISHING SHORT",
+                        "secret": "azsdb9x719",
+                        "side": "sell",
+                        "symbol": symbol,
+                        "open": {
+                        "price": float(df['Close'][-2])
+                        }
+                        }
+                        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=Tendencia_short) 
+              
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

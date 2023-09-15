@@ -50,8 +50,8 @@ def calculate_indicators(symbol,interval):
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
-    df['roc_long'] = np.where(df['roc'][-2] > 7,1,0)
-    df['roc_short'] = np.where(df['roc'][-2] < -7,1,0)
+    df['roc_long'] = np.where(df['roc'][-2] > 8,1,0)
+    df['roc_short'] = np.where(df['roc'][-2] < -8,1,0)
     
     df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
     df['cci_signal'] = np.where(df['cci'][-2] > 0,1,0)

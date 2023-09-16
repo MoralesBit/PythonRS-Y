@@ -42,17 +42,16 @@ def calculate_indicators(symbol,interval):
     
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
     
-    #df['p_short'] = np.where(df['psar'][-2] > df['Close'][-2],1,0) 
-    #df['p_long'] = np.where(df['psar'][-2] < df['Close'][-2],1,0) 
+    df['p_short'] = np.where(df['psar'][-2] > df['Close'][-2],1,0) 
+    df['p_long'] = np.where(df['psar'][-2] < df['Close'][-2],1,0) 
     
     #df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
     #df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
-    #df['roc_long'] = np.where(df['roc'][-2] > 5,1,0)
-    #df['roc_short'] = np.where( df['roc'][-2] < -5,1,0)
-    
+    df['roc_signal'] = np.where(abs(df['roc'][-2]) > 5,1,0)
+        
     df['diff'] = abs((df['Close'] / df['psar'] -1) * 100)
     
     df['vwma'] = ta.WMA(df['Close'], timeperiod=20)
@@ -82,7 +81,8 @@ def run_strategy():
 
             if df['vwma_long'][-2] == 1: 
                 if df['adx_long'][-2] == 1:
-
+                    if df['roc_signal'][-2] ==1 and df['p_long'][-2] ==1:
+                        
                             message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
                             Tb.telegram_canal_3por(message)
                                               
@@ -99,7 +99,8 @@ def run_strategy():
                                
             if df['vwma_short'][-2] == 1: 
                 if df['adx_short'][-2] == 1:
-                       
+                    if df['roc_signal'][-2] ==1 and df['p_short'][-2] ==1:  
+                         
                             message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
                             Tb.telegram_canal_3por(message)
                                   

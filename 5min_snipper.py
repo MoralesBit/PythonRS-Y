@@ -37,7 +37,7 @@ def calculate_indicators(symbol,interval):
      
     df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
     
-    acceleration=0.02 
+    acceleration=0.08 
     maximum=0.20
     
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
@@ -89,16 +89,16 @@ def run_strategy():
                             message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
                             Tb.telegram_send_message(message)
                                               
-                        Tendencia_Long = {
-                        "name": "FISHING LONG",
-                        "secret": "0kivpja7tz89",
-                        "side": "buy",
-                        "symbol": symbol,
-                        "open": {
-                        "price": float(df['Close'][-2])
-                        }
-                        }
-                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
+                            Tendencia_Long = {
+                            "name": "FISHING LONG",
+                            "secret": "0kivpja7tz89",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
+                            requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
                                
             else:
                 if df['vwma_short'][-2] == 1 and df['p_short'][-2] == 1: 
@@ -109,15 +109,15 @@ def run_strategy():
                             Tb.telegram_send_message(message)
                                   
                             Tendencia_short = {
-                        "name": "FISHING SHORT",
-                        "secret": "azsdb9x719",
-                        "side": "sell",
-                        "symbol": symbol,
-                        "open": {
-                        "price": float(df['Close'][-2])
-                        }
-                        }
-                        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=Tendencia_short) 
+                            "name": "FISHING SHORT",
+                            "secret": "azsdb9x719",
+                            "side": "sell",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
+                            requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=Tendencia_short) 
               
         except Exception as e:
           

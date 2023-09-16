@@ -58,8 +58,12 @@ def calculate_indicators(symbol,interval):
     df['vwma'] = ta.WMA(df['Close'], timeperiod=20)
     df['vwma_short'] = np.where(df['vwma'][-3] > df['Close'][-3] and df['vwma'][-2] < df['Close'][-2],1,0)
     df['vwma_long'] = np.where(df['vwma'][-3] < df['Close'][-3] and df['vwma'][-2] > df['Close'][-2],1,0)
-     
-    return df[-3:]
+    
+    df['adx'] = ta.ADX(df['Close'],timeperiod=14)
+    df['adx_signal'] = np.where(df['adx'] > 25,1,0)
+    
+   
+   return df[-3:]
         
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""

@@ -55,13 +55,13 @@ def calculate_indicators(symbol,interval):
     df['diff'] = abs((df['Close'] / df['psar'] -1) * 100)
     
     df['vwma'] = ta.WMA(df['Close'], timeperiod=20)
-    df['vwma_long'] = np.where(df['vwma'][-3] > df['Close'][-3] and df['vwma'][-2] < df['Close'][-2],1,0)
-    df['vwma_short'] = np.where(df['vwma'][-3] < df['Close'][-3] and df['vwma'][-2] > df['Close'][-2],1,0)
+    df['vwma_short'] = np.where(df['vwma'][-3] > df['Close'][-3] and df['vwma'][-2] < df['Close'][-2],1,0)
+    df['vwma_long'] = np.where(df['vwma'][-3] < df['Close'][-3] and df['vwma'][-2] > df['Close'][-2],1,0)
     #df['vwma_signal'] = np.where( df['vwma'] < df['Close'],1,0)
     
     df['adx'] = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
-    df['adx_long'] =  np.where(df['adx'] < 15 ,1,0)
-    df['adx_short'] =  np.where(df['adx'] > 35 ,1,0)
+    df['adx_short'] =  np.where(df['adx'] < 15 ,1,0)
+    df['adx_long'] =  np.where(df['adx'] > 35 ,1,0)
      
     return df[-3:]
         

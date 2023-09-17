@@ -13,8 +13,9 @@ client = Client(api_key=Pkey, api_secret=Skey)
 def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
-    symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    coins_to_remove = ["DOGEUSDT","AXSUSDT","ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
+    #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
+    symbols = ["BAKEUSDT", "PERPUSDT", "AUDIOUSDT", "SSVUSDT"]
+    coins_to_remove = ["DOGEUSDT"]  # Lista de monedas a eliminar
     for coin in coins_to_remove:
         if coin in symbols:
             symbols.remove(coin)
@@ -34,34 +35,27 @@ def calculate_indicators(symbol,interval):
     df = df.set_index('Open time')
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
-     
-    #df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
     
-    acceleration=0.08 
-    maximum=0.20
+    df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
+    
+    df['ema_long'] = np.where( df['ema200'] > df['Close'],1,0)
+    df['ema_short'] = np.where( df['ema200'] < df['Close'],1,0)
+        
+    acceleration=0.005 
+    maximum=0.08
     
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
     
     df['p_short'] = np.where(df['psar'][-2] > df['Close'][-2],1,0) 
     df['p_long'] = np.where(df['psar'][-2] < df['Close'][-2],1,0) 
     
-    #df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
-    #df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
-    
+    df['psar_signal'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
+     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
     df['roc_signal'] = np.where(abs(df['roc'][-2]) > 5,1,0)
         
     df['diff'] = abs((df['Close'] / df['psar'] -1) * 100)
-    
-    df['vwma'] = ta.WMA(df['Close'], timeperiod=20)
-    df['vwma_short'] = np.where(df['vwma'][-3] > df['Close'][-3] and df['vwma'][-2] < df['Close'][-2],1,0)
-    df['vwma_long'] = np.where(df['vwma'][-3] < df['Close'][-3] and df['vwma'][-2] > df['Close'][-2],1,0)
-    #df['vwma_signal'] = np.where( df['vwma'] < df['Close'],1,0)
-    
-    df['adx'] = ta.ADX(df['High'], df['Low'], df['Close'], timeperiod=14)
-    df['adx_short'] =  np.where(df['adx'] < 15 ,1,0)
-    df['adx_long'] =  np.where(df['adx'] > 35 ,1,0)
      
     return df[-3:]
         
@@ -79,9 +73,7 @@ def run_strategy():
             if df is None:
                 continue
 
-            if df['vwma_long'][-2] == 1: 
-                if df['adx_long'][-2] == 1:
-                    if df['roc_signal'][-2] ==1 and df['p_long'][-2] ==1:
+            if df['ema_long'][-2] ==1 and df['psar_signal'][-2] == 1:
                         
                             message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
                             Tb.telegram_canal_3por(message)
@@ -97,9 +89,7 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
                                
-            if df['vwma_short'][-2] == 1: 
-                if df['adx_short'][-2] == 1:
-                    if df['roc_signal'][-2] ==1 and df['p_short'][-2] ==1:  
+            if df['ema_short'][-2] ==1 and df['psar_signal'][-2] == 1:  
                          
                             message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
                             Tb.telegram_canal_3por(message)

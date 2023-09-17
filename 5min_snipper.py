@@ -41,7 +41,7 @@ def calculate_indicators(symbol,interval):
     df['ema_long'] = np.where( df['ema200'] > df['Close'],1,0)
     df['ema_short'] = np.where( df['ema200'] < df['Close'],1,0)
         
-    df['psar'] = ta.SAR(df['High'], df['Low'], acceleration=0, maximum=2)
+    df['psar'] = ta.SAR(df['High'], df['Low'], acceleration=0.05, maximum=2)
     
     df['p_short'] = np.where(df['psar'][-2] > df['Close'][-2],1,0) 
     df['p_long'] = np.where(df['psar'][-2] < df['Close'][-2],1,0) 

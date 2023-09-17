@@ -13,8 +13,8 @@ client = Client(api_key=Pkey, api_secret=Skey)
 def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
-    symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    #symbols = ["BAKEUSDT", "PERPUSDT", "AUDIOUSDT", "SSVUSDT"]
+    #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
+    symbols = ["TRBUSDT", "MTLUSDT", "SFPUSDT", "API3USDT"]
     coins_to_remove = ["DOGEUSDT"]  # Lista de monedas a eliminar
     for coin in coins_to_remove:
         if coin in symbols:
@@ -70,8 +70,8 @@ def run_strategy():
                          
             if df is None:
                 continue
-            if df['roc_signal'][-2] == 1:    
-                if df['ema_long'][-2] ==1 and df['psar_signal'][-2] == 1:
+                
+            if df['ema_long'][-2] ==1 and df['psar_signal'][-2] == 1:
                         
                             message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
                             Tb.telegram_canal_3por(message)
@@ -87,7 +87,7 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
                                
-                if df['ema_short'][-2] ==1 and df['psar_signal'][-2] == 1:  
+            if df['ema_short'][-2] ==1 and df['psar_signal'][-2] == 1:  
                          
                             message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
                             Tb.telegram_canal_3por(message)

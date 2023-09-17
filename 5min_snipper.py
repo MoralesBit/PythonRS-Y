@@ -38,8 +38,8 @@ def calculate_indicators(symbol,interval):
     
     df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
     
-    df['ema_long'] = np.where( df['ema200'] > df['Close'],1,0)
-    df['ema_short'] = np.where( df['ema200'] < df['Close'],1,0)
+    df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
+    df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
         
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration=0.05, maximum=2)
     

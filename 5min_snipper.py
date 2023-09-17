@@ -41,10 +41,10 @@ def calculate_indicators(symbol,interval):
     df['ema_long'] = np.where( df['ema200'] > df['Close'],1,0)
     df['ema_short'] = np.where( df['ema200'] < df['Close'],1,0)
         
-    start=0.005 
-    maximum=0.08
-       
-    df['psar'] = ta.SAR(df['High'], df['Low'], start, maximum)
+    start = 0.005
+    maximo = 0.08
+    incremento = 0.02
+    df['psar'] = ta.SAR(df['High'], df['Low'], acceleration=start, maximum=maximo)
     
     df['p_short'] = np.where(df['psar'][-2] > df['Close'][-2],1,0) 
     df['p_long'] = np.where(df['psar'][-2] < df['Close'][-2],1,0) 
@@ -69,6 +69,7 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
+            print(df['psar'][-2])
                          
             if df is None:
                 continue
@@ -114,6 +115,6 @@ def run_strategy():
 while True:
     current_time = time.time()
     seconds_to_wait = 300 - current_time % 300
-    time.sleep(seconds_to_wait)    
+    #time.sleep(seconds_to_wait)    
     run_strategy()
     #VERSION ESTABLE

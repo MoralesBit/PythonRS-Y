@@ -13,8 +13,8 @@ client = Client(api_key=Pkey, api_secret=Skey)
 def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
-    #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    symbols = ["BAKEUSDT", "PERPUSDT", "AUDIOUSDT", "SSVUSDT"]
+    symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
+    #symbols = ["BAKEUSDT", "PERPUSDT", "AUDIOUSDT", "SSVUSDT"]
     coins_to_remove = ["DOGEUSDT"]  # Lista de monedas a eliminar
     for coin in coins_to_remove:
         if coin in symbols:
@@ -49,11 +49,14 @@ def calculate_indicators(symbol,interval):
     df['p_short'] = np.where(df['psar'][-2] > df['Close'][-2],1,0) 
     df['p_long'] = np.where(df['psar'][-2] < df['Close'][-2],1,0) 
     
-    df['psar_signal'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
+    df['psar_signal_positivo'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
+    df['psar_signal_negativo'] = np.where( df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2],1,0)
      
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
-    df['roc_signal'] = np.where(abs(df['roc'][-2]) > 5,1,0)
+    df['roc_signal_positivo'] = np.where((df['roc'][-2]) > 5,1,0)
+    df['roc_signal_negativo'] = np.where((df['roc'][-2]) < -5,1,0)
+    
         
     df['diff'] = abs((df['Close'] / df['psar'] -1) * 100)
      
@@ -72,8 +75,8 @@ def run_strategy():
                          
             if df is None:
                 continue
-
-            if df['ema_long'][-2] ==1 and df['psar_signal'][-2] == 1:
+            if df['roc_signal_positivo'][-2] == 1:    
+                if df['ema_long'][-2] ==1 and df['psar_signal_positivo'][-2] == 1:
                         
                             message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
                             Tb.telegram_canal_3por(message)
@@ -89,7 +92,7 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
                                
-            if df['ema_short'][-2] ==1 and df['psar_signal'][-2] == 1:  
+                if df['ema_short'][-2] ==1 and df['psar_signal_positivo'][-2] == 1:  
                          
                             message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
                             Tb.telegram_canal_3por(message)
@@ -103,7 +106,40 @@ def run_strategy():
                             "price": float(df['Close'][-2])
                             }
                             }
-                            requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=Tendencia_short) 
+                            requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=Tendencia_short)
+            
+            if df['roc_signal_negativo'][-2] == 1:    
+                if df['ema_long'][-2] ==1 and df['psar_signal_negativo'][-2] == 1:
+                        
+                            message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
+                            Tb.telegram_canal_3por(message)
+                                              
+                            Tendencia_Long = {
+                            "name": "FISHING LONG",
+                            "secret": "0kivpja7tz89",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
+                            requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
+                               
+                if df['ema_short'][-2] ==1 and df['psar_signal_negativo'][-2] == 1:  
+                         
+                            message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
+                            Tb.telegram_canal_3por(message)
+                                  
+                            Tendencia_short = {
+                            "name": "FISHING SHORT",
+                            "secret": "azsdb9x719",
+                            "side": "sell",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
+                            requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=Tendencia_short)                 
               
         except Exception as e:
           

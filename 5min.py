@@ -14,8 +14,11 @@ def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
     symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    #symbols = ["AMBUSDT", "BLZUSDT"]
-    symbols.remove("ETHBTC")  
+    #symbols = ["TRBUSDT", "MTLUSDT", "SFPUSDT", "API3USDT"]
+    coins_to_remove = ["DOGEUSDT"]  # Lista de monedas a eliminar
+    for coin in coins_to_remove:
+        if coin in symbols:
+            symbols.remove(coin)
     return symbols
 
    
@@ -32,34 +35,45 @@ def calculate_indicators(symbol,interval):
     df = df.set_index('Open time')
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
-      
-    df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
     
-    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
-    df['rsi_signal_long'] = np.where(df['rsi'][-2] < 55,1,0)
-   
-    df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
-    
+    df['diff'] = ((df['Open'] / df['Close'] -1) * 100)
+        
     acceleration=0.02 
     maximum=0.20
     
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
+        
+    df['roc'] = ta.ROC(df['Close'], timeperiod=6)
+    
+    df['roc_signal_short'] = np.where((df['roc'][-2]) > 5 ,1,0)
+    df['roc_signal_long'] = np.where((df['roc'][-2]) < -5 ,1,0)
+        
+    df['diff_psar'] = abs((df['Open'] / df['psar'] -1) * 100)
     
     df['p_short'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
     df['p_long'] = np.where( df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2],1,0) 
     
-    df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
-    df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
+      #VERIFICACION
+    checks = np.isin(1, df['roc_signal_short'][-12:])
     
-    df['roc'] = ta.ROC(df['Close'], timeperiod=288)
+    if checks:
+       checks == 1 
+    else : 
+       checks == 0
     
-    df['roc_long'] = np.where(df['roc'][-2] > 8,1,0)
-    df['roc_short'] = np.where(df['roc'][-2] < -8,1,0)
+    df['check_short'] = checks
     
-    df['cci'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=28)
-    df['cci_signal'] = np.where(df['cci'][-2] > 0,1,0)
+        #VERIFICACION
+    checkl = np.isin(1, df['roc_signal_long'][-12:])
     
-    return df[-3:]
+    if checkl:
+       checkl == 1 
+    else : 
+       checkl == 0
+    
+    df['check_long'] = checkl
+     
+    return df[-4:]
         
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
@@ -71,50 +85,46 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            #dfbtc = calculate_indicators("BTCUSDT",interval=Client.KLINE_INTERVAL_5MINUTE)
-            # revisando si seguir ema de BTC
-            print(df['roc'][-2])
-                                                     
+                                
             if df is None:
                 continue
+                
+            if df['check_long'][-2] == 1:
+                if  df['p_long'][-2] == 1:       
+                            message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n💥 {round(df['roc'][-2],2)}%"
+                            Tb.telegram_canal_3por(message)
+                                              
+                            contratendencia_long = {
+                            "name": "PICKER LONG",
+                            "secret": "nwh2tbpay1r",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
+                            requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=contratendencia_long)      
             
-                  
-            if df['p_short'][-2] == 1 and df['ema_long'][-2] == 1:
-                    if df['roc_long'][-2] == 1  and df['cci_signal'][-2] == 1:
+            if df['check_short'][-2] == 1:                   
+                if  df['p_short'][-2] == 1:  
+                         
+                            message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n💥 {round(df['roc'][-2],2)}%"
+                            Tb.telegram_canal_3por(message)
+                                  
+                            contratendencia_short= {
+                            "name": "PICKER SHORT",
+                            "secret": "hgw3399vhh",
+                            "side": "sell",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
+   
+                            requests.post('https://hook.finandy.com/30oL3Xd_SYGJzzdoqFUK', json=contratendencia_short)
+            
                         
-                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
-                        FISHINGSHORT = {
-                        "name": "FISHING SHORT",
-                        "secret": "azsdb9x719",
-                        "side": "sell",
-                        "symbol": symbol,
-                        "open": {
-                        "price": float(df['Close'][-2])
-                        }
-                        }
-                        requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
               
-            if df['p_long'][-2] == 1 and df['ema_short'][-2] == 1:
-                    if df['roc_short'][-2] == 1 and df['cci_signal'][-2] == 0 :    
-                                                           
-                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n⏳ 5M")
-                        FISHINGLONG = {
-                        "name": "FISHING LONG",
-                        "secret": "0kivpja7tz89",
-                        "side": "buy",
-                        "symbol": symbol,
-                        "open": {
-                        "price": float(df['Close'][-2])
-                        }
-                        }
-                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
-            
-            else :
-                print("NEXT")       
-            
-            #time.sleep(0.5)                 
-                           
-                        
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

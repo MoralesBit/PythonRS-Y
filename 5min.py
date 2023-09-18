@@ -50,9 +50,9 @@ def calculate_indicators(symbol,interval):
     
     df['roc_signal'] = np.where((df['roc'][-2]) > 5 or df['roc'][-2] < -5,1,0)
         
-    df['diff_psar'] = abs((df['Close'] / df['psar'] -1) * 100)
+    df['diff_psar'] = abs((df['Open'] / df['psar'] -1) * 100)
      
-    return df[-3:]
+    return df[-4:]
         
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
@@ -65,13 +65,16 @@ def run_strategy():
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
             print(df['psar'][-2])
+            in_Long = (df['Close'][-2] - (df['Close'][-2]*df['diff_psar'][-4]))
+            in_short = (df['Close'][-2] + (df['Close'][-2]*df['diff_psar'][-4]))
+            
                          
             if df is None:
                 continue
                 
-            if df['diff_down'] [-2] == 1:
+            if df['diff_down'][-2] == 1:
                         
-                            message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\🔜 {round(df['psar'][-2],3)} \n💥 {round(df['diff_psar'][-2],2)}%"
+                            message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\🔜 {round(in_Long,3)} \n💥 {round(df['diff_psar'][-4],2)}%"
                             Tb.telegram_canal_3por(message)
                                               
                             contratendencia_long = {
@@ -80,14 +83,14 @@ def run_strategy():
                             "side": "buy",
                             "symbol": symbol,
                             "open": {
-                            "price": float(df['psar'][-2])
+                            "price": in_Long
                             }
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=contratendencia_long)      
                                
-            if df['diff_up'] [-2] == 1:  
+            if df['diff_up'][-2] == 1:  
                          
-                            message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🔜 {round(df['psar'][-2],3)} \n💥 {round(df['diff_psar'][-2],2)}%"
+                            message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n🔜 {round(in_short,3)} \n💥 {round(df['diff_psar'][-4],2)}%"
                             Tb.telegram_canal_3por(message)
                                   
                             contratendencia_short= {
@@ -96,7 +99,7 @@ def run_strategy():
                             "side": "sell",
                             "symbol": symbol,
                             "open": {
-                            "price": float(df['psar'][-2])
+                            "price": in_short
                             }
                             }
    

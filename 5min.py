@@ -13,8 +13,8 @@ client = Client(api_key=Pkey, api_secret=Skey)
 def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
-    #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    symbols = ["TRBUSDT", "MTLUSDT", "SFPUSDT", "API3USDT"]
+    symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
+    #symbols = ["TRBUSDT", "MTLUSDT", "SFPUSDT", "API3USDT"]
     coins_to_remove = ["DOGEUSDT"]  # Lista de monedas a eliminar
     for coin in coins_to_remove:
         if coin in symbols:

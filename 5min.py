@@ -93,7 +93,7 @@ def run_strategy():
                         }
                         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
                                  
-            if df['recompra_long'][-2] == 1 :
+            if df['recompra_long'][-1] == 1 :
                                             
                         message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-1]}\n Recompra"
                         Tb.telegram_canal_prueba(message)
@@ -109,8 +109,7 @@ def run_strategy():
                         }
                         requests.post('https://hook.finandy.com/p-0RG59xlYnRP-A-qVUK', json=recompra_long) 
               
-                        
-       
+
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

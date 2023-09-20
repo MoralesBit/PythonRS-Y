@@ -43,7 +43,7 @@ def calculate_indicators(symbol,interval):
         
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
     
-    df['recompra_long'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
+    df['recompra_long'] = np.where( df['psar'][-2] < df['Close'][-2] and df['psar'][-1] > df['Close'][-1],1,0) 
      
     df['p_long'] = np.where(df['psar'][-2] < df['Close'][-2],1,0) 
         
@@ -108,7 +108,6 @@ def run_strategy():
                         }
                         }
                         requests.post('https://hook.finandy.com/p-0RG59xlYnRP-A-qVUK', json=recompra_long) 
-              
 
         except Exception as e:
           

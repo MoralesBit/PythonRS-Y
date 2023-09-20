@@ -38,7 +38,7 @@ def calculate_indicators(symbol,interval):
      
     df['ema50'] = df['Close'].ewm(span=50, adjust=False).mean()
     
-    acceleration=0.025
+    acceleration=0.025 
     maximum=0.20
         
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
@@ -79,7 +79,7 @@ def run_strategy():
                 if df['vwma_long'][-2] == 1:
                     if df['p_long'][-2] == 1:  
                             
-                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}"
+                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-1]}"
                         Tb.telegram_canal_prueba(message)
                                               
                         Tendencia_Long = {
@@ -88,14 +88,14 @@ def run_strategy():
                         "side": "buy",
                         "symbol": symbol,
                         "open": {
-                        "price": float(df['Close'][-2])
+                        "price": float(df['Close'][-1])
                         }
                         }
                         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
                                  
             if df['recompra_long'][-2] == 1 :
                                             
-                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n Recompra"
+                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-1]}\n Recompra"
                         Tb.telegram_canal_prueba(message)
                                   
                         recompra_long = {
@@ -104,12 +104,13 @@ def run_strategy():
                         "side": "buy",
                         "symbol": symbol,
                         "open": {
-                        "price": float(df['Close'][-2])
+                        "price": float(df['Close'][-1])
                         }
                         }
                         requests.post('https://hook.finandy.com/p-0RG59xlYnRP-A-qVUK', json=recompra_long) 
               
-
+                        
+       
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

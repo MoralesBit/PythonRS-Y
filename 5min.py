@@ -14,7 +14,7 @@ def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
     #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    symbols = ["TRBUSDT", "STMXUSDT", "BLZUSDT", "SPELLUSDT"]
+    symbols = ["ARKUSDT"]
     coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
     for coin in coins_to_remove:
         if coin in symbols:
@@ -36,7 +36,7 @@ def calculate_indicators(symbol,interval):
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
      
-    df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
+    df['ema50'] = df['Close'].ewm(span=50, adjust=False).mean()
     
     acceleration=0.02 
     maximum=0.20
@@ -78,7 +78,7 @@ def run_strategy():
                     if df['p_long'][-2] == 1:  
                             
                         message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}"
-                        Tb.telegram_send_message(message)
+                        Tb.telegram_canal_prueba(message)
                                               
                         Tendencia_Long = {
                         "name": "FISHING LONG",

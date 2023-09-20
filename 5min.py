@@ -38,7 +38,7 @@ def calculate_indicators(symbol,interval):
      
     df['ema50'] = df['Close'].ewm(span=50, adjust=False).mean()
     
-    acceleration=0.02 
+    acceleration=0.025
     maximum=0.20
         
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)

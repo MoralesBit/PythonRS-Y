@@ -14,7 +14,7 @@ def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
     #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    symbols = ["ARKUSDT"]
+    symbols = ["CYBERUSDT"]
     coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
     for coin in coins_to_remove:
         if coin in symbols:
@@ -42,6 +42,8 @@ def calculate_indicators(symbol,interval):
     maximum=0.20
         
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
+    
+    df['recompra_long'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
      
     df['p_long'] = np.where(df['psar'][-2] < df['Close'][-2],1,0) 
         
@@ -91,22 +93,21 @@ def run_strategy():
                         }
                         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
                                  
-            #if df['p_short'][-2] == 1 and df['ema_short'][-2] == 1:
-                #if df['roc_short'][-2] == 1:   
-                            
-                        #message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📊 {round(df['roc'][-2],3)}% \n💥 {round(df['diff'][-2],2)}%"
-                        #Tb.telegram_send_message(message)
+            if df['recompra_long'][-2] == 1 :
+                                            
+                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n Recompra"
+                        Tb.telegram_canal_prueba(message)
                                   
-                        #Tendencia_short = {
-                        #"name": "FISHING SHORT",
-                        #"secret": "azsdb9x719",
-                        #"side": "sell",
-                        #"symbol": symbol,
-                        #"open": {
-                        #"price": float(df['Close'][-2])
-                        #}
-                        #}
-                        #requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=Tendencia_short) 
+                        recompra_long = {
+                        "name": "RECOMPRA LONG SHORT",
+                        "secret": "luj6ewrkwje",
+                        "side": "buy",
+                        "symbol": symbol,
+                        "open": {
+                        "price": float(df['Close'][-2])
+                        }
+                        }
+                        requests.post('https://hook.finandy.com/p-0RG59xlYnRP-A-qVUK', json=recompra_long) 
               
            
                         

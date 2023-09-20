@@ -47,7 +47,7 @@ def calculate_indicators(symbol,interval):
      
     df['p_long'] = np.where(df['psar'][-2] < df['Close'][-2],1,0) 
         
-    df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
+    df['ema_long'] = np.where( df['ema50'] < df['Close'],1,0)
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
@@ -109,12 +109,7 @@ def run_strategy():
                         }
                         requests.post('https://hook.finandy.com/p-0RG59xlYnRP-A-qVUK', json=recompra_long) 
               
-           
-                        
-           
-                        
-                         
-       
+
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

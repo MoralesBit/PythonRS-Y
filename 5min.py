@@ -10,16 +10,23 @@ Pkey = ''
 Skey = ''
 client = Client(api_key=Pkey, api_secret=Skey)
 
+
 def get_trading_symbols():
-    """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
-    futures_info = client.futures_exchange_info()
-    #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    symbols = ["MASKUSDT"]
-    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
-    for coin in coins_to_remove:
-        if coin in symbols:
-            symbols.remove(coin)
+   
+    with open('symbols_long.txt', 'r') as f:
+        symbols = [line.strip() for line in f if line.strip()]
     return symbols
+
+#def get_trading_symbols():
+#    """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
+#    futures_info = client.futures_exchange_info()
+#    #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
+#    symbols = ["MASKUSDT"]
+#    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
+#    for coin in coins_to_remove:
+#        if coin in symbols:
+#            symbols.remove(coin)
+#    return symbols
 
    
 def calculate_indicators(symbol,interval):

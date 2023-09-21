@@ -72,9 +72,9 @@ def calculate_indicators(symbol,interval):
     
     df['sma_signal'] = np.where(df['rsi_sma'][-2] < 65 ,1,0)
     
-    df['vwav'] = ta.WMA(df['Close'], timeperiod=1000)
+    #df['vwav'] = ta.WMA(df['Close'], timeperiod=500)
     
-    df['vwav_signal'] = np.where(df['vwav'] > df['ema50'] ,1,0)
+    #df['vwav_signal'] = np.where(df['vwav'] > df['ema50'] ,1,0)
      
     return df[-3:]
         
@@ -88,7 +88,7 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            print(df['vwav'][-2])                                         
+            #print(df['vwav'][-2])                                         
             if df is None:
                 continue
            
@@ -96,7 +96,7 @@ def run_strategy():
                 if df['vwma_long'][-2] == 1:
                     if df['p_long'][-2] == 1: 
                         if df['sma_signal'][-2] == 1:
-                            if df['vwav_signal'][-2] == 1:      
+                            #if df['vwav_signal'][-2] == 1:      
                             
                                 message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-1]}"
                                 Tb.telegram_canal_prueba(message)

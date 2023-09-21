@@ -70,10 +70,8 @@ def calculate_indicators(symbol,interval):
     
     df['sma_signal'] = np.where(df['rsi_sma'][-2] < 65 ,1,0)
     
-    df['Volumen_Acumulado'] = df['Volume'].cumsum()
-    df['Ponderado'] = df['Close'] * df['Volume']
-    df['Ponderado_Acumulado'] = df['Ponderado'].cumsum()
-    df['vwav'] = df['Ponderado_Acumulado'] / df['Volumen_Acumulado']
+    df['typical_price'] = (df['Close'] + df['High'] + df['Low']) / 3
+    df['vwav'] = ta.SUM(df['typical_price'] * df['Volume']) / ta.SUM(df['Volume'])
         
     df['vwav_signal'] = np.where(df['vwav'] > df['ema50'] ,1,0)
      

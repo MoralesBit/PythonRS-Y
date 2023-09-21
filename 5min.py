@@ -14,7 +14,7 @@ def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
     #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    symbols = ["LEVERUSDT"]
+    symbols = ["JASMYUSDT"]
     coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
     for coin in coins_to_remove:
         if coin in symbols:
@@ -64,6 +64,10 @@ def calculate_indicators(symbol,interval):
     df['rsi_sma'] = ta.SMA(df['rsi'], timeperiod=14)
     
     df['sma_signal'] = np.where(df['rsi_sma'][-2] < 65 ,1,0)
+    
+    df['vwav'] = ta.WMA(df['close'], timeperiod=1000)
+    
+    df['vwav_signal'] = np.where(df['vwav'] > df['ema50'] ,1,0)
      
     return df[-3:]
         
@@ -84,21 +88,22 @@ def run_strategy():
             if df['ema_long'][-2] == 1:
                 if df['vwma_long'][-2] == 1:
                     if df['p_long'][-2] == 1: 
-                        if df['sma_signal'][-2] == 1:     
+                        if df['sma_signal'][-2] == 1:
+                            if df['vwav_signal'][-2] == 1:      
                             
-                            message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-1]}"
-                            Tb.telegram_canal_prueba(message)
+                                message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-1]}"
+                                Tb.telegram_canal_prueba(message)
                                               
-                            Tendencia_Long = {
-                            "name": "FISHING LONG",
-                            "secret": "0kivpja7tz89",
-                            "side": "buy",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-1])
-                            }
-                            }
-                            requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
+                                Tendencia_Long = {
+                                "name": "FISHING LONG",
+                                "secret": "0kivpja7tz89",
+                                "side": "buy",
+                                "symbol": symbol,
+                                "open": {
+                                "price": float(df['Close'][-1])
+                                }
+                                }
+                                requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
                                  
             if df['recompra_long'][-1] == 1 :
                                             

@@ -88,7 +88,7 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-                                                     
+            print(df['vwav'][-2])                                         
             if df is None:
                 continue
            

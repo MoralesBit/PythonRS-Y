@@ -11,22 +11,22 @@ Skey = ''
 client = Client(api_key=Pkey, api_secret=Skey)
 
 
-def get_trading_symbols():
-   
-    with open('symbols_long.txt', 'r') as f:
-        symbols = [line.strip() for line in f if line.strip()]
-    return symbols
-
 #def get_trading_symbols():
-#    """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
-#    futures_info = client.futures_exchange_info()
-#    #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-#    symbols = ["MASKUSDT"]
-#    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
-#    for coin in coins_to_remove:
-#        if coin in symbols:
-#            symbols.remove(coin)
-#    return symbols
+   
+    #with open('symbols_long.txt', 'r') as f:
+    #    symbols = [line.strip() for line in f if line.strip()]
+    #return symbols
+
+def get_trading_symbols():
+    """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
+    futures_info = client.futures_exchange_info()
+    #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
+    symbols = ["IMXUSDT","LEVERUSDT","ACHUSDT",""]
+    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
+    for coin in coins_to_remove:
+        if coin in symbols:
+            symbols.remove(coin)
+    return symbols
 
    
 def calculate_indicators(symbol,interval):
@@ -59,9 +59,7 @@ def calculate_indicators(symbol,interval):
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
     df['roc_long'] = np.where(df['roc'][-2] > 7,1,0)
-        
-    df['diff'] = abs((df['Close'] / df['psar'] -1) * 100)
-    
+           
     df['vwma'] = ta.WMA(df['Close'], timeperiod=20)
   
     df['vwma_long'] = np.where(df['vwma'][-2] > df['psar'][-2] ,1,0)
@@ -72,9 +70,9 @@ def calculate_indicators(symbol,interval):
     
     df['sma_signal'] = np.where(df['rsi_sma'][-2] < 65 ,1,0)
     
-    #df['vwav'] = ta.WMA(df['Close'], timeperiod=500)
+    df['vwav'] = ta.WMA(df['Close'], timeperiod=100)
     
-    #df['vwav_signal'] = np.where(df['vwav'] > df['ema50'] ,1,0)
+    df['vwav_signal'] = np.where(df['vwav'] > df['ema50'] ,1,0)
      
     return df[-3:]
         
@@ -88,7 +86,7 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            #print(df['vwav'][-2])                                         
+            print(df['vwav'][-2])                                         
             if df is None:
                 continue
            
@@ -96,7 +94,7 @@ def run_strategy():
                 if df['vwma_long'][-2] == 1:
                     if df['p_long'][-2] == 1: 
                         if df['sma_signal'][-2] == 1:
-                            #if df['vwav_signal'][-2] == 1:      
+                            if df['vwav_signal'][-2] == 1:      
                             
                                 message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-1]}"
                                 Tb.telegram_canal_prueba(message)
@@ -126,7 +124,25 @@ def run_strategy():
                         "price": float(df['Close'][-1])
                         }
                         }
-                        requests.post('https://hook.finandy.com/p-0RG59xlYnRP-A-qVUK', json=recompra_long) 
+                        requests.post('https://hook.finandy.com/p-0RG59xlYnRP-A-qVUK', json=recompra_long)
+            
+            if df['vwav_signal'][-2] == 0:
+                if df['recompra_long'][-2] == 1:
+                    
+                    message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}"
+                    Tb.telegram_canal_3por(message)
+                   
+                    Contratendencia_short = {
+                        "name": "PICKER SHORT",
+                        "secret": "ao2cgree8fp",
+                        "side": "sell",
+                        "symbol": symbol,
+                        "open": {
+                        "price": float(df['Close'][-1]) 
+                        }
+                        }
+            
+                    requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=Contratendencia_short)            
 
         except Exception as e:
           

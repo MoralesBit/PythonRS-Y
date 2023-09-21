@@ -70,8 +70,11 @@ def calculate_indicators(symbol,interval):
     
     df['sma_signal'] = np.where(df['rsi_sma'][-2] < 65 ,1,0)
     
-    df['vwav'] = ta.WMA(df['Close'], timeperiod=100)
-    
+    df['Volumen_Acumulado'] = df['Volume'].cumsum()
+    df['Ponderado'] = df['Close'] * df['Volume']
+    df['Ponderado_Acumulado'] = df['Ponderado'].cumsum()
+    df['vwav'] = df['Ponderado_Acumulado'] / df['Volumen_Acumulado']
+        
     df['vwav_signal'] = np.where(df['vwav'] > df['ema50'] ,1,0)
      
     return df[-3:]

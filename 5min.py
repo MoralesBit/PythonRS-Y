@@ -5,6 +5,8 @@ import pandas as pd
 import talib as ta
 from binance.client import Client
 import Telegram_bot as Tb
+import pandas_ta as tw
+
 
 Pkey = ''
 Skey = ''
@@ -70,8 +72,10 @@ def calculate_indicators(symbol,interval):
     
     df['sma_signal'] = np.where(df['rsi_sma'][-2] < 65 ,1,0)
     
-    df['typical_price'] = (df['Close'] + df['High'] + df['Low']) / 3
-    df['vwav'] = ta.SUM(df['typical_price'] * df['Volume']) / ta.SUM(df['Volume'])
+    #df['typical_price'] = (df['Close'] + df['High'] + df['Low']) / 3
+    #df['vwav'] = ta.SUM(df['typical_price'] * df['Volume']) / ta.SUM(df['Volume'])
+    
+    df["vwav"] = tw.vwap(df['High'] , df['Low'], df['Close'] , df['Volume'])
         
     df['vwav_signal'] = np.where(df['vwav'] > df['ema50'] ,1,0)
      

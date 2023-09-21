@@ -13,22 +13,22 @@ Skey = ''
 client = Client(api_key=Pkey, api_secret=Skey)
 
 
-#def get_trading_symbols():
-   
-    #with open('symbols_long.txt', 'r') as f:
-    #    symbols = [line.strip() for line in f if line.strip()]
-    #return symbols
-
 def get_trading_symbols():
-    """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
-    futures_info = client.futures_exchange_info()
-    #symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-    symbols = ["IMXUSDT","LEVERUSDT","ACHUSDT","AGLDUSDT"]
-    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
-    for coin in coins_to_remove:
-        if coin in symbols:
-            symbols.remove(coin)
+   
+    with open('symbols_long.txt', 'r') as f:
+        symbols = [line.strip() for line in f if line.strip()]
     return symbols
+
+#def get_trading_symbols():
+#    """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
+#    futures_info = client.futures_exchange_info()
+##    symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
+#    symbols = ["IMXUSDT","LEVERUSDT","ACHUSDT","AGLDUSDT"]
+#    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
+#    for coin in coins_to_remove:
+##        if coin in symbols:
+#            symbols.remove(coin)
+#    return symbols
 
    
 def calculate_indicators(symbol,interval):
@@ -130,25 +130,7 @@ def run_strategy():
                         }
                         }
                         requests.post('https://hook.finandy.com/p-0RG59xlYnRP-A-qVUK', json=recompra_long)
-            
-            if df['vwav_signal'][-2] == 0:
-                if df['recompra_long'][-2] == 1:
-                    
-                    message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}"
-                    Tb.telegram_canal_3por(message)
-                   
-                    Contratendencia_short = {
-                        "name": "PICKER SHORT",
-                        "secret": "ao2cgree8fp",
-                        "side": "sell",
-                        "symbol": symbol,
-                        "open": {
-                        "price": float(df['Close'][-1]) 
-                        }
-                        }
-            
-                    requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=Contratendencia_short)            
-
+           
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")
@@ -158,4 +140,4 @@ while True:
     seconds_to_wait = 300 - current_time % 300
     time.sleep(seconds_to_wait)    
     run_strategy()
-    #VERSION ESTABLE
+    #VERSION ESTABLE para operar solo 5 monedas, va con la tendencia fuerte! LEE LAS MONEDAS DE ARCHIVO EXTERNO

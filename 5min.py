@@ -65,7 +65,7 @@ def calculate_indicators(symbol,interval):
     
     df['sma_signal'] = np.where(df['rsi_sma'][-2] < 65 ,1,0)
     
-    df['vwav'] = ta.WMA(df['close'], timeperiod=1000)
+    df['vwav'] = ta.WMA(df['Close'], timeperiod=1000)
     
     df['vwav_signal'] = np.where(df['vwav'] > df['ema50'] ,1,0)
      

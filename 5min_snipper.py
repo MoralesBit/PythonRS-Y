@@ -60,7 +60,7 @@ def calculate_indicators(symbol,interval):
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
-    df['roc_long'] = np.where(df['roc'][-2] > 7,1,0)
+    df['roc_signal'] = np.where(df['roc'][-2] > 5,1,0)
            
     df['vwma'] = ta.WMA(df['Close'], timeperiod=20)
   
@@ -71,10 +71,7 @@ def calculate_indicators(symbol,interval):
     df['rsi_sma'] = ta.SMA(df['rsi'], timeperiod=14)
     
     df['sma_signal'] = np.where(df['rsi_sma'][-2] < 65 ,1,0)
-    
-    #df['typical_price'] = (df['Close'] + df['High'] + df['Low']) / 3
-    #df['vwav'] = ta.SUM(df['typical_price'] * df['Volume']) / ta.SUM(df['Volume'])
-    
+       
     df["vwav"] = tw.vwap(df['High'] , df['Low'], df['Close'] , df['Volume'])
         
     df['vwav_signal'] = np.where(df['vwav'] > df['ema50'] ,1,0)
@@ -95,14 +92,14 @@ def run_strategy():
                                                     
             if df is None:
                 continue
-                           
-            if df['vwav_signal'][-2] == 0:
-                if df['recompra_long'][-2] == 1:
+            if df['roc_signal'][-2] == 1:               
+                if df['vwav_signal'][-2] == 0:
+                    if df['recompra_long'][-2] == 1:
                     
-                    message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}"
-                    Tb.telegram_canal_3por(message)
+                        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}"
+                        Tb.telegram_canal_3por(message)
                    
-                    Contratendencia_short = {
+                        Contratendencia_short = {
                         "name": "PICKER SHORT",
                         "secret": "ao2cgree8fp",
                         "side": "sell",
@@ -112,7 +109,7 @@ def run_strategy():
                         }
                         }
             
-                    requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=Contratendencia_short)            
+                        requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=Contratendencia_short)            
 
         except Exception as e:
           

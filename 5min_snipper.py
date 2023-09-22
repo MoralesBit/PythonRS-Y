@@ -74,7 +74,9 @@ def calculate_indicators(symbol,interval):
        
     df["vwav"] = tw.vwap(df['High'] , df['Low'], df['Close'] , df['Volume'])
         
-    df['vwav_signal'] = np.where(df['vwav'] > df['ema50'] ,1,0)
+    df['signal_short'] = np.where(df['vwav'][-2] < df['ema50'][-2] and df['vwav'][-1] > df['ema50'][-1] ,1,0)
+    df['signal_long'] = np.where(df['vwav'][-2] > df['ema50'][-2] and df['vwav'][-1] < df['ema50'][-1] ,1,0)
+    
      
     return df[-3:]
         
@@ -93,8 +95,8 @@ def run_strategy():
             if df is None:
                 continue
             if df['roc_signal'][-2] == 1:               
-                if df['vwav_signal'][-2] == 0:
-                    if df['recompra_long'][-2] == 1:
+                if df['signal_short'][-2] == 1:
+                    
                     
                         message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}"
                         Tb.telegram_canal_3por(message)
@@ -108,8 +110,26 @@ def run_strategy():
                         "price": float(df['Close'][-1]) 
                         }
                         }
-            
-                        requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=Contratendencia_short)            
+                        requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=Contratendencia_short)
+                        
+            if df['roc_signal'][-2] == 1:               
+                if df['signal_long'][-2] == 1:
+                    
+                        
+                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}"
+                        
+                        Tb.telegram_canal_3por(message)
+                                      
+                        Contratendencia_long = {
+                        "name": "PICKER LONG",
+                        "secret": "xjth0i3qgb",
+                        "side": "buy",
+                        "symbol": symbol,
+                        "open": {
+                        "price": float(df['Close'][-1])
+                        }
+                        }
+                        requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Contratendencia_long)             
 
         except Exception as e:
           

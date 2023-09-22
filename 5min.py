@@ -52,7 +52,7 @@ def calculate_indicators(symbol,interval):
         
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
     
-    df['recompra_long'] = np.where( df['psar'][-2] < df['Close'][-2] and df['psar'][-1] > df['Close'][-1],1,0) 
+    df['recompra_long'] = np.where( df['psar'][-2] > df['Close'][-2] and df['psar'][-1] < df['Close'][-1],1,0) 
      
     df['p_long'] = np.where(df['psar'][-2] < df['Close'][-2],1,0) 
         

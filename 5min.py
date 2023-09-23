@@ -37,7 +37,7 @@ def calculate_indicators(symbol, interval):
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-    df['signal'] = np.where(df['diff'] > 5,1,0)
+    df['signal'] = np.where(df['diff'] > 3,1,0)
     
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
     df['rsi_short'] = np.where(df['rsi'] > 70 ,1,0)

@@ -13,22 +13,22 @@ Skey = ''
 client = Client(api_key=Pkey, api_secret=Skey)
 
 
-def get_trading_symbols():
-   
-    with open('symbols_long.txt', 'r') as f:
-        symbols = [line.strip() for line in f if line.strip()]
-    return symbols
-
 #def get_trading_symbols():
-#    """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
-#    futures_info = client.futures_exchange_info()
-##    symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
-#    symbols = ["IMXUSDT","LEVERUSDT","ACHUSDT","AGLDUSDT"]
-#    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
-#    for coin in coins_to_remove:
-##        if coin in symbols:
-#            symbols.remove(coin)
+   
+#    with open('symbols_long.txt', 'r') as f:
+#        symbols = [line.strip() for line in f if line.strip()]
 #    return symbols
+
+def get_trading_symbols():
+    """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
+    futures_info = client.futures_exchange_info()
+    symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
+    #symbols = ["IMXUSDT","LEVERUSDT","ACHUSDT","AGLDUSDT"]
+    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
+    for coin in coins_to_remove:
+        if coin in symbols:
+            symbols.remove(coin)
+    return symbols
 
    
 def calculate_indicators(symbol,interval):
@@ -94,26 +94,26 @@ def run_strategy():
             print(df['vwav'][-2])                                         
             if df is None:
                 continue
-           
-            if df['ema_long'][-2] == 1:
-                if df['vwma_long'][-2] == 1:
-                    if df['p_long'][-2] == 1: 
-                        if df['sma_signal'][-2] == 1:
-                            if df['vwav_signal'][-2] == 1:      
+            if df['roc_long'][-2] == 1:
+                if df['ema_long'][-2] == 1:
+                    if df['vwma_long'][-2] == 1:
+                        if df['p_long'][-2] == 1: 
+                            if df['sma_signal'][-2] == 1:
+                                if df['vwav_signal'][-2] == 1:      
                             
-                                message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-1]}"
-                                Tb.telegram_canal_prueba(message)
+                                    message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-1]}"
+                                    Tb.telegram_canal_prueba(message)
                                               
-                                Tendencia_Long = {
-                                "name": "FISHING LONG",
-                                "secret": "0kivpja7tz89",
-                                "side": "buy",
-                                "symbol": symbol,
-                                "open": {
-                                "price": float(df['Close'][-1])
-                                }
-                                }
-                                requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
+                                    Tendencia_Long = {
+                                    "name": "FISHING LONG",
+                                    "secret": "0kivpja7tz89",
+                                    "side": "buy",
+                                    "symbol": symbol,
+                                    "open": {
+                                    "price": float(df['Close'][-1])
+                                    }
+                                    }
+                                    requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
                                  
             if df['recompra_long'][-1] == 1 :
                                             

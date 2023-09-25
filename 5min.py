@@ -46,7 +46,7 @@ def calculate_indicators(symbol, interval):
     
     df['rsi_30'] = np.where(df['rsi'] < 30 ,1,0)
     df['rsi_25'] = np.where(df['rsi'] < 25 ,1,0)
-    df['rsi_20'] = np.where(df['rsi'] < 25 ,1,0)
+    df['rsi_20'] = np.where(df['rsi'] < 20 ,1,0)
     
     return df[-3:]
         
@@ -65,7 +65,7 @@ def run_strategy():
             if df is None:
                 continue
             if df['signal'][-2] == 1:
-                if df['rsi_80'][-2] == 1 and df_15['rsi_75'][-2] == 1 and df_30['rsi_70'][-2] == 1: 
+                if df['rsi_80'][-2] == 1 and df_15['rsi_75'][-2] == 1: 
                 
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
@@ -81,7 +81,7 @@ def run_strategy():
                  
             
             if df['signal'][-2] == 1:
-                if df['rsi_20'][-2] == 1 and df_15['rsi_25'][-2] == 1 and df_30['rsi_30'][-2] == 1: 
+                if df['rsi_20'][-2] == 1 and df_15['rsi_25'][-2] == 1: 
                 
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {

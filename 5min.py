@@ -37,11 +37,16 @@ def calculate_indicators(symbol, interval):
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-    df['signal'] = np.where(df['diff'] > 3,1,0)
+    df['signal'] = np.where(df['diff'] >= 3,1,0)
     
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
-    df['rsi_short'] = np.where(df['rsi'] > 70 ,1,0)
-    df['rsi_long'] = np.where(df['rsi'] < 30 ,1,0)
+    df['rsi_70'] = np.where(df['rsi'] > 70 ,1,0)
+    df['rsi_75'] = np.where(df['rsi'] > 75 ,1,0)
+    df['rsi_80'] = np.where(df['rsi'] > 80 ,1,0)
+    
+    df['rsi_30'] = np.where(df['rsi'] < 30 ,1,0)
+    df['rsi_25'] = np.where(df['rsi'] < 25 ,1,0)
+    df['rsi_20'] = np.where(df['rsi'] < 25 ,1,0)
     
     return df[-3:]
         
@@ -54,12 +59,13 @@ def run_strategy():
 
         try:
             df = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
-            df_4h = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_4HOUR) 
+            df_15 = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_30MINUTE) 
+            df_30 = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_30MINUTE) 
             
             if df is None:
                 continue
             if df['signal'][-2] == 1:
-                if df_4h['rsi_short'][-2] == 1: 
+                if df['rsi_80'][-2] == 1 and df_15['rsi_75'][-2] == 1 and df_30['rsi_70'][-2] == 1: 
                 
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                     PICKERSHORT = {
@@ -75,7 +81,7 @@ def run_strategy():
                  
             
             if df['signal'][-2] == 1:
-                if df_4h['rsi_long'][-2] == 1: 
+                if df['rsi_20'][-2] == 1 and df_15['rsi_25'][-2] == 1 and df_30['rsi_30'][-2] == 1: 
                 
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                     PICKERLONG = {

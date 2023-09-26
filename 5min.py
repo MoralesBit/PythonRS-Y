@@ -5,7 +5,7 @@ import pandas as pd
 import talib as ta
 from binance.client import Client
 import Telegram_bot as Tb
- 
+import pandas_ta as tw
 
 Pkey = ''
 Skey = ''
@@ -37,16 +37,19 @@ def calculate_indicators(symbol, interval):
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-    df['signal'] = np.where(df['diff'] >= 3,1,0)
+    df['signal'] = np.where(df['diff'] > 2,1,0)
     
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
-    df['rsi_70'] = np.where(df['rsi'] > 70 ,1,0)
-    df['rsi_75'] = np.where(df['rsi'] > 75 ,1,0)
-    df['rsi_80'] = np.where(df['rsi'] > 80 ,1,0)
+    df['rsi_short'] = np.where(df['rsi'] > 80 ,1,0)
+    df['rsi_long'] = np.where(df['rsi'] < 20 ,1,0)
     
-    df['rsi_30'] = np.where(df['rsi'] < 30 ,1,0)
-    df['rsi_25'] = np.where(df['rsi'] < 25 ,1,0)
-    df['rsi_20'] = np.where(df['rsi'] < 20 ,1,0)
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5, matype=0)
+    df['upperband'] = upperband
+    df['middleband'] = middleband
+    df['lowerband'] = lowerband
+    
+    df['up_signal'] = np.where(df['upperband'] <= df['Close'] ,1,0)
+    df['low_signal'] = np.where(df['lowerband'] >= df['Close'] ,1,0)
     
     return df[-3:]
         
@@ -59,44 +62,43 @@ def run_strategy():
 
         try:
             df = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
-            df_15 = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_30MINUTE) 
-            df_30 = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_30MINUTE) 
-            
+             
             if df is None:
                 continue
+            
             if df['signal'][-2] == 1:
-                if df['rsi_80'][-2] == 1 and df_15['rsi_75'][-2] == 1: 
+                if df['rsi_short'][-2] == 1:
+                    if df['up_signal'][-2] == 1:
                 
-                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
-                    PICKERSHORT = {
-                    "name": "PICKER SHORT",
-                    "secret": "ao2cgree8fp",
-                    "side": "sell",
-                    "symbol": symbol,
-                    "open": {
-                    "price": float(df['Close'][-1]) 
-                    }
-                    }
-                    requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
+                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
+                        PICKERSHORT = {
+                        "name": "PICKER SHORT",
+                        "secret": "ao2cgree8fp",
+                        "side": "sell",
+                        "symbol": symbol,
+                        "open": {
+                        "price": float(df['Close'][-1]) 
+                        }
+                        }
+                        requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
                  
             
             if df['signal'][-2] == 1:
-                if df['rsi_20'][-2] == 1 and df_15['rsi_25'][-2] == 1: 
+                if df['rsi_long'][-2] == 1:
+                    if df['low_signal'][-2] == 1: 
                 
-                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
-                    PICKERLONG = {
-                    "name": "PICKER LONG",
-                    "secret": "nwh2tbpay1r",
-                    "side": "buy",
-                    "symbol": symbol,
-                    "open": {
-                    "price": float(df['Close'][-1])
-                    }
-                    }
-                    requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)                                               
-                    
-            
-                
+                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
+                        PICKERLONG = {
+                        "name": "PICKER LONG",
+                        "secret": "nwh2tbpay1r",
+                        "side": "buy",
+                        "symbol": symbol,
+                        "open": {
+                        "price": float(df['Close'][-1])
+                        }
+                        }
+                        requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)                                               
+       
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")

@@ -49,11 +49,10 @@ def calculate_indicators(symbol, interval):
     df['short'] = np.where(df['sma'] < df['fib_23'], 1, 0)
     df['long'] = np.where(df['sma'] < df['fib_61'], 1, 0)
     
-    bbands = tw.bbands(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5, matype=0)
-    
-    df['upperband'] = bbands[0]
-    df['middleband'] = bbands[1]
-    df['lowerband'] = bbands[2] 
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5, matype=0)
+    df['upperband'] = upperband
+    df['middleband'] = middleband
+    df['lowerband'] = lowerband
     
     df['up_signal'] = np.where(df['upperband'] <= df['Close'] ,1,0)
     df['low_signal'] = np.where(df['lowerband'] >= df['Close'] ,1,0)

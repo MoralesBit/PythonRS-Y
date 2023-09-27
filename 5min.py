@@ -6,6 +6,7 @@ import talib as ta
 from binance.client import Client
 import Telegram_bot as Tb
 import pandas_ta as tw
+ 
 
 Pkey = ''
 Skey = ''
@@ -36,21 +37,27 @@ def calculate_indicators(symbol, interval):
                    
     df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
     
-    df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-    df['signal'] = np.where(df['diff'] > 2,1,0)
+    df['sma'] = ta.SMA(df['Close'], timeperiod=20)
     
-    df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
-    df['rsi_short'] = np.where(df['rsi'] > 80 ,1,0)
-    df['rsi_long'] = np.where(df['rsi'] < 20 ,1,0)
+    df['highest_high'] = df['High'].max()
+    df['lowest_low'] = df['Low'].min()
+    df['diff_fib'] = df['highest_high'] - df['lowest_low']
+
+    df['fib_23'] = df['Close'] - 0.236 * df['diff_fib']
+    df['fib_61'] = df['Close'] - 0.618 * df['diff_fib']
     
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5, matype=0)
-    df['upperband'] = upperband
-    df['middleband'] = middleband
-    df['lowerband'] = lowerband
+    df['short'] = np.where(df['sma'] < df['fib_23'], 1, 0)
+    df['long'] = np.where(df['sma'] < df['fib_61'], 1, 0)
+    
+    bbands = tw.bbands(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5, matype=0)
+    
+    df['upperband'] = bbands[0]
+    df['middleband'] = bbands[1]
+    df['lowerband'] = bbands[2] 
     
     df['up_signal'] = np.where(df['upperband'] <= df['Close'] ,1,0)
     df['low_signal'] = np.where(df['lowerband'] >= df['Close'] ,1,0)
-    
+        
     return df[-3:]
         
 def run_strategy():
@@ -62,14 +69,14 @@ def run_strategy():
 
         try:
             df = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
-             
+            print(df['fib_23'][-2])
+            print(df['fib_61'][-2]) 
+            
             if df is None:
                 continue
             
-            if df['signal'][-2] == 1:
-                if df['rsi_short'][-2] == 1:
-                    if df['up_signal'][-2] == 1:
-                
+            if df['short'][-2] == 1:
+                if df['up_signal'][-2] == 1:
                         Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                         PICKERSHORT = {
                         "name": "PICKER SHORT",
@@ -83,9 +90,8 @@ def run_strategy():
                         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
                  
             
-            if df['signal'][-2] == 1:
-                if df['rsi_long'][-2] == 1:
-                    if df['low_signal'][-2] == 1: 
+            if df['long'][-2] == 1:
+                if df['low_signal'][-2] == 1: 
                 
                         Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                         PICKERLONG = {

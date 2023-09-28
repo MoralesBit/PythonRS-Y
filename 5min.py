@@ -72,6 +72,7 @@ def run_strategy():
        
     for symbol in symbols:
         print(symbol)
+        
 
         try:
             df = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
@@ -119,5 +120,5 @@ def run_strategy():
 while True:
     current_time = time.time()
     seconds_to_wait = 300 - current_time % 300
-    #time.sleep(seconds_to_wait)    
+    time.sleep(seconds_to_wait)    
     run_strategy()

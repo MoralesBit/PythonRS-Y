@@ -49,13 +49,10 @@ def calculate_indicators(symbol, interval):
     df['short'] = np.where(df['sma'] < df['fib_23'], 1, 0)
     df['long'] = np.where(df['sma'] < df['fib_61'], 1, 0)
     
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5, matype=0)
-    df['upperband'] = upperband
-    df['middleband'] = middleband
-    df['lowerband'] = lowerband
+    df['upperband'], df['middleband'], df['lowerband'] = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5)  
     
-    df['up_signal'] = np.where(df['upperband'] <= df['Close'] ,1,0)
-    df['low_signal'] = np.where(df['lowerband'] >= df['Close'] ,1,0)
+    df['up_signal'] = np.where(df['upperband'] <= df['Close'],1,0)
+    df['low_signal'] = np.where(df['lowerband'] >= df['Close'],1,0)
         
     return df[-3:]
         
@@ -68,14 +65,14 @@ def run_strategy():
 
         try:
             df = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
-            print(df['fib_23'][-2])
-            print(df['fib_61'][-2]) 
+            print(df['upperband'][-2])
+            print(df['lowerband'][-2])           
             
             if df is None:
                 continue
             
-            if df['short'][-2] == 1:
-                if df['up_signal'][-2] == 1:
+            if df['up_signal'][-2] == 1:
+                if df['short'][-2] == 1:
                         Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                         PICKERSHORT = {
                         "name": "PICKER SHORT",
@@ -88,10 +85,8 @@ def run_strategy():
                         }
                         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT) 
                  
-            
-            if df['long'][-2] == 1:
-                if df['low_signal'][-2] == 1: 
-                
+            if df['low_signal'][-2] == 1:
+                if df['long'][-2] == 1:
                         Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                         PICKERLONG = {
                         "name": "PICKER LONG",

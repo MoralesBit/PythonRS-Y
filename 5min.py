@@ -35,7 +35,7 @@ def calculate_indicators(symbol, interval):
     
     df = df.set_index('Open time')
                    
-    df[['Open', 'High', 'Low', 'Close']] = df[['Open', 'High', 'Low', 'Close']].astype(float)
+    df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float)
     
     df['sma'] = ta.SMA(df['Close'], timeperiod=20)
     
@@ -53,6 +53,16 @@ def calculate_indicators(symbol, interval):
     
     df['up_signal'] = np.where(df['upperband'] <= df['Close'],1,0)
     df['low_signal'] = np.where(df['lowerband'] >= df['Close'],1,0)
+    
+    df['Volume'] = pd.to_numeric(df['Volume'])
+    df['Close'] = pd.to_numeric(df['Close'])
+    #Calcular el oscilador de volumen en porcentaje usando las longitudes corta y larga:
+    df['Short Avg'] = df['Volume'].rolling(5).mean()
+    df['Long Avg'] = df['Volume'].rolling(10).mean()
+    df['Volume_Oscillator'] = ((df['Short Avg'] - df['Long Avg']) / df['Long Avg']) * 100
+    df['vol_positivo'] = np.where(df['Volume_Oscillator'] >= 50,1,0)
+    df['vol_negativo'] = np.where(df['Volume_Oscillator'] <= -50,1,0)
+
         
     return df[-3:]
         
@@ -65,14 +75,15 @@ def run_strategy():
 
         try:
             df = calculate_indicators(symbol, interval=Client.KLINE_INTERVAL_5MINUTE)
-            print(df['upperband'][-2])
-            print(df['lowerband'][-2])           
-            
+            print(df['Volume_Oscillator'][-2])
+           
             if df is None:
                 continue
             
             if df['up_signal'][-2] == 1:
                 if df['short'][-2] == 1:
+                    if df['vol_positivo'][-2] == 1:
+                        
                         Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker ▫️ 5 min")
                         PICKERSHORT = {
                         "name": "PICKER SHORT",
@@ -87,6 +98,8 @@ def run_strategy():
                  
             if df['low_signal'][-2] == 1:
                 if df['long'][-2] == 1:
+                    if df['vol_negativo'][-2] == 1:
+                        
                         Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n📍 Picker  ▫️ 5 min")
                         PICKERLONG = {
                         "name": "PICKER LONG",
@@ -106,5 +119,5 @@ def run_strategy():
 while True:
     current_time = time.time()
     seconds_to_wait = 300 - current_time % 300
-    time.sleep(seconds_to_wait)    
+    #time.sleep(seconds_to_wait)    
     run_strategy()

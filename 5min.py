@@ -62,8 +62,8 @@ def calculate_indicators(symbol,interval):
     df['Short Avg'] = df['Volume'].rolling(5).mean()
     df['Long Avg'] = df['Volume'].rolling(10).mean()
     df['Volume_Oscillator'] = ((df['Short Avg'] - df['Long Avg']) / df['Long Avg']) * 100
-    df['vol_positivo'] = np.where(df['Volume_Oscillator'] >= 20,1,0)
-    df['vol_negativo'] = np.where(df['Volume_Oscillator'] <= -20,1,0)
+    df['vol_positivo'] = np.where(df['Volume_Oscillator'] >= 10,1,0)
+    df['vol_negativo'] = np.where(df['Volume_Oscillator'] <= -10,1,0)
          
     return df[-3:]
         
@@ -81,10 +81,10 @@ def run_strategy():
             if df is None:
                 continue
            
-            if df['p_long'][-2] == 1:
-                if df['ema_long'][-2] == 1:
-                    if df['vol_positivo'][-2] == 1:
-                        if df['roc_long'][-2] == 1:  
+                if df['vol_positivo'][-2] == 1:
+                    if df['p_long'][-2] == 1:
+                        if df['ema_long'][-2] == 1:
+                            if df['roc_long'][-2] == 1:  
                             
                             message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}"
                             Tb.telegram_send_message(message)
@@ -100,9 +100,9 @@ def run_strategy():
                         }
                             requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
                                  
-            if df['p_short'][-2] == 1 :
-                if df['ema_short'][-2] == 1:
-                    if df['vol_negativo'][-2] == 1:
+            if df['vol_positivo'][-2] == 1:
+                if df['p_short'][-2] == 1 :
+                    if df['ema_short'][-2] == 1:
                         if df['roc_short'][-2] == 1:   
 
                             message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}"

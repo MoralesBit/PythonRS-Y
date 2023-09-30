@@ -81,24 +81,24 @@ def run_strategy():
             if df is None:
                 continue
            
-                if df['vol_positivo'][-2] == 1:
-                    if df['p_long'][-2] == 1:
-                        if df['ema_long'][-2] == 1:
-                            if df['roc_long'][-2] == 1:  
+            if df['vol_positivo'][-2] == 1:
+                if df['p_long'][-2] == 1:
+                    if df['ema_long'][-2] == 1:
+                        if df['roc_long'][-2] == 1:  
                             
-                            message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}"
-                            Tb.telegram_send_message(message)
+                                message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}"
+                                Tb.telegram_send_message(message)
                                               
-                            Tendencia_Long = {
-                        "name": "FISHING LONG",
-                        "secret": "0kivpja7tz89",
-                        "side": "buy",
-                        "symbol": symbol,
-                        "open": {
-                        "price": float(df['Close'][-2])
-                        }
-                        }
-                            requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
+                                Tendencia_Long = {
+                                "name": "FISHING LONG",
+                                "secret": "0kivpja7tz89",
+                                "side": "buy",
+                                "symbol": symbol,
+                                "open": {
+                                "price": float(df['Close'][-2])
+                                }
+                                 }
+                                requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
                                  
             if df['vol_positivo'][-2] == 1:
                 if df['p_short'][-2] == 1 :
@@ -109,14 +109,14 @@ def run_strategy():
                             Tb.telegram_send_message(message)
                                   
                             Tendencia_short = {
-                        "name": "FISHING SHORT",
-                        "secret": "azsdb9x719",
-                        "side": "sell",
-                        "symbol": symbol,
-                        "open": {
-                        "price": float(df['Close'][-2])
-                        }
-                        }
+                            "name": "FISHING SHORT",
+                            "secret": "azsdb9x719",
+                            "side": "sell",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                            }
+                            }
                             requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=Tendencia_short) 
 
         except Exception as e:

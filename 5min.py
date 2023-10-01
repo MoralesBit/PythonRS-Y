@@ -44,7 +44,8 @@ def calculate_indicators(symbol,interval):
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
     
     df['p_short'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
-    df['p_long'] = np.where( df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2],1,0) 
+    df['p_long'] = np.where( df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2],1,0)
+    df['p_top'] = np.where(df['psar'] > df['Close'], 1,0) 
     
     df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
     df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
@@ -64,6 +65,7 @@ def calculate_indicators(symbol,interval):
     df['Volume_Oscillator'] = ((df['Short Avg'] - df['Long Avg']) / df['Long Avg']) * 100
     df['vol_positivo'] = np.where(df['Volume_Oscillator'] >= 10,1,0)
     df['vol_negativo'] = np.where(df['Volume_Oscillator'] <= -10,1,0)
+    df['vol_cross_up'] = np.where(df['Volume_Oscillator'][-2] < 0 and df['Volume_Oscillator'][-1] > 0 ,1,0)
          
     return df[-3:]
         
@@ -98,8 +100,27 @@ def run_strategy():
                                 "price": float(df['Close'][-2])
                                 }
                                  }
-                                requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
-                                 
+                                requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)
+                                    
+            if df['vol_cross_up'][-1] == 1:
+                if df['p_top'][-1] == 1:
+                    if df['ema_long'][-1] == 1:
+                        if df['roc_long'][-1] == 1:  
+                            
+                                message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}"
+                                Tb.telegram_canal_prueba(message)
+                                              
+                                Tendencia_Long = {
+                                "name": "FISHING LONG",
+                                "secret": "0kivpja7tz89",
+                                "side": "buy",
+                                "symbol": symbol,
+                                "open": {
+                                "price": float(df['Close'][-2])
+                                }
+                                 }
+                                requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long) 
+                                                     
             if df['vol_positivo'][-1] == 1:
                 if df['p_short'][-1] == 1 :
                     if df['ema_short'][-1] == 1:

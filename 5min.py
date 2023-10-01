@@ -55,6 +55,7 @@ def calculate_indicators(symbol,interval):
     df['roc_short'] = np.where( df['roc'][-2] < -5,1,0)
     
     df['diff'] = abs((df['Close'] / df['psar'] -1) * 100)
+    df['diff_signal'] = np.where(df['diff'] >= 1.5,1,0)
 
     df['Volume'] = pd.to_numeric(df['Volume'])
     df['Close'] = pd.to_numeric(df['Close'])
@@ -102,7 +103,7 @@ def run_strategy():
                                  }
                                 requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)
             
-            if df['vol_min'][-1] == 1 and df['p_short'][-1] == 1 :
+            if df['vol_min'][-1] == 1 and df['diff_signal'][-1] == 1 :
                     if df['ema_short'][-1] == 1:
                         if df['roc_short'][-1] == 1:
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
@@ -135,7 +136,7 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=Tendencia_short)
             
-            if df['vol_max'][-1] == 1 and df['p_long'][-1] == 1:
+            if df['vol_max'][-1] == 1 and df['diff_signal'][-1] == 1:
                     if df['ema_long'][-1] == 1:
                         if df['roc_long'][-1] == 1:
                             

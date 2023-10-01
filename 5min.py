@@ -83,8 +83,7 @@ def run_strategy():
             if df is None:
                 continue
            
-            if df['vol_positivo'][-1] == 1:
-                if df['p_long'][-1] == 1:
+            if df['vol_negativo'][-1] == 1 and df['p_long'][-1] == 1:
                     if df['ema_long'][-1] == 1:
                         if df['roc_long'][-1] == 1:  
                             
@@ -102,8 +101,7 @@ def run_strategy():
                                  }
                                 requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)
                                     
-            if df['vol_cross_up'][-1] == 1:
-                if df['p_top'][-1] == 1:
+            if df['vol_cross_up'][-1] == 1 and  df['p_top'][-1] == 1:
                     if df['ema_long'][-1] == 1:
                         if df['roc_long'][-1] == 1:  
                             
@@ -121,8 +119,7 @@ def run_strategy():
                                  }
                                 requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long) 
                                                      
-            if df['vol_positivo'][-1] == 1:
-                if df['p_short'][-1] == 1 :
+            if df['vol_positivo'][-1] == 1 and df['p_short'][-1] == 1 :
                     if df['ema_short'][-1] == 1:
                         if df['roc_short'][-1] == 1:   
 

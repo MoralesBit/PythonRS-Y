@@ -81,10 +81,10 @@ def run_strategy():
             if df is None:
                 continue
            
-            if df['vol_positivo'][-2] == 1:
-                if df['p_long'][-2] == 1:
-                    if df['ema_long'][-2] == 1:
-                        if df['roc_long'][-2] == 1:  
+            if df['vol_positivo'][-1] == 1:
+                if df['p_long'][-1] == 1:
+                    if df['ema_long'][-1] == 1:
+                        if df['roc_long'][-1] == 1:  
                             
                                 message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}"
                                 Tb.telegram_send_message(message)
@@ -100,10 +100,10 @@ def run_strategy():
                                  }
                                 requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)    
                                  
-            if df['vol_positivo'][-2] == 1:
-                if df['p_short'][-2] == 1 :
-                    if df['ema_short'][-2] == 1:
-                        if df['roc_short'][-2] == 1:   
+            if df['vol_positivo'][-1] == 1:
+                if df['p_short'][-1] == 1 :
+                    if df['ema_short'][-1] == 1:
+                        if df['roc_short'][-1] == 1:   
 
                             message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}"
                             Tb.telegram_send_message(message)

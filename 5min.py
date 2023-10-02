@@ -69,8 +69,8 @@ def calculate_indicators(symbol,interval):
     df['vol_negativo'] = np.where(df['Volume_Oscillator'] <= -5,1,0)
     df['vol_max'] = np.where(df['Volume_Oscillator'] >= 45,1,0)
     df['vol_min'] = np.where(df['Volume_Oscillator'] <= -45,1,0)
-    df['v_cross_down'] = np.where(df['Volume_Oscillator'][-2] > -20 and df['Volume_Oscillator'][-2] <= -20 ,1,0)
-    df['v_cross_up'] = np.where(df['Volume_Oscillator'][-2] < 20 and df['Volume_Oscillator'][-2] >= 20 ,1,0)
+    df['v_cross_down'] = np.where(df['Volume_Oscillator'][-2] > -20 and df['Volume_Oscillator'][-1] <= -20 ,1,0)
+    df['v_cross_up'] = np.where(df['Volume_Oscillator'][-2] < 20 and df['Volume_Oscillator'][-1] >= 20 ,1,0)
          
     return df[-3:]
         

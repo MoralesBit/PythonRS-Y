@@ -41,8 +41,8 @@ def calculate_indicators(symbol,interval):
     df['middleband'] = middleband
     df['lowerband'] = lowerband
     
-    df['bb_up'] = np.where(df['upperband'] < df['Close'],1,0)
-    df['bb_dw'] = np.where(df['lowerband'] > df['Close'],1,0)
+    df['bb_up'] = np.where(df['upperband'][-2] < df['Close'][-2],1,0)
+    df['bb_dw'] = np.where(df['lowerband'][-2] > df['Close'][-2],1,0)
      
     # Obtener el libro de órdenes
     order_book = client.futures_order_book(symbol=symbol)
@@ -56,8 +56,8 @@ def calculate_indicators(symbol,interval):
     best_bid_price = float(bids[0][0])
     df['second_best_ask_price'] = float(asks[1][0])
     df['second_best_bid_price'] = float(bids[1][0])
-    df['signal_short'] = np.where(df['second_best_ask_price'] > df['Close'],1,0)
-    df['signal_long'] = np.where(df['second_best_bid_price'] < df['Close'],1,0)
+    df['signal_short'] = np.where(df['second_best_ask_price'][-2] > df['Close'][-2],1,0)
+    df['signal_long'] = np.where(df['second_best_bid_price'][-2] < df['Close'][-2],1,0)
          
     return df[-3:]
         

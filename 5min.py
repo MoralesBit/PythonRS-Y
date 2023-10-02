@@ -43,19 +43,21 @@ def calculate_indicators(symbol,interval):
     
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
     
-    df['p_short'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
-    df['p_long'] = np.where( df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2],1,0)
+    df['p_short'] = np.where( df['psar'][-2] < df['Close'][-2] and df['psar'][-1] > df['Close'][-1],1,0) 
+    df['p_long'] = np.where( df['psar'][-2] > df['Close'][-2] and df['psar'][-1] < df['Close'][-1],1,0)
+    df['top_short'] = np.where( df['psar'] > df['Close'],1,0)
+    df['down_long'] = np.where( df['psar'] < df['Close'],1,0)  
         
     df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
     df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
-    df['roc_long'] = np.where(df['roc'][-2] > 5,1,0)
-    df['roc_short'] = np.where( df['roc'][-2] < -5,1,0)
+    df['roc_long'] = np.where(df['roc'][-2] > 10,1,0)
+    df['roc_short'] = np.where( df['roc'][-2] < -10,1,0)
     
     df['diff'] = abs((df['Close'] / df['psar'] -1) * 100)
-    df['diff_signal'] = np.where(df['diff'] >= 1.5,1,0)
+    df['diff_signal'] = np.where(df['diff'] >= 3,1,0)
 
     df['Volume'] = pd.to_numeric(df['Volume'])
     df['Close'] = pd.to_numeric(df['Close'])
@@ -67,7 +69,8 @@ def calculate_indicators(symbol,interval):
     df['vol_negativo'] = np.where(df['Volume_Oscillator'] <= -5,1,0)
     df['vol_max'] = np.where(df['Volume_Oscillator'] >= 45,1,0)
     df['vol_min'] = np.where(df['Volume_Oscillator'] <= -45,1,0)
-    
+    df['v_cross_down'] = np.where(df['Volume_Oscillator'][-2] > -20 and df['Volume_Oscillator'][-2] <= -20 ,1,0)
+    df['v_cross_up'] = np.where(df['Volume_Oscillator'][-2] < 20 and df['Volume_Oscillator'][-2] >= 20 ,1,0)
          
     return df[-3:]
         
@@ -103,10 +106,11 @@ def run_strategy():
                                  }
                                 requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)
             
-            if df['vol_min'][-1] == 1 and df['diff_signal'][-1] == 1 :
-                    if df['ema_short'][-1] == 1:
-                        if df['roc_short'][-1] == 1:
-                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+            if df['top_short'][-1] == 1:
+                if df['v_cross_down'] ==1:
+                    if df['ema_long'][-1] == 1:
+                        if df['roc_long'][-1] == 1: 
+                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                             PICKERLONG = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",
@@ -136,11 +140,12 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=Tendencia_short)
             
-            if df['vol_max'][-1] == 1 and df['diff_signal'][-1] == 1:
-                    if df['ema_long'][-1] == 1:
-                        if df['roc_long'][-1] == 1:
+            if df['v_cross_up'][-1] == 1:
+                if  df['down_long'][-1] == 1:
+                    if df['ema_short'][-1] == 1:
+                        if df['roc_short'][-1] == 1:  
                             
-                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                             PICKERSHORT = {
                             "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",

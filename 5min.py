@@ -43,22 +43,17 @@ def calculate_indicators(symbol,interval):
     
     df['bb_up'] = np.where(df['upperband'][-2] < df['Close'][-2],1,0)
     df['bb_dw'] = np.where(df['lowerband'][-2] > df['Close'][-2],1,0)
+    
+    df['Volume'] = pd.to_numeric(df['Volume'])
+    df['Close'] = pd.to_numeric(df['Close'])
+    #Calcular el oscilador de volumen en porcentaje usando las longitudes corta y larga:
+    df['Short Avg'] = df['Volume'].rolling(5).mean()
+    df['Long Avg'] = df['Volume'].rolling(10).mean()
+    df['Volume_Oscillator'] = ((df['Short Avg'] - df['Long Avg']) / df['Long Avg']) * 100
+    df['v_short'] = np.where(df['Volume_Oscillator'][-2] >= 50,1,0)
+    df['v_long'] = np.where(df['Volume_Oscillator'][-2] <= -50,1,0)
      
-    # Obtener el libro de órdenes
-    order_book = client.futures_order_book(symbol=symbol)
-
-    # Obtener los precios y volúmenes de las órdenes de compra y venta
-    asks = order_book['asks']
-    bids = order_book['bids']
-
-    # Calcular los 4 puntos más importantes
-    best_ask_price = float(asks[0][0])
-    best_bid_price = float(bids[0][0])
-    df['second_best_ask_price'] = float(asks[1][0])
-    df['second_best_bid_price'] = float(bids[1][0])
-    df['signal_short'] = np.where(df['second_best_ask_price'][-2] > df['Close'][-2],1,0)
-    df['signal_long'] = np.where(df['second_best_bid_price'][-2] < df['Close'][-2],1,0)
-         
+          
     return df[-3:]
         
 def run_strategy():
@@ -74,12 +69,10 @@ def run_strategy():
                                                      
             if df is None:
                 continue
-           
-            print(df['second_best_ask_price'][-1])
-            print(df['second_best_bid_price'][-1])
+
                                     
             if df['bb_dw'][-2] == 1:
-                if df['signal_long'][-2] == 1: 
+                if df['v_long'][-2] == 1: 
                     
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                             PICKERLONG = {
@@ -96,7 +89,7 @@ def run_strategy():
            
             
             if df['bb_up'][-2] == 1: 
-                if df['signal_short'][-2] == 1:   
+                if df['v_short'][-2] == 1:   
                             
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                             PICKERSHORT = {

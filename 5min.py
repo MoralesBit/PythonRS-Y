@@ -78,8 +78,8 @@ def run_strategy():
             print(df['second_best_ask_price'][-1])
             print(df['second_best_bid_price'][-1])
                                     
-            if df['bb_dw'][-1] == 1:
-                if df['signal_long'][-1] == 1: 
+            if df['bb_dw'][-2] == 1:
+                if df['signal_long'][-2] == 1: 
                     
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                             PICKERLONG = {
@@ -95,8 +95,8 @@ def run_strategy():
                                                      
            
             
-            if df['bb_up'][-1] == 1: 
-                if df['signal_short'][-1] == 1:   
+            if df['bb_up'][-2] == 1: 
+                if df['signal_short'][-2] == 1:   
                             
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                             PICKERSHORT = {

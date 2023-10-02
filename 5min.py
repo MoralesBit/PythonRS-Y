@@ -107,7 +107,7 @@ def run_strategy():
                                 requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)
             
             if df['top_short'][-1] == 1:
-                if df['v_cross_down'] ==1:
+                if df['v_cross_down'][-1] ==1:
                     if df['ema_long'][-1] == 1:
                         if df['roc_long'][-1] == 1: 
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")

@@ -35,42 +35,29 @@ def calculate_indicators(symbol,interval):
     df = df.set_index('Open time')
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
+    
+    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+    df['upperband'] = upperband
+    df['middleband'] = middleband
+    df['lowerband'] = lowerband
+    
+    df['bb_up'] = np.where(df['upperband'] < df['Close'],1,0)
+    df['bb_dw'] = np.where(df['lowerband'] > df['Close'],1,0)
      
-    df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
-    
-    acceleration=0.02 
-    maximum=0.20
-    
-    df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
-    
-    df['p_short'] = np.where( df['psar'][-2] < df['Close'][-2] and df['psar'][-1] > df['Close'][-1],1,0) 
-    df['p_long'] = np.where( df['psar'][-2] > df['Close'][-2] and df['psar'][-1] < df['Close'][-1],1,0)
-    df['top_short'] = np.where( df['psar'] > df['Close'],1,0)
-    df['down_long'] = np.where( df['psar'] < df['Close'],1,0)  
-        
-    df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
-    df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
-    
-    df['roc'] = ta.ROC(df['Close'], timeperiod=288)
-    
-    df['roc_long'] = np.where(df['roc'][-2] > 10,1,0)
-    df['roc_short'] = np.where( df['roc'][-2] < -10,1,0)
-    
-    df['diff'] = abs((df['Close'] / df['psar'] -1) * 100)
-    df['diff_signal'] = np.where(df['diff'] >= 3,1,0)
+    # Obtener el libro de órdenes
+    order_book = client.futures_order_book(symbol=symbol)
 
-    df['Volume'] = pd.to_numeric(df['Volume'])
-    df['Close'] = pd.to_numeric(df['Close'])
-    #Calcular el oscilador de volumen en porcentaje usando las longitudes corta y larga:
-    df['Short Avg'] = df['Volume'].rolling(5).mean()
-    df['Long Avg'] = df['Volume'].rolling(10).mean()
-    df['Volume_Oscillator'] = ((df['Short Avg'] - df['Long Avg']) / df['Long Avg']) * 100
-    df['vol_positivo'] = np.where(df['Volume_Oscillator'] >= 5,1,0)
-    df['vol_negativo'] = np.where(df['Volume_Oscillator'] <= -5,1,0)
-    df['vol_max'] = np.where(df['Volume_Oscillator'] >= 45,1,0)
-    df['vol_min'] = np.where(df['Volume_Oscillator'] <= -45,1,0)
-    df['v_cross_down'] = np.where(df['Volume_Oscillator'][-2] > -20 and df['Volume_Oscillator'][-1] <= -20 ,1,0)
-    df['v_cross_up'] = np.where(df['Volume_Oscillator'][-2] < 20 and df['Volume_Oscillator'][-1] >= 20 ,1,0)
+    # Obtener los precios y volúmenes de las órdenes de compra y venta
+    asks = order_book['asks']
+    bids = order_book['bids']
+
+    # Calcular los 4 puntos más importantes
+    best_ask_price = float(asks[0][0])
+    best_bid_price = float(bids[0][0])
+    df['second_best_ask_price'] = float(asks[1][0])
+    df['second_best_bid_price'] = float(bids[1][0])
+    df['signal_short'] = np.where(df['second_best_ask_price'] > df['Close'],1,0)
+    df['signal_long'] = np.where(df['second_best_bid_price'] < df['Close'],1,0)
          
     return df[-3:]
         
@@ -88,28 +75,12 @@ def run_strategy():
             if df is None:
                 continue
            
-            if df['vol_positivo'][-1] == 1 and df['p_long'][-1] == 1:
-                    if df['ema_long'][-1] == 1:
-                        if df['roc_long'][-1] == 1:  
-                            
-                                message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}"
-                                Tb.telegram_send_message(message)
-                                              
-                                Tendencia_Long = {
-                                "name": "FISHING LONG",
-                                "secret": "0kivpja7tz89",
-                                "side": "buy",
-                                "symbol": symbol,
-                                "open": {
-                                "price": float(df['Close'][-2])
-                                }
-                                 }
-                                requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=Tendencia_Long)
-            
-            if df['top_short'][-1] == 1:
-                if df['v_cross_down'][-1] ==1:
-                    if df['ema_long'][-1] == 1:
-                        if df['roc_long'][-1] == 1: 
+            print(df['second_best_ask_price'][-1])
+            print(df['second_best_bid_price'][-1])
+                                    
+            if df['bb_dw'][-1] == 1:
+                if df['signal_long'][-1] == 1: 
+                    
                             Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                             PICKERLONG = {
                             "name": "PICKER LONG",
@@ -122,28 +93,10 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)   
                                                      
-            if df['vol_positivo'][-1] == 1 and df['p_short'][-1] == 1 :
-                    if df['ema_short'][-1] == 1:
-                        if df['roc_short'][-1] == 1:   
-
-                            message = f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}"
-                            Tb.telegram_send_message(message)
-                                  
-                            Tendencia_short = {
-                            "name": "FISHING SHORT",
-                            "secret": "azsdb9x719",
-                            "side": "sell",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2])
-                            }
-                            }
-                            requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=Tendencia_short)
+           
             
-            if df['v_cross_up'][-1] == 1:
-                if  df['down_long'][-1] == 1:
-                    if df['ema_short'][-1] == 1:
-                        if df['roc_short'][-1] == 1:  
+            if df['bb_up'][-1] == 1: 
+                if df['signal_short'][-1] == 1:   
                             
                             Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                             PICKERSHORT = {

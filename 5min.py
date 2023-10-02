@@ -74,7 +74,7 @@ def run_strategy():
             if df['bb_dw'][-2] == 1:
                 if df['v_long'][-2] == 1: 
                     
-                            Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                             PICKERLONG = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",
@@ -91,7 +91,7 @@ def run_strategy():
             if df['bb_up'][-2] == 1: 
                 if df['v_short'][-2] == 1:   
                             
-                            Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                             PICKERSHORT = {
                             "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",

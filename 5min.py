@@ -24,7 +24,7 @@ def get_trading_symbols():
    
 def calculate_indicators(symbol,interval):
         
-    klines = client.futures_klines(symbol=symbol, interval=interval, limit=1000)
+    klines = client.futures_klines(symbol=symbol, interval=interval, limit=500)
     df = pd.DataFrame(klines)
     if df.empty:
         return None
@@ -65,6 +65,8 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
+            print(df['bb_up'][-2])
+            print(df['bb_dw'][-2])  
                                                      
             if df is None:
                 continue

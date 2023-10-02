@@ -50,11 +50,10 @@ def calculate_indicators(symbol,interval):
     df['Short Avg'] = df['Volume'].rolling(5).mean()
     df['Long Avg'] = df['Volume'].rolling(10).mean()
     df['Volume_Oscillator'] = ((df['Short Avg'] - df['Long Avg']) / df['Long Avg']) * 100
-    df['v_short'] = np.where(df['Volume_Oscillator'][-2] >= 50,1,0)
-    df['v_long'] = np.where(df['Volume_Oscillator'][-2] <= -50,1,0)
-     
-          
-    return df[-3:]
+    df['v_short'] = np.where(df['Volume_Oscillator'][-2] > 50,1,0)
+    df['v_long'] = np.where(df['Volume_Oscillator'][-2] < -50,1,0)
+               
+    return df
         
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
@@ -69,7 +68,6 @@ def run_strategy():
                                                      
             if df is None:
                 continue
-
                                     
             if df['bb_dw'][-2] == 1:
                 if df['v_long'][-2] == 1: 
@@ -85,9 +83,7 @@ def run_strategy():
                             }
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)   
-                                                     
-           
-            
+
             if df['bb_up'][-2] == 1: 
                 if df['v_short'][-2] == 1:   
                             

@@ -41,8 +41,8 @@ def calculate_indicators(symbol,interval):
     df['middleband'] = middleband
     df['lowerband'] = lowerband
     
-    df['bb_up'] = np.where(df['upperband'][-2] < df['Close'][-2],1,0)
-    df['bb_dw'] = np.where(df['lowerband'][-2] > df['Close'][-2],1,0)
+    df['bb_up'] = np.where(df['upperband'] < df['Close'],1,0)
+    df['bb_dw'] = np.where(df['lowerband'] > df['Close'],1,0)
     
     df['Volume'] = pd.to_numeric(df['Volume'])
     df['Close'] = pd.to_numeric(df['Close'])
@@ -50,8 +50,8 @@ def calculate_indicators(symbol,interval):
     df['Short Avg'] = df['Volume'].rolling(5).mean()
     df['Long Avg'] = df['Volume'].rolling(10).mean()
     df['Volume_Oscillator'] = ((df['Short Avg'] - df['Long Avg']) / df['Long Avg']) * 100
-    df['v_short'] = np.where(df['Volume_Oscillator'][-2] > 50,1,0)
-    df['v_long'] = np.where(df['Volume_Oscillator'][-2] < -50,1,0)
+    df['v_short'] = np.where(df['Volume_Oscillator'] > 50,1,0)
+    df['v_long'] = np.where(df['Volume_Oscillator'] < -50,1,0)
                
     return df
         

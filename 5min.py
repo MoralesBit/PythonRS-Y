@@ -71,8 +71,7 @@ def run_strategy():
             if df is None:
                 continue
                                     
-            if df['bb_dw'].iloc[-2] == 1:
-                if df['v_long'].iloc[-2] == 1: 
+            if df['v_long'].iloc[-2] == 1: 
                     
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
                             PICKERLONG = {
@@ -86,8 +85,7 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)   
 
-            if df['bb_up'].iloc[-2] == 1: 
-                if df['v_short'].iloc[-2] == 1:   
+            if df['v_short'].iloc[-2] == 1:   
                             
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
                             PICKERSHORT = {

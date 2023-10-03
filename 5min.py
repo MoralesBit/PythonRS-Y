@@ -65,38 +65,38 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            print(df['bb_up'][-2])
-            print(df['bb_dw'][-2])  
+            print(df['bb_up'].iloc[-2])
+            print(df['bb_dw'].iloc[-2])  
                                                      
             if df is None:
                 continue
                                     
-            if df['bb_dw'][-2] == 1:
-                if df['v_long'][-2] == 1: 
+            if df['bb_dw'].iloc[-2] == 1:
+                if df['v_long'].iloc[-2] == 1: 
                     
-                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-2],4)}")
+                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
                             PICKERLONG = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",
                             "side": "buy",
                             "symbol": symbol,
                             "open": {
-                            "price": float(df['Close'][-2])
+                            "price": float(df['Close'].iloc[-2])
                             }
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)   
 
-            if df['bb_up'][-2] == 1: 
-                if df['v_short'][-2] == 1:   
+            if df['bb_up'].iloc[-2] == 1: 
+                if df['v_short'].iloc[-2] == 1:   
                             
-                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-2],4)}")
+                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
                             PICKERSHORT = {
                             "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",
                             "side": "sell",
                             "symbol": symbol,
                             "open": {
-                            "price": float(df['Close'][2]) 
+                            "price": float(df['Close'].iloc[2]) 
                             }
                             }
                             requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT)

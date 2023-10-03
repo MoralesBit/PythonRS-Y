@@ -50,8 +50,8 @@ def calculate_indicators(symbol,interval):
     df['Short Avg'] = df['Volume'].rolling(5).mean()
     df['Long Avg'] = df['Volume'].rolling(10).mean()
     df['Volume_Oscillator'] = ((df['Short Avg'] - df['Long Avg']) / df['Long Avg']) * 100
-    df['v_short'] = np.where(df['Volume_Oscillator'].iloc[-2] > 50,1,0)
-    df['v_long'] = np.where(df['Volume_Oscillator'].iloc[-2] < -50,1,0)
+    df['v_short'] = np.where(df['Volume_Oscillator'].iloc[-2] > 70,1,0)
+    df['v_long'] = np.where(df['Volume_Oscillator'].iloc[-2] < -70,1,0)
                
     return df
         

@@ -34,7 +34,7 @@ def calculate_indicators(symbol):
     
     df = df.set_index('Open time')
     
-    df['upperband'], df['middleband'], df['lowerband'] = ta.BBANDS(df['Close'],timeperiod=20,nbdevdn=2.5,nbdevup=2.5,matype=0)
+    df['upperband'], df['middleband'], df['lowerband'] = ta.BBANDS(df['Close'],timeperiod=20)
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
     
@@ -50,6 +50,8 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol)
+            print(df['upperband'].iloc[-2])
+            print(df['lowerband'].iloc[-2]) 
                                                                 
             if df is None:
                 continue

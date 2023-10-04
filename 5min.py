@@ -38,7 +38,7 @@ def calculate_indicators(symbol):
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
     
-    return upper_band, lower_band, df
+    return upper_band, middle_band, lower_band, df
         
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
@@ -49,8 +49,8 @@ def run_strategy():
         print(symbol)
         
         try:
-            df = calculate_indicators(symbol)
-            upper_band, middle_band, lower_band = calculate_indicators(symbol)
+           
+            df, upper_band, lower_band = calculate_indicators(symbol)
             print(upper_band[-2])
             print(lower_band[-2]) 
                                                                 
@@ -58,8 +58,8 @@ def run_strategy():
                 continue
                                     
             if upper_band[-2] <= df['Close'][-2]:
-                            Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
-                            PICKERLONG = {
+                Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
+                PICKERLONG = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",
                             "side": "buy",
@@ -68,19 +68,19 @@ def run_strategy():
                             "price": float(df['Close'].iloc[-2])
                             }
                             }
-                            requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)   
+                requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)   
 
-            if df['lowerband'].iloc[-2] >= df['Close'].iloc[-2]:                                          
+            if lower_band[-2] >= df['Close'][-2]:                                          
                 Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
                 PICKERSHORT = {
-                 "name": "PICKER SHORT",
-                "secret": "ao2cgree8fp",
-                "side": "sell",
-                "symbol": symbol,
-                "open": {
-                "price": float(df['Close'].iloc[-2])
-                }
-                }
+                            "name": "PICKER SHORT",
+                            "secret": "ao2cgree8fp",
+                            "side": "sell",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'].iloc[-2])
+                            }
+                            }
                 requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT)
 
         except Exception as e:

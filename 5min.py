@@ -36,23 +36,11 @@ def calculate_indicators(symbol,interval):
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
     
-    upperband, middleband, lowerband = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
-    df['upperband'] = upperband
-    df['middleband'] = middleband
-    df['lowerband'] = lowerband
+    df['upperband'], df['middleband'], df['lowerband'] = ta.BBANDS(df['Close'],timeperiod=20,nbdevdn=2.5,nbdevup=2.5,matype=0)
     
-    df['bb_up'] = np.where(df['upperband'].iloc[-2] < df['Close'].iloc[-2],1,0)
-    df['bb_dw'] = np.where(df['lowerband'].iloc[-2] > df['Close'].iloc[-2],1,0)
-    
-    df['Volume'] = pd.to_numeric(df['Volume'])
-    df['Close'] = pd.to_numeric(df['Close'])
-    #Calcular el oscilador de volumen en porcentaje usando las longitudes corta y larga:
-    df['Short Avg'] = df['Volume'].rolling(5).mean()
-    df['Long Avg'] = df['Volume'].rolling(10).mean()
-    df['Volume_Oscillator'] = ((df['Short Avg'] - df['Long Avg']) / df['Long Avg']) * 100
-    df['v_short'] = np.where(df['Volume_Oscillator'].iloc[-2] > 70,1,0)
-    df['v_long'] = np.where(df['Volume_Oscillator'].iloc[-2] < -70,1,0)
-               
+    df['bb_up'] = np.where(df['upperband'] <= df['Close'],1,0)
+    df['bb_dw'] = np.where(df['lowerband'] >= df['Close'],1,0)
+                   
     return df
         
 def run_strategy():
@@ -71,8 +59,8 @@ def run_strategy():
             if df is None:
                 continue
                                     
-            if df['v_long'].iloc[-2] == 1: 
-                    
+            if df['bb_dw'].iloc[-2] == 1:
+                                    
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
                             PICKERLONG = {
                             "name": "PICKER LONG",
@@ -85,8 +73,8 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)   
 
-            if df['v_short'].iloc[-2] == 1:   
-                            
+            if df['bb_up'].iloc[-2] == 1: 
+                                          
                             Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
                             PICKERSHORT = {
                             "name": "PICKER SHORT",

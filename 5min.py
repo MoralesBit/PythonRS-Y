@@ -22,9 +22,9 @@ def get_trading_symbols():
             symbols.remove(coin)
     return symbols
    
-def calculate_indicators(symbol,interval):
+def calculate_indicators(symbol):
         
-    klines = client.futures_klines(symbol=symbol, interval=interval, limit=500)
+    klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE, limit=500)
     df = pd.DataFrame(klines)
     if df.empty:
         return None
@@ -37,10 +37,7 @@ def calculate_indicators(symbol,interval):
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
     
     df['upperband'], df['middleband'], df['lowerband'] = ta.BBANDS(df['Close'],timeperiod=20,nbdevdn=2.5,nbdevup=2.5,matype=0)
-    
-    df['bb_up'] = np.where(df['upperband'] <= df['Close'],1,0)
-    df['bb_dw'] = np.where(df['lowerband'] >= df['Close'],1,0)
-                   
+  
     return df
         
 def run_strategy():
@@ -52,15 +49,12 @@ def run_strategy():
         print(symbol)
         
         try:
-            df = calculate_indicators(symbol,interval=Client.KLINE_INTERVAL_5MINUTE)
-            print(df['bb_up'].iloc[-2])
-            print(df['bb_dw'].iloc[-2])  
-                                                     
+            df = calculate_indicators(symbol)
+                                                                
             if df is None:
                 continue
                                     
             if df['upperband'].iloc[-2] <= df['Close'].iloc[-2]:
-                                    
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
                             PICKERLONG = {
                             "name": "PICKER LONG",
@@ -73,19 +67,18 @@ def run_strategy():
                             }
                             requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)   
 
-            if df['lowerband'].iloc[-2] >= df['Close'].iloc[-2]: 
-                                          
-                            Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
-                            PICKERSHORT = {
-                            "name": "PICKER SHORT",
-                            "secret": "ao2cgree8fp",
-                            "side": "sell",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'].iloc[2]) 
-                            }
-                            }
-                            requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT)
+            if df['lowerband'].iloc[-2] >= df['Close'].iloc[-2]:                                          
+                Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
+                PICKERSHORT = {
+                 "name": "PICKER SHORT",
+                "secret": "ao2cgree8fp",
+                "side": "sell",
+                "symbol": symbol,
+                "open": {
+                "price": float(df['Close'].iloc[-2])
+                }
+                }
+                requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT)
 
         except Exception as e:
           

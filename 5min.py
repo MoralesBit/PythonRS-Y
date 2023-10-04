@@ -37,6 +37,14 @@ def calculate_indicators(symbol):
     df['upper_band'], df['middle_band'], df['lower_band'] = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5, matype=0)
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
+    
+    df['Volume'] = pd.to_numeric(df['Volume'])
+    df['Close'] = pd.to_numeric(df['Close'])
+    #Calcular el oscilador de volumen en porcentaje usando las longitudes corta y larga:
+    df['Short Avg'] = df['Volume'].rolling(5).mean()
+    df['Long Avg'] = df['Volume'].rolling(10).mean()
+    df['Volume_Oscillator'] = ((df['Short Avg'] - df['Long Avg']) / df['Long Avg']) * 100
+    df['vol_50'] = np.where(df['Volume_Oscillator'] >= 50,1,0)
            
     return df
         
@@ -54,15 +62,16 @@ def run_strategy():
                       
             print(df['upper_band'][-2])
             print(df['lower_band'][-2]) 
-            print(df['Close'][-2])
+            print(df['Volume_Oscillator'][-2])
                                                                 
             if df is None:
                 continue
             
             if df['lower_band'][-2] != df['upper_band'][-2]:                     
                 if df['lower_band'][-2] >= df['Close'][-2]:
-                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-2],4)}")
-                    contratendencia_long = {
+                    if df['vol_50'][-2] == 1:
+                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-2],4)}")
+                        contratendencia_long = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",
                             "side": "buy",
@@ -71,12 +80,12 @@ def run_strategy():
                             "price": float(df['Close'][-2])
                             }
                             }
-                    requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=contratendencia_long)   
+                        requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=contratendencia_long)   
 
                 if df['upper_band'][-2] <= df['Close'][-2]:
-                                                     
-                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-2],4)}")
-                    contratendencia_short = {
+                    if df['vol_50'][-2] == 1:                                     
+                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-2],4)}")
+                        contratendencia_short = {
                             "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",
                             "side": "sell",
@@ -85,7 +94,7 @@ def run_strategy():
                             "price": float(df['Close'][-2])
                             }
                             }
-                    requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=contratendencia_short)
+                        requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=contratendencia_short)
 
         except Exception as e:
           

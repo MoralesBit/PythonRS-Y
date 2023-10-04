@@ -62,38 +62,38 @@ def run_strategy():
            
             df = calculate_indicators(symbol)
                       
-            print(df['upper_band'][-2])
-            print(df['lower_band'][-2]) 
-            print(df['Volume_Oscillator'][-2])
+            print(df['upper_band'][-1])
+            print(df['lower_band'][-1]) 
+            print(df['Volume_Oscillator'][-1])
                                                                 
             if df is None:
                 continue
             
-            if df['lower_band'][-2] != df['upper_band'][-2]:                     
-                if df['lower_band'][-2] >= df['Close'][-2] and df['Volume_Oscillator'][-2] >= 50:
+            if df['lower_band'][-1] != df['upper_band'][-1]:                     
+                if df['lower_band'][-1] >= df['Close'][-1] and df['Volume_Oscillator'][-1] >= 50:
                    
-                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-2],4)} 📊 {round(df['diff'][-2],2)}")
+                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-2],4)} 📊 {round(df['diff'][-1],2)} 🛒 {round(df['Volume_Oscillator'][-1],2)}%")
                         contratendencia_long = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",
                             "side": "buy",
                             "symbol": symbol,
                             "open": {
-                            "price": float(df['Close'][-2])
+                            "price": float(df['Close'][-1])
                             }
                             }
                         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=contratendencia_long)   
 
-                if df['upper_band'][-2] <= df['Close'][-2] and df['Volume_Oscillator'][-2] >= 50:
+                if df['upper_band'][-1] <= df['Close'][-1] and df['Volume_Oscillator'][-1] >= 50:
                                                   
-                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-2],4)} 📊 {round(df['diff'][-2],2)}")
+                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)} 📊 {round(df['diff'][-1],2)} 🛒 {round(df['Volume_Oscillator'][-1],2)}%")
                         contratendencia_short = {
                             "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",
                             "side": "sell",
                             "symbol": symbol,
                             "open": {
-                            "price": float(df['Close'][-2])
+                            "price": float(df['Close'][-1])
                             }
                             }
                         requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=contratendencia_short)

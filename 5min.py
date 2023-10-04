@@ -44,7 +44,7 @@ def calculate_indicators(symbol):
     df['Short Avg'] = df['Volume'].rolling(5).mean()
     df['Long Avg'] = df['Volume'].rolling(10).mean()
     df['Volume_Oscillator'] = ((df['Short Avg'] - df['Long Avg']) / df['Long Avg']) * 100
-    df['vol_50'] = np.where(df['Volume_Oscillator'] >= 50,1,0)
+    #df['vol_50'] = np.where(df['Volume_Oscillator'] >= 50,1,0)
            
     return df
         
@@ -69,7 +69,7 @@ def run_strategy():
             
             if df['lower_band'][-2] != df['upper_band'][-2]:                     
                 if df['lower_band'][-2] >= df['Close'][-2]:
-                    if df['vol_50'][-2] == 1:
+                    if df['Volume_Oscillator'][-2] >= 50:
                         Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-2],4)}")
                         contratendencia_long = {
                             "name": "PICKER LONG",
@@ -83,7 +83,7 @@ def run_strategy():
                         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=contratendencia_long)   
 
                 if df['upper_band'][-2] <= df['Close'][-2]:
-                    if df['vol_50'][-2] == 1:                                     
+                    if df['Volume_Oscillator'][-2] >= 50:                                     
                         Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-2],4)}")
                         contratendencia_short = {
                             "name": "PICKER SHORT",

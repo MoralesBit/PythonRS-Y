@@ -22,9 +22,9 @@ def get_trading_symbols():
             symbols.remove(coin)
     return symbols
    
-def calculate_indicators(symbol):
+def calculate_indicators(symbol,):
         
-    klines = client.futures_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_5MINUTE, limit=500)
+    klines = client.futures_klines(symbol=symbol, Client.KLINE_INTERVAL_5MINUTE, limit=1000)
     df = pd.DataFrame(klines)
     if df.empty:
         return None
@@ -33,11 +33,11 @@ def calculate_indicators(symbol):
     df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
     
     df = df.set_index('Open time')
+    
+    df['upperband'], df['middleband'], df['lowerband'] = ta.BBANDS(df['Close'],timeperiod=20,nbdevdn=2.5,nbdevup=2.5,matype=0)
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
     
-    df['upperband'], df['middleband'], df['lowerband'] = ta.BBANDS(df['Close'],timeperiod=20,nbdevdn=2.5,nbdevup=2.5,matype=0)
-  
     return df
         
 def run_strategy():
@@ -49,7 +49,7 @@ def run_strategy():
         print(symbol)
         
         try:
-            df = calculate_indicators(symbol)
+            df = calculate_indicators(symbol,interval=)
                                                                 
             if df is None:
                 continue

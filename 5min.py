@@ -57,7 +57,7 @@ def run_strategy():
             if df is None:
                 continue
                                     
-            if upper_band[-2] <= df['Close'][-2]:
+            if lower_band[-2] >= df['Close'][-2]:
                 Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
                 PICKERLONG = {
                             "name": "PICKER LONG",
@@ -70,7 +70,8 @@ def run_strategy():
                             }
                 requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)   
 
-            if lower_band[-2] >= df['Close'][-2]:                                          
+            if upper_band[-2] <= df['Close'][-2]:
+                                                     
                 Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
                 PICKERSHORT = {
                             "name": "PICKER SHORT",

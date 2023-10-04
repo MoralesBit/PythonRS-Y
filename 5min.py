@@ -34,11 +34,12 @@ def calculate_indicators(symbol):
     
     df = df.set_index('Open time')
     
-    upper_band, middle_band, lower_band = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+    df['upper_band'], df['middle_band'], df['lower_band'] = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5, matype=0)
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
     
-    return upper_band, middle_band, lower_band, df
+       
+    return df
         
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
@@ -50,16 +51,18 @@ def run_strategy():
         
         try:
            
-            df, upper_band, lower_band = calculate_indicators(symbol)
-            print(upper_band[-2])
-            print(lower_band[-2]) 
+            df = calculate_indicators(symbol)
+                      
+            print(df['upper_band'][-2])
+            print(df['lower_band'][-2]) 
+            print(df['Close'][-2])
                                                                 
             if df is None:
                 continue
                                     
-            if lower_band[-2] >= df['Close'][-2]:
+            if df['lower_band'][-2] >= df['Close'][-2]:
                 Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
-                PICKERLONG = {
+                contratendencia_long = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",
                             "side": "buy",
@@ -68,12 +71,12 @@ def run_strategy():
                             "price": float(df['Close'].iloc[-2])
                             }
                             }
-                requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)   
+                requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=contratendencia_long)   
 
-            if upper_band[-2] <= df['Close'][-2]:
+            if df['upper_band'][-2] <= df['Close'][-2]:
                                                      
                 Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
-                PICKERSHORT = {
+                contratendencia_short = {
                             "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",
                             "side": "sell",
@@ -82,7 +85,7 @@ def run_strategy():
                             "price": float(df['Close'].iloc[-2])
                             }
                             }
-                requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT)
+                requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=contratendencia_short)
 
         except Exception as e:
           

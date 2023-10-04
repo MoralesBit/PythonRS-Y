@@ -34,11 +34,11 @@ def calculate_indicators(symbol):
     
     df = df.set_index('Open time')
     
-    df['upperband'], df['middleband'], df['lowerband'] = ta.BBANDS(df['Close'],timeperiod=20)
+    upper_band, middle_band, lower_band = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
     
-    return df
+    return upper_band, lower_band, df
         
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
@@ -50,13 +50,14 @@ def run_strategy():
         
         try:
             df = calculate_indicators(symbol)
-            print(df['upperband'].iloc[-2])
-            print(df['lowerband'].iloc[-2]) 
+            upper_band, middle_band, lower_band = calculate_indicators(symbol)
+            print(upper_band[-2])
+            print(lower_band[-2]) 
                                                                 
             if df is None:
                 continue
                                     
-            if df['upperband'].iloc[-2] <= df['Close'].iloc[-2]:
+            if upper_band[-2] <= df['Close'][-2]:
                             Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'].iloc[-2],4)}")
                             PICKERLONG = {
                             "name": "PICKER LONG",

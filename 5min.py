@@ -35,6 +35,8 @@ def calculate_indicators(symbol):
     df = df.set_index('Open time')
     
     df['upper_band'], df['middle_band'], df['lower_band'] = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5, matype=0)
+    
+    df['diff'] = abs((df['upper_band'] / df['lower_band'] -1) * 100)
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
     
@@ -69,8 +71,8 @@ def run_strategy():
             
             if df['lower_band'][-2] != df['upper_band'][-2]:                     
                 if df['lower_band'][-2] >= df['Close'][-2]:
-                    if df['Volume_Oscillator'][-2] >= 50:
-                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-2],4)}")
+                    if 15 <= df['Volume_Oscillator'][-2] <= 25:
+                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-2],4)} \📊 {round(df['diff'][-2],2)}")
                         contratendencia_long = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",
@@ -83,8 +85,8 @@ def run_strategy():
                         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=contratendencia_long)   
 
                 if df['upper_band'][-2] <= df['Close'][-2]:
-                    if df['Volume_Oscillator'][-2] >= 50:                                     
-                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-2],4)}")
+                    if 15 <= df['Volume_Oscillator'][-2] <= 25:                                     
+                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-2],4)} \📊 {round(df['diff'][-2],2)}")
                         contratendencia_short = {
                             "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",

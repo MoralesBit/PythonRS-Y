@@ -34,9 +34,10 @@ def calculate_indicators(symbol):
     
     df = df.set_index('Open time')
     
-    df['upper_band'], df['middle_band'], df['lower_band'] = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=2.5, nbdevdn=2.5, matype=0)
+    df['upper_band'], df['middle_band'], df['lower_band'] = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=3.5, nbdevdn=3.5, matype=0)
     
-    df['diff'] = abs((df['upper_band'] / df['lower_band'] -1) * 100)
+    df['diff_up'] = abs((df['High'] / df['Close'] -1) * 100)
+    df['diff_down'] = abs((df['Low'] / df['Close'] -1) * 100)
            
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
   
@@ -63,21 +64,21 @@ def run_strategy():
                 continue
             
             if df['lower_band'][-1] != df['upper_band'][-1]:                     
-                if df['lower_band'][-1] >= df['Close'][-1] and df['diff'][-1] >= 2 and df['rsi'][-1] < 25:
+                if df['lower_band'][-1] >= df['Low'][-1] and df['diff_up'][-1] >= 0.5:
                    
-                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-2],4)} 📊 {round(df['diff'][-1],2)}%")
+                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)} 📊 {round(df['diff'][-1],2)}%")
                         contratendencia_long = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",
                             "side": "buy",
                             "symbol": symbol,
                             "open": {
-                            "price": float(df['Close'][-1])
+                            "price": float(df['Close'][-2])
                             }
                             }
                         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=contratendencia_long)   
 
-                if df['upper_band'][-1] <= df['Close'][-1] and df['diff'][-1] >= 2 and df['rsi'][-1] > 75:
+                if df['upper_band'][-1] <= df['High'][-1] and df['diff_down'][-1] >= 0.5:
                                                   
                         Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)} 📊 {round(df['diff'][-1],2)}%")
                         contratendencia_short = {

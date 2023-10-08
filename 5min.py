@@ -35,11 +35,11 @@ def calculate_indicators(symbol):
     df = df.set_index('Open time')
     
     df['upper_band'], df['middle_band'], df['lower_band'] = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=3.5, nbdevdn=3.5, matype=0)
-    
+
+    df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
+   
     df['diff_up'] = abs((df['High'] / df['Close'] -1) * 100)
     df['diff_down'] = abs((df['Low'] / df['Close'] -1) * 100)
-           
-    df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
   
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
                

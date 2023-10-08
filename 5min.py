@@ -35,7 +35,8 @@ def calculate_indicators(symbol):
     df = df.set_index('Open time')
     
     df['upper_band'], df['middle_band'], df['lower_band'] = ta.BBANDS(df['Close'], timeperiod=20, nbdevup=3.5, nbdevdn=3.5, matype=0)
-
+    df['slowk'], df['slowd'] = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=14, slowk_matype=0, slowd_period=3, slowd_matype=0)
+       
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
    
     df['diff_up'] = abs((df['High'] / df['upper_band'] -1) * 100)
@@ -56,15 +57,12 @@ def run_strategy():
         try:
            
             df = calculate_indicators(symbol)
-                      
-            print(df['upper_band'][-1])
-            print(df['lower_band'][-1]) 
-                                                                
+                                                                        
             if df is None:
                 continue
             
-            if df['lower_band'][-1] != df['upper_band'][-1]:                     
-                if df['lower_band'][-1] >= df['Low'][-1] and df['diff_down'][-1] >= 0.5:
+            if df['middle_band'][-1] <= df['Close'][-1]:
+                if df['slowk'][-2] <= df['slowd'][-2] and  df['slowk'][-1] >= df['slowd'][-1]:
                    
                         Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)} 📊 {round(df['diff_down'][-1],2)}%")
                         contratendencia_long = {
@@ -78,7 +76,8 @@ def run_strategy():
                             }
                         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=contratendencia_long)   
 
-                if df['upper_band'][-1] <= df['High'][-1] and df['diff_up'][-1] >= 0.5:
+            if df['middle_band'][-1] >= df['Close'][-1]:
+                if df['slowk'][-2] >= df['slowd'][-2] and  df['slowk'][-1] <= df['slowd'][-1]:
                                                   
                         Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)} 📊 {round(df['diff_up'][-1],2)}%")
                         contratendencia_short = {

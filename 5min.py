@@ -38,8 +38,8 @@ def calculate_indicators(symbol):
 
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float) 
    
-    df['diff_up'] = abs((df['High'] / df['Close'] -1) * 100)
-    df['diff_down'] = abs((df['Low'] / df['Close'] -1) * 100)
+    df['diff_up'] = abs((df['High'] / df['upper_band'] -1) * 100)
+    df['diff_down'] = abs((df['Low'] / df['lower_band'] -1) * 100)
   
     df['rsi'] = ta.RSI(df['Close'], timeperiod=14)
                

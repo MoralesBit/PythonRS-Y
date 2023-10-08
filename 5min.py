@@ -64,7 +64,7 @@ def run_strategy():
                 continue
             
             if df['lower_band'][-1] != df['upper_band'][-1]:                     
-                if df['lower_band'][-1] >= df['Low'][-1] and df['diff_up'][-1] >= 0.5:
+                if df['lower_band'][-1] >= df['Low'][-1] and df['diff_down'][-1] >= 0.5:
                    
                         Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)} 📊 {round(df['diff_down'][-1],2)}%")
                         contratendencia_long = {
@@ -78,7 +78,7 @@ def run_strategy():
                             }
                         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=contratendencia_long)   
 
-                if df['upper_band'][-1] <= df['High'][-1] and df['diff_down'][-1] >= 0.5:
+                if df['upper_band'][-1] <= df['High'][-1] and df['diff_up'][-1] >= 0.5:
                                                   
                         Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)} 📊 {round(df['diff_up'][-1],2)}%")
                         contratendencia_short = {

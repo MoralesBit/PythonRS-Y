@@ -66,7 +66,7 @@ def run_strategy():
             if df['lower_band'][-1] != df['upper_band'][-1]:                     
                 if df['lower_band'][-1] >= df['Low'][-1] and df['diff_up'][-1] >= 0.5:
                    
-                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)} 📊 {round(df['diff'][-1],2)}%")
+                        Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)} 📊 {round(df['diff_down'][-1],2)}%")
                         contratendencia_long = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",
@@ -80,7 +80,7 @@ def run_strategy():
 
                 if df['upper_band'][-1] <= df['High'][-1] and df['diff_down'][-1] >= 0.5:
                                                   
-                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)} 📊 {round(df['diff'][-1],2)}%")
+                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)} 📊 {round(df['diff_up'][-1],2)}%")
                         contratendencia_short = {
                             "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",

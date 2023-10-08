@@ -62,7 +62,7 @@ def run_strategy():
                 continue
             
             if df['middle_band'][-1] <= df['Close'][-1]:
-                if df['slowk'][-2] <= df['slowd'][-2] and  df['slowk'][-1] >= df['slowd'][-1]:
+                if df['slowk'][-2] <= df['slowd'][-2] and  df['slowk'][-1] >= df['slowd'][-1] < 50:
                    
                         Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)} 📊 {round(df['diff_down'][-1],2)}%")
                         contratendencia_long = {
@@ -77,7 +77,7 @@ def run_strategy():
                         requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=contratendencia_long)   
 
             if df['middle_band'][-1] >= df['Close'][-1]:
-                if df['slowk'][-2] >= df['slowd'][-2] and  df['slowk'][-1] <= df['slowd'][-1]:
+                if df['slowk'][-2] >= df['slowd'][-2] and  df['slowk'][-1] <= df['slowd'][-1] > 50:
                                                   
                         Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)} 📊 {round(df['diff_up'][-1],2)}%")
                         contratendencia_short = {

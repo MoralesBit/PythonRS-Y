@@ -57,7 +57,7 @@ def run_strategy():
             if df['p_long'][-2] == 1 :
              
                         message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]} Recompra"
-                        Tb.telegram_send_message(message)
+                        Tb.telegram_canal_prueba(message)
                                               
                         recompra_long = {
                         "name": "RECOMPRA LONG",
@@ -73,7 +73,7 @@ def run_strategy():
             if df['p_short'][-2] == 1 :
               
                         message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} Recompra"
-                        Tb.telegram_send_message(message)
+                        Tb.telegram_canal_prueba(message)
                                   
                         recompra_short = {
                         "name": "RECOMPRA SHORT",

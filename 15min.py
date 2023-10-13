@@ -35,8 +35,8 @@ def calculate_indicators(symbol,interval):
     
     df['psar'] = ta.SAR(df['High'], df['Low'], acceleration, maximum)
     
-    df['p_short'] = np.where( df['psar'][-3] < df['Close'][-3] and df['psar'][-2] > df['Close'][-2],1,0) 
-    df['p_long'] = np.where( df['psar'][-3] > df['Close'][-3] and df['psar'][-2] < df['Close'][-2],1,0) 
+    df['p_short'] = np.where( df['psar'][-2] < df['Close'][-2] and df['psar'][-1] > df['Close'][-1],1,0) 
+    df['p_long'] = np.where( df['psar'][-2] > df['Close'][-2] and df['psar'][-1] < df['Close'][-1],1,0) 
      
     return df[-3:]
         
@@ -54,9 +54,9 @@ def run_strategy():
             if df is None:
                 continue
            
-            if df['p_long'][-2] == 1 :
+            if df['p_long'][-1] == 1 :
              
-                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]} Recompra"
+                        message = f"🟢 {symbol} \n💵 Precio: {df['Close'][-1]} Recompra"
                         Tb.telegram_canal_prueba(message)
                                               
                         recompra_long = {
@@ -70,9 +70,9 @@ def run_strategy():
                         }
                         requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=recompra_long)    
                                  
-            if df['p_short'][-2] == 1 :
+            if df['p_short'][-1] == 1 :
               
-                        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} Recompra"
+                        message = f"🔴 {symbol} \n💵 Precio: {df['Close'][-1]} Recompra"
                         Tb.telegram_canal_prueba(message)
                                   
                         recompra_short = {

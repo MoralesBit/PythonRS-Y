@@ -68,7 +68,7 @@ def run_strategy():
             if df['roc_negativo'][-2] == 1:                     
                 if df['cross_up'][-2] == 1:
                                 
-                        Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                        Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                         
 
         except Exception as e:

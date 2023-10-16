@@ -34,7 +34,7 @@ def calculate_indicators(symbol):
     
     df = df.set_index('Open time')
     
-    df['slowk'] , df['slowd'] = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=14, slowk_matype=0, slowd_period=3, slowd_matype=0)
+    df['slowk'] , df['slowd'] = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=3, slowk_period=14, slowk_matype=0, slowd_period=14, slowd_matype=0)
     
     df['cross_up'] = np.where( df['slowk'][-3] < df['slowd'][-3] and df['slowk'][-2] > df['slowd'][-2] and df['slowk'][-2] < 40,1,0) 
     df['cross_down'] = np.where( df['slowk'][-3] > df['slowd'][-3] and df['slowk'][-2] < df['slowd'][-2] and df['slowk'][-2] > 60,1,0)
@@ -57,18 +57,21 @@ def run_strategy():
         try:
            
             df = calculate_indicators(symbol)
-                                                           
+            print(df['slowk'][-2])
+            print(df['slowd'][-2])
+                                                                       
             if df is None:
                 continue
             
             if df['roc_positivo'][-2] == 1:                     
                 if df['cross_up'][-2] == 1:
                    
-                        Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                    Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                    
             if df['roc_negativo'][-2] == 1:                     
                 if df['cross_down'][-2] == 1:
                                 
-                        Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                    Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                         
 
         except Exception as e:

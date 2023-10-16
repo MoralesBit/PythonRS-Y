@@ -66,7 +66,7 @@ def run_strategy():
                    
                         Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
             if df['roc_negativo'][-2] == 1:                     
-                if df['cross_up'][-2] == 1:
+                if df['cross_down'][-2] == 1:
                                 
                         Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                         

@@ -59,6 +59,8 @@ def run_strategy():
             df = calculate_indicators(symbol)
             print(df['slowk'][-2])
             print(df['slowd'][-2])
+            print(df['roc_positivo'][-2])
+            print(df['roc_negativo'][-2])
                                                                        
             if df is None:
                 continue

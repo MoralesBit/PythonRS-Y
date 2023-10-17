@@ -65,11 +65,11 @@ def run_strategy():
                 continue
             
             if df['slowk'][-2] < df['slowd'][-2] and df['slowk'][-1] >= df['slowd'][-1] and df['slowk'][-1] < 40:
-                if df['cci'][-1] > 0:                     
+                if df['cci'][-1] > 0 and df['roc'][-1] > 10:                     
                     Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                     
             if df['slowk'][-2] > df['slowd'][-2] and df['slowk'][-1] <= df['slowd'][-1] and df['slowk'][-1] > 60:                  
-                if df['cci'][-1] < 0:
+                if df['cci'][-1] < 0 and df['roc'][-1] < -10:
                     Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                         
 

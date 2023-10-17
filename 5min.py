@@ -36,8 +36,13 @@ def calculate_indicators(symbol):
     df = df.set_index('Open time')
     
     slowk, slowd = STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=14, slowk_matype=0, slowd_period=14, slowd_matype=0)
-    df['slowk'] = slowk
-    df['slowd'] = slowd
+    # Calcular la media móvil simple con smooth=3
+    slowk_smooth = ta.SMA(slowk, 3)
+    slowd_smooth = ta.SMA(slowd, 3)
+
+# Asignar los valores al DataFrame
+    df['slowk'] = slowk_smooth
+    df['slowd'] = slowd_smooth
     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     

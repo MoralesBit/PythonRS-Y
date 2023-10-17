@@ -54,7 +54,6 @@ def run_strategy():
     for symbol in symbols:
                            
         print(symbol)
-     
         
         try:
            
@@ -66,14 +65,12 @@ def run_strategy():
                 continue
             
             if df['slowk'][-2] < df['slowd'][-2] and df['slowk'][-1] >= df['slowd'][-1] and df['slowk'][-1] < 40:
-                if df['roc_positivo'][-1] == 1:                   
-                                      
-                    Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                                 
+                Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                     
             if df['slowk'][-2] > df['slowd'][-2] and df['slowk'][-1] <= df['slowd'][-1] and df['slowk'][-1] > 60:                  
-                if df['roc_negativo'][-1] == 1:
-                                
-                        Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+               
+                Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                         
 
         except Exception as e:

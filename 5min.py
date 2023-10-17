@@ -59,19 +59,19 @@ def run_strategy():
         try:
            
             df = calculate_indicators(symbol)
-            print(df['slowk'][-2])
-            print(df['slowd'][-2])
+            print(df['slowk'][-1])
+            print(df['slowd'][-1])
                                                                              
             if df is None:
                 continue
             
-            if df['slowk'][-3] < df['slowd'][-3] and df['slowk'][-2] >= df['slowd'][-2] and df['slowk'][2] < 40:
-                if df['roc_positivo'][-2] == 1:                   
+            if df['slowk'][-2] < df['slowd'][-2] and df['slowk'][-1] >= df['slowd'][-1] and df['slowk'][-1] < 40:
+                if df['roc_positivo'][-1] == 1:                   
                                       
                     Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                     
-            if df['slowk'][-3] > df['slowd'][-3] and df['slowk'][-2] <= df['slowd'][-2] and df['slowk'][2] > 60:                  
-                if df['roc_negativo'][-2] == 1:
+            if df['slowk'][-2] > df['slowd'][-2] and df['slowk'][-1] <= df['slowd'][-1] and df['slowk'][-1] > 60:                  
+                if df['roc_negativo'][-1] == 1:
                                 
                         Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                         

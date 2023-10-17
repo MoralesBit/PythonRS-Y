@@ -34,22 +34,18 @@ def calculate_indicators(symbol):
     df['Open time'] = pd.to_datetime(df['Open time'], unit='ms')
     
     df = df.set_index('Open time')
+    df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float)
     
-    slowk, slowd = STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=14, slowk_matype=0, slowd_period=14, slowd_matype=0)
-    # Calcular la media móvil simple con smooth=3
-    slowk_smooth = ta.SMA(slowk, 3)
-    slowd_smooth = ta.SMA(slowd, 3)
-
-# Asignar los valores al DataFrame
-    df['slowk'] = slowk_smooth
-    df['slowd'] = slowd_smooth
-    
+    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], 14, 14, 0, 3)
+    df['slowk'] = slowk
+    df['slowd'] = slowd
+  
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
     df['roc_positivo'] = np.where(5 < df['roc'][-2] < 10,1,0)
     df['roc_negativo'] = np.where(-5 > df['roc'][-2] > -8,1,0)
                   
-    return df
+    return df[-3:]
         
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
@@ -58,24 +54,23 @@ def run_strategy():
     for symbol in symbols:
                            
         print(symbol)
+     
         
         try:
            
             df = calculate_indicators(symbol)
             print(df['slowk'][-2])
             print(df['slowd'][-2])
-            print(df['roc_positivo'][-2])
-            print(df['roc_negativo'][-2])
-                                                                       
+                                                                             
             if df is None:
                 continue
             
-            if df['slowk'][-2] < 40 and df['slowk'][-3] < df['slowd'][-3] and df['slowk'][-2] > df['slowd'][-2]:
+            if df['slowk'][-3] < df['slowd'][-3] and df['slowk'][-2] >= df['slowd'][-2] and df['slowk'][2] < 40:
                 if df['roc_positivo'][-2] == 1:                   
                                       
                     Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                     
-            if df['slowk'][-2] > 60 and df['slowk'][-3] > df['slowd'][-3] and df['slowk'][-2] < df['slowd'][-2]:                     
+            if df['slowk'][-3] > df['slowd'][-3] and df['slowk'][-2] <= df['slowd'][-2] and df['slowk'][2] > 60:                  
                 if df['roc_negativo'][-2] == 1:
                                 
                         Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")

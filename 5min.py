@@ -41,10 +41,7 @@ def calculate_indicators(symbol):
     df['slowd'] = slowd
   
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
-    
-    df['roc_positivo'] = np.where(5 < df['roc'][-2] < 10,1,0)
-    df['roc_negativo'] = np.where(-5 > df['roc'][-2] > -8,1,0)
-                  
+                   
     return df[-3:]
         
 def run_strategy():
@@ -65,12 +62,12 @@ def run_strategy():
                 continue
             
             if df['slowk'][-2] < df['slowd'][-2] and df['slowk'][-1] >= df['slowd'][-1] and df['slowk'][-1] < 40:
-                                 
-                Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                if df['roc'][-1] > 5:                     
+                    Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                     
             if df['slowk'][-2] > df['slowd'][-2] and df['slowk'][-1] <= df['slowd'][-1] and df['slowk'][-1] > 60:                  
-               
-                Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                if df['roc'][-1] < -5:
+                    Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                         
 
         except Exception as e:

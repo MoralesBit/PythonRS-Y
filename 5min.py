@@ -5,6 +5,7 @@ import pandas as pd
 import talib as ta
 from binance.client import Client
 import Telegram_bot as Tb
+from talib import STOCH
 
 Pkey = ''
 Skey = ''
@@ -34,11 +35,10 @@ def calculate_indicators(symbol):
     
     df = df.set_index('Open time')
     
-    df['slowk'] , df['slowd'] = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=0, slowk_period=14, slowk_matype=0, slowd_period=14, slowd_matype=0)
+    slowk, slowd = STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=14, slowk_matype=0, slowd_period=14, slowd_matype=0)
+    df['slowk'] = slowk
+    df['slowd'] = slowd
     
-    df['cross_up'] = np.where( df['slowk'][-3] < df['slowd'][-3] and df['slowk'][-2] > df['slowd'][-2] and df['slowk'][-2] < 40,1,0) 
-    df['cross_down'] = np.where( df['slowk'][-3] > df['slowd'][-3] and df['slowk'][-2] < df['slowd'][-2] and df['slowk'][-2] > 60,1,0)
-     
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
     df['roc_positivo'] = np.where(5 < df['roc'][-2] < 10,1,0)
@@ -65,15 +65,13 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df['slowk'][-3] < df['slowd'][-3] and df['slowk'][-2] > df['slowd'][-2]:
-                if df['slowk'][-2] > 60: 
-                    if df['roc_positivo'][-2] == 1:                   
+            if df['slowk'][-2] < 40 and df['slowk'][-3] < df['slowd'][-3] and df['slowk'][-2] > df['slowd'][-2]:
+                if df['roc_positivo'][-2] == 1:                   
                                       
-                        Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                    Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                     
-            if df['slowk'][-3] > df['slowd'][-3] and df['slowk'][-2] < df['slowd'][-2]:                     
-                if df['roc'][-2] < 40: 
-                    if df['roc_negativo'][-2] == 1:
+            if df['slowk'][-2] > 60 and df['slowk'][-3] > df['slowd'][-3] and df['slowk'][-2] < df['slowd'][-2]:                     
+                if df['roc_negativo'][-2] == 1:
                                 
                         Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                         

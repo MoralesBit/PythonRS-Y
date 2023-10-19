@@ -68,9 +68,32 @@ def run_strategy():
                 if df['cci'][-1] > 0 and df['roc'][-1] > 10:                     
                     Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                     
+                    FISHINGLONG = {
+                            "name": "FISHING LONG",
+                            "secret": "0kivpja7tz89",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                                }
+                            }
+                    requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
+                    
             if df['slowk'][-2] > df['slowd'][-2] and df['slowk'][-1] <= df['slowd'][-1] and df['slowk'][-1] > 60:                  
                 if df['cci'][-1] < 0 and df['roc'][-1] < -10:
                     Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                    
+                    FISHINGSHORT = {
+                            "name": "FISHING SHORT",
+                            "secret": "azsdb9x719",
+                            "side": "sell",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                                }
+                            }
+   
+                    requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
                         
 
         except Exception as e:

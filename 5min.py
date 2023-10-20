@@ -63,7 +63,7 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df['diff'][-2] >= 3: 
+            if df['diff'][-2] >= 2: 
                 if df['cci'][-3] > 0 and df['cci'][-2] < 0 and  df['roc'][-1] > 10:
                                          
                     Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
@@ -79,7 +79,7 @@ def run_strategy():
                             }
                     requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
                     
-            if df['diff'][-2] >= 3: 
+            if df['diff'][-2] >= 2: 
                 if df['cci'][-3] < 0 and df['cci'][-2] > 0 and  df['roc'][-1] < -10:
                     Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                     

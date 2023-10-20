@@ -36,16 +36,15 @@ def calculate_indicators(symbol):
     df = df.set_index('Open time')
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float)
     
-    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], 14, 14, 0, 3)
-    df['slowk'] = slowk
-    df['slowd'] = slowd
+    df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
   
     df['roc'] = ta.ROC(df['Close'], timeperiod=288)
     
     cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
     df['cci'] = cci
-                   
-    return df[-3:]
+    
+                      
+    return df[-5:]
         
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""
@@ -64,8 +63,9 @@ def run_strategy():
             if df is None:
                 continue
             
-            if df['slowk'][-2] < df['slowd'][-2] and df['slowk'][-1] >= df['slowd'][-1] and df['slowk'][-1] < 40:
-                if df['cci'][-1] > 0 and df['roc'][-1] > 10:                     
+            if df['diff'][-2] >= 3: 
+                if df['cci'][-3] > 0 and df['cci'][-2] < 0 and  df['roc'][-1] > 10:
+                                         
                     Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                     
                     FISHINGLONG = {
@@ -79,8 +79,8 @@ def run_strategy():
                             }
                     requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
                     
-            if df['slowk'][-2] > df['slowd'][-2] and df['slowk'][-1] <= df['slowd'][-1] and df['slowk'][-1] > 60:                  
-                if df['cci'][-1] < 0 and df['roc'][-1] < -10:
+            if df['diff'][-2] >= 3: 
+                if df['cci'][-3] < 0 and df['cci'][-2] > 0 and  df['roc'][-1] < -10:
                     Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                     
                     FISHINGSHORT = {

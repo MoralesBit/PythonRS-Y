@@ -43,7 +43,7 @@ def calculate_indicators(symbol):
     cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
     df['cci'] = cci
                           
-    return df[-5:]
+    return df[-3:]
         
 def run_strategy():
     """Ejecuta la estrategia de trading para cada símbolo en la lista de trading"""

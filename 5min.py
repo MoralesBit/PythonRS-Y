@@ -42,8 +42,7 @@ def calculate_indicators(symbol):
     
     cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
     df['cci'] = cci
-    
-                      
+                          
     return df[-5:]
         
 def run_strategy():
@@ -57,9 +56,8 @@ def run_strategy():
         try:
            
             df = calculate_indicators(symbol)
-            print(df['slowk'][-1])
-            print(df['slowd'][-1])
-                                                                             
+            print(df['diff'][-2])
+                                             
             if df is None:
                 continue
             

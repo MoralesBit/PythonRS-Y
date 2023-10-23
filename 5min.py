@@ -6,11 +6,9 @@ import talib as ta
 from binance.client import Client
 import Telegram_bot as Tb
 
-
 Pkey = ''
 Skey = ''
 client = Client(api_key=Pkey, api_secret=Skey)
-
 
 def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
@@ -37,9 +35,7 @@ def calculate_indicators(symbol):
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float)
     
     df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-  
-    df['roc'] = ta.ROC(df['Close'], timeperiod=288)
-    
+      
     cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
     df['cci'] = cci
                           
@@ -62,23 +58,8 @@ def run_strategy():
                 continue
             
             if df['diff'][-2] >= 2: 
-                if df['cci'][-3] > 0 and df['cci'][-2] < 0 and  df['roc'][-1] > 10:
-                                         
-                    Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                if df['cci'][-3] > 0 and df['cci'][-2] < 0:
                     
-                    FISHINGLONG = {
-                            "name": "FISHING LONG",
-                            "secret": "0kivpja7tz89",
-                            "side": "buy",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2])
-                                }
-                            }
-                    requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
-                    
-            if df['diff'][-2] >= 2: 
-                if df['cci'][-3] < 0 and df['cci'][-2] > 0 and  df['roc'][-1] < -10:
                     Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                     
                     FISHINGSHORT = {
@@ -91,7 +72,22 @@ def run_strategy():
                                 }
                             }
    
-                    requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT) 
+                    requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)                         
+               
+            if df['diff'][-2] >= 2: 
+                if df['cci'][-3] < 0 and df['cci'][-2] > 0:
+                    Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                    
+                    FISHINGLONG = {
+                            "name": "FISHING LONG",
+                            "secret": "0kivpja7tz89",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                                }
+                            }
+                    requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
                         
 
         except Exception as e:

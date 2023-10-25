@@ -81,7 +81,7 @@ def run_strategy():
                 continue
             
             if dfr['high_accumulation'][-2] == True:
-                if df['sl_signal'][-2] == 1:    
+                if df['sl_short'][-2] == 1:    
                     
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\nStochastic ✅ \n⏳ 5 Minutos")
                     PICKERSHORT = {

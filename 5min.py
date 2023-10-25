@@ -21,6 +21,10 @@ def calculate_order_block(df):
     accumulation_threshold = df['accumulation'].quantile(0.8)
     df['high_accumulation'] = df['accumulation'] >= accumulation_threshold
     
+    # Calcular el punto de acumulación más bajo
+    lowest_accumulation = df['accumulation'].min()
+    df['low_accumulation'] = df['accumulation'] == lowest_accumulation
+    
     return df
 
 def get_trading_symbols():
@@ -74,10 +78,12 @@ def run_strategy():
             short = df['Close'][-2]*(0.9997)
             long = df['Close'][-2]*(0.003) + df['Close'][-2]
             
-            print(df['high_accumulation'][-2])
+            print(dfr['high_accumulation'][-2])
+            print(dfr['low_accumulation'][-2])
                                              
             if df is None:
                 continue
+            #Contratendencia:
             
             if dfr['high_accumulation'][-2] == True:
                 if df['sl_short'][-2] == 1:    
@@ -96,7 +102,7 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT)                         
                     
                     
-            if dfr['high_accumulation'][-2] == True:
+            if dfr['low_accumulation'][-2] == True:
                 if df['sl_long'][-2] == 1:
                 
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\nStochastic ✅\n⏳ 5 Minutos")
@@ -109,7 +115,42 @@ def run_strategy():
                             "price": long
                             }
                             }
-                    requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)  
+                    requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)
+            
+            #Tendencia:        
+            if dfr['low_accumulation'][-2] == True:
+                if df['sl_short'][-2] == 1:
+                    
+                    Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                    
+                    FISHINGSHORT = {
+                            "name": "FISHING SHORT",
+                            "secret": "azsdb9x719",
+                            "side": "sell",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                                }
+                            }
+   
+                    requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
+                    
+            if dfr['high_accumulation'][-2] == True:
+                if df['sl_long'][-2] == 1:
+                    
+                    Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                    
+                    FISHINGLONG = {
+                            "name": "FISHING LONG",
+                            "secret": "0kivpja7tz89",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                                }
+                            }
+                    requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
+                               
                         
 
         except Exception as e:

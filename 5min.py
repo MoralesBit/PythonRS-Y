@@ -77,7 +77,7 @@ def run_strategy():
             if dfr['high_accumulation'][-2] == True:
                 if df['rsi'][-2] >= 70:    
                     
-                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
+                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n®️ RSI: {round(df['rsi'][-2],2)}\n⏳ 5 Minutos")
                     PICKERSHORT = {
                             "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",
@@ -94,7 +94,7 @@ def run_strategy():
             if dfr['high_accumulation'][-2] == True:
                 if df['rsi'][-2] <= 30:
                 
-                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker  ▫️ 5 min")
+                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n®️ RSI: {round(df['rsi'][-2],2)}\n⏳ 5 Minutos")
                     PICKERLONG = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",

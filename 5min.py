@@ -85,10 +85,10 @@ def run_strategy():
                 continue
             #Contratendencia:
             
-            if dfr['high_accumulation'][-2] == True:
+            if dfr['low_accumulation'][-2] == True and df['rsi'][-2] > 80:
                 if df['sl_short'][-2] == 1:    
                     
-                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\nStochastic ✅ \n⏳ 5 Minutos")
+                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n⏳ 5 Minutos")
                     PICKERSHORT = {
                             "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",
@@ -102,10 +102,10 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT)                         
                     
                     
-            if dfr['low_accumulation'][-2] == True:
+            if dfr['low_accumulation'][-2] == True and df['rsi'][-2] < 20:
                 if df['sl_long'][-2] == 1:
                 
-                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\nStochastic ✅\n⏳ 5 Minutos")
+                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5 Minutos")
                     PICKERLONG = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",
@@ -118,7 +118,7 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)
             
             #Tendencia:        
-            if dfr['low_accumulation'][-2] == True:
+            if dfr['high_accumulation'][-2] == True and df['rsi'][-2] < 40:
                 if df['sl_short'][-2] == 1:
                     
                     Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
@@ -135,7 +135,7 @@ def run_strategy():
    
                     requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
                     
-            if dfr['high_accumulation'][-2] == True:
+            if dfr['high_accumulation'][-2] == True and df['rsi'][-2] > 60:
                 if df['sl_long'][-2] == 1:
                     
                     Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")

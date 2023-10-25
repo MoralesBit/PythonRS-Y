@@ -66,6 +66,8 @@ def run_strategy():
            
             df = calculate_indicators(symbol)
             dfr = calculate_order_block(df)
+            short = df['Close'][-2]*(0.9997)
+            long = df['Close'][-2]*(0.003) + df['Close'][-2]
             
             print(df['high_accumulation'][-2])
                                              
@@ -82,7 +84,7 @@ def run_strategy():
                             "side": "sell",
                             "symbol": symbol,
                             "open": {
-                            "price": float(df['Close'][-2]) 
+                            "price": short 
                             }
                             }
    
@@ -99,7 +101,7 @@ def run_strategy():
                             "side": "buy",
                             "symbol": symbol,
                             "open": {
-                            "price": float(df['Close'][-2])
+                            "price": long
                             }
                             }
                     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)  

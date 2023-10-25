@@ -56,8 +56,7 @@ def calculate_indicators(symbol):
     
     df['sl_short'] = np.where(df['slowk'][-3] > df['slowd'][-3] and df['slowk'][-2] <= df['slowd'][-2],1,0)
     df['sl_long'] = np.where(df['slowk'][-3] < df['slowd'][-3] and df['slowk'][-2] >= df['slowd'][-2],1,0)
-    
-                          
+                              
     return df[-3:]
         
 def run_strategy():

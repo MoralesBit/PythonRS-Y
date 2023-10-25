@@ -86,7 +86,7 @@ def run_strategy():
             #Contratendencia:
             
             if dfr['low_accumulation'][-2] == True and df['rsi'][-2] > 70:
-                if df['sl_short'][-2] == 1:    
+                
                     
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n⏳ 5 Minutos")
                     PICKERSHORT = {
@@ -103,7 +103,7 @@ def run_strategy():
                     
                     
             if dfr['low_accumulation'][-2] == True and df['rsi'][-2] < 30:
-                if df['sl_long'][-2] == 1:
+                
                 
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5 Minutos")
                     PICKERLONG = {

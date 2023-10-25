@@ -50,7 +50,13 @@ def calculate_indicators(symbol):
     rsi = ta.RSI(df['Close'], timeperiod=14)
     df['rsi'] = rsi
     
-     
+    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], 14, 14, 0, 3)
+    df['slowk'] = slowk
+    df['slowd'] = slowd
+    
+    df['sl_short'] = np.where(df['slowk'][-3] > df['slowd'][-3] and df['slowk'][-2] <= df['slowd'][-2],1,0)
+    df['sl_long'] = np.where(df['slowk'][-3] < df['slowd'][-3] and df['slowk'][-2] >= df['slowd'][-2],1,0)
+    
                           
     return df[-3:]
         
@@ -75,9 +81,9 @@ def run_strategy():
                 continue
             
             if dfr['high_accumulation'][-2] == True:
-                if df['rsi'][-2] >= 70:    
+                if df['sl_signal'][-2] == 1:    
                     
-                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n®️ RSI: {round(df['rsi'][-2],2)}\n⏳ 5 Minutos")
+                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\nStochastic ✅ \n⏳ 5 Minutos")
                     PICKERSHORT = {
                             "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",
@@ -92,9 +98,9 @@ def run_strategy():
                     
                     
             if dfr['high_accumulation'][-2] == True:
-                if df['rsi'][-2] <= 30:
+                if df['sl_long'][-2] == 1:
                 
-                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n®️ RSI: {round(df['rsi'][-2],2)}\n⏳ 5 Minutos")
+                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\nStochastic ✅\n⏳ 5 Minutos")
                     PICKERLONG = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",

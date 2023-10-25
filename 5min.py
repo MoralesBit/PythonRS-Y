@@ -118,9 +118,8 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)
             
             #Tendencia:        
-            if dfr['high_accumulation'][-2] == True and df['rsi'][-2] > 40:
-                if df['sl_short'][-2] == 1:
-                    
+            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == 1 and df['rsi'][-2] >= 70:
+                
                     Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                     
                     FISHINGSHORT = {
@@ -135,9 +134,8 @@ def run_strategy():
    
                     requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
                     
-            if dfr['high_accumulation'][-2] == True and df['rsi'][-2] < 60:
-                if df['sl_long'][-2] == 1:
-                    
+             if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == 1 and df['rsi'][-2] <= 30:
+                
                     Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                     
                     FISHINGLONG = {

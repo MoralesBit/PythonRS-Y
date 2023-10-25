@@ -10,6 +10,19 @@ Pkey = ''
 Skey = ''
 client = Client(api_key=Pkey, api_secret=Skey)
 
+def calculate_order_block(df):
+    # Calcular el tamaño del order block
+    df['range'] = df['High'] - df['Low']
+    order_block_range = df['range'].quantile(0.2)
+    df['order_block'] = (df['High'] - df['Low']) <= order_block_range
+    
+    # Calcular los puntos con mayor acumulación
+    df['accumulation'] = ta.AD(df['High'], df['Low'], df['Close'], df['Volume'])
+    accumulation_threshold = df['accumulation'].quantile(0.8)
+    df['high_accumulation'] = df['accumulation'] >= accumulation_threshold
+    
+    return df
+
 def get_trading_symbols():
     """Obtiene la lista de símbolos de futuros de Binance que están disponibles para trading"""
     futures_info = client.futures_exchange_info()
@@ -34,10 +47,10 @@ def calculate_indicators(symbol):
     df = df.set_index('Open time')
     df[['Open', 'High', 'Low', 'Close','Volume']] = df[['Open', 'High', 'Low', 'Close','Volume']].astype(float)
     
-    df['diff'] = abs((df['High'] / df['Low'] -1) * 100)
-      
-    cci = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=58)
-    df['cci'] = cci
+    rsi = ta.RSI(df['Close'], timeperiod=14)
+    df['rsi'] = rsi
+    
+     
                           
     return df[-3:]
         
@@ -52,42 +65,44 @@ def run_strategy():
         try:
            
             df = calculate_indicators(symbol)
-            print(df['diff'][-2])
+            dfr = calculate_order_block(df)
+            
+            print(df['high_accumulation'][-2])
                                              
             if df is None:
                 continue
             
-            if df['diff'][-2] >= 2: 
-                if df['cci'][-3] > 0 and df['cci'][-2] < 0:
+            if dfr['high_accumulation'][-2] == True:
+                if df['rsi'][-2] >= 70:    
                     
-                    Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
-                    
-                    FISHINGSHORT = {
-                            "name": "FISHING SHORT",
-                            "secret": "azsdb9x719",
+                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker ▫️ 5 min")
+                    PICKERSHORT = {
+                            "name": "PICKER SHORT",
+                            "secret": "ao2cgree8fp",
                             "side": "sell",
                             "symbol": symbol,
                             "open": {
-                            "price": float(df['Close'][-2])
-                                }
+                            "price": float(df['Close'][-2]) 
+                            }
                             }
    
-                    requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)                         
-               
-            if df['diff'][-2] >= 2: 
-                if df['cci'][-3] < 0 and df['cci'][-2] > 0:
-                    Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                    requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT)                         
                     
-                    FISHINGLONG = {
-                            "name": "FISHING LONG",
-                            "secret": "0kivpja7tz89",
+                    
+            if dfr['high_accumulation'][-2] == True:
+                if df['rsi'][-2] <= 30:
+                
+                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n📍 Picker  ▫️ 5 min")
+                    PICKERLONG = {
+                            "name": "PICKER LONG",
+                            "secret": "nwh2tbpay1r",
                             "side": "buy",
                             "symbol": symbol,
                             "open": {
                             "price": float(df['Close'][-2])
-                                }
                             }
-                    requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG) 
+                            }
+                    requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)  
                         
 
         except Exception as e:

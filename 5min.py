@@ -122,7 +122,7 @@ def run_strategy():
             #Tendencia:        
             if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi'][-2] > 60:
                                     
-                    Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n⏳ 5 Minutos")
+                    Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n⏳ 5 Minutos")
                     
                     FISHINGSHORT = {
                             "name": "FISHING SHORT",
@@ -138,7 +138,7 @@ def run_strategy():
                     
             if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi'][-2] < 40:
                                     
-                    Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n⏳ 5 Minutos")
+                    Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n⏳ 5 Minutos")
                     
                     FISHINGLONG = {
                             "name": "FISHING LONG",

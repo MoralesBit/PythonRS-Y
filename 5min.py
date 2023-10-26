@@ -120,8 +120,24 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)
             
             #Tendencia:        
-            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi'][-2] > 65:
-                                    
+            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi'][-2] > 60:
+                    
+                    Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n⏳ 5 Minutos")
+                    
+                    FISHINGLONG = {
+                            "name": "FISHING LONG",
+                            "secret": "0kivpja7tz89",
+                            "side": "buy",
+                            "symbol": symbol,
+                            "open": {
+                            "price": float(df['Close'][-2])
+                                }
+                            }
+                    requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)                
+                    
+                    
+            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi'][-2] < 40:
+                    
                     Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n⏳ 5 Minutos")
                     
                     FISHINGSHORT = {
@@ -134,22 +150,8 @@ def run_strategy():
                                 }
                             }
    
-                    requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
+                    requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)                
                     
-            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi'][-2] < 35:
-                                    
-                    Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n⏳ 5 Minutos")
-                    
-                    FISHINGLONG = {
-                            "name": "FISHING LONG",
-                            "secret": "0kivpja7tz89",
-                            "side": "buy",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2])
-                                }
-                            }
-                    requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)
                                
                         
 

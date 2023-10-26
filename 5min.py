@@ -61,8 +61,9 @@ def calculate_indicators(symbol):
     df['sl_short'] = np.where(df['slowk'][-3] > df['slowd'][-3] and df['slowk'][-2] <= df['slowd'][-2],1,0)
     df['sl_long'] = np.where(df['slowk'][-3] < df['slowd'][-3] and df['slowk'][-2] >= df['slowd'][-2],1,0)
     
-    df['rsi_short'] = np.where(df['rsi'][-3] > 40 and df['rsi'][-2] <= 40,1,0)
-    df['rsi_long'] = np.where(df['rsi'][-3] < 60 and df['rsi'][-2] >= 60,1,0)
+    df['rsi_short'] = np.where(df['rsi'][-3] < 30 and df['rsi'][-2] >= 30,1,0)
+    df['rsi_long'] = np.where(df['rsi'][-3] > 70 and df['rsi'][-2] <= 70,1,0)
+    
                               
     return df[-3:]
         
@@ -81,6 +82,8 @@ def run_strategy():
             short = df['Close'][-2]*(0.9999)
             long = df['Close'][-2]*(0.001) + df['Close'][-2]
             
+            dfr['acu_symbol'] = np.where(df['high_accumulation'][-2] == True ,"🟢","🔴")
+                       
             print(dfr['high_accumulation'][-2])
             print(dfr['low_accumulation'][-2])
             print(dfr['order_block'][-2])
@@ -92,7 +95,7 @@ def run_strategy():
             if dfr['low_accumulation'][-2] == True and df['rsi'][-2] > 70:
                 if df['sl_short'][-2] == 1:    
                     
-                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n⏳ 5 Minutos")
+                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n💲 HA: {df['acu_symbol'][-2]}\n⏳ 5 Minutos")
                     PICKERSHORT = {
                             "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",
@@ -109,7 +112,7 @@ def run_strategy():
             if dfr['low_accumulation'][-2] == True and df['rsi'][-2] < 30:
                 if df['sl_long'][-2] == 1:
                 
-                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5 Minutos")
+                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n💲 HA: {df['acu_symbol'][-2]}\n⏳ 5 Minutos")
                     PICKERLONG = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",

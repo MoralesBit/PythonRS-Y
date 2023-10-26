@@ -6,7 +6,6 @@ import talib as ta
 from binance.client import Client
 import Telegram_bot as Tb
 
-
 Pkey = ''
 Skey = ''
 client = Client(api_key=Pkey, api_secret=Skey)
@@ -33,7 +32,7 @@ def get_trading_symbols():
     futures_info = client.futures_exchange_info()
     symbols = [symbol['symbol'] for symbol in futures_info['symbols'] if symbol['status'] == "TRADING"]
     #symbols = ["IMXUSDT","LEVERUSDT","ACHUSDT","AGLDUSDT"]
-    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
+    coins_to_remove = ["ETHBTC", "USDCUSDT", "BNBBTC", "ETHUSDT", "BTCDOMUSDT","XMRUSDT", "BTCUSDT_230929","XEMUSDT","BLUEBIRDUSDT","ETHUSDT_231229","DOGEUSDT","LITUSDT","ETHUSDT_230929","BTCUSDT_231229","ETCUSDT"]  # Lista de monedas a eliminar
     for coin in coins_to_remove:
         if coin in symbols:
             symbols.remove(coin)
@@ -151,9 +150,6 @@ def run_strategy():
                             }
    
                     requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)                
-                    
-                               
-                        
 
         except Exception as e:
           

@@ -87,6 +87,7 @@ def run_strategy():
             print(dfr['high_accumulation'][-2])
             print(dfr['low_accumulation'][-2])
             print(dfr['order_block'][-2])
+            print(dfr['acu_symbol'] [-2])
                                              
             if df is None:
                 continue

@@ -6,6 +6,7 @@ import talib as ta
 from binance.client import Client
 import Telegram_bot as Tb
 
+
 Pkey = ''
 Skey = ''
 client = Client(api_key=Pkey, api_secret=Skey)
@@ -119,9 +120,9 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)
             
             #Tendencia:        
-            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi'][-2] > 70:
+            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi'][-2] > 60:
                                     
-                    Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                    Tb.telegram_canal_prueba(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n⏳ 5 Minutos")
                     
                     FISHINGSHORT = {
                             "name": "FISHING SHORT",
@@ -135,9 +136,9 @@ def run_strategy():
    
                     requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
                     
-            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi'][-2] < 30:
+            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi'][-2] < 40:
                                     
-                    Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
+                    Tb.telegram_canal_prueba(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n⏳ 5 Minutos")
                     
                     FISHINGLONG = {
                             "name": "FISHING LONG",

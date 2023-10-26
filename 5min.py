@@ -60,6 +60,9 @@ def calculate_indicators(symbol):
     
     df['sl_short'] = np.where(df['slowk'][-3] > df['slowd'][-3] and df['slowk'][-2] <= df['slowd'][-2],1,0)
     df['sl_long'] = np.where(df['slowk'][-3] < df['slowd'][-3] and df['slowk'][-2] >= df['slowd'][-2],1,0)
+    
+    df['rsi_short'] = np.where(df['rsi'][-3] > 40 and df['rsi'][-2] <= 40,1,0)
+    df['rsi_long'] = np.where(df['rsi'][-3] < 60 and df['rsi'][-2] >= 60,1,0)
                               
     return df[-3:]
         
@@ -119,7 +122,7 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)
             
             #Tendencia:        
-            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and 60 > df['rsi'][-2] > 50:
+            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and  df['rsi_long'][-2] == 1:
                     
                     Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n⏳ 5 Minutos")
                     
@@ -135,7 +138,7 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)                
                     
                     
-            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and 40 < df['rsi'][-2] < 50:
+            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi_short'][-2] == 1:
                     
                     Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n⏳ 5 Minutos")
                     

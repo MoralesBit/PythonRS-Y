@@ -75,18 +75,19 @@ def run_strategy():
            
             df = calculate_indicators(symbol)
             dfr = calculate_order_block(df)
-            short = df['Close'][-2]*(0.9997)
-            long = df['Close'][-2]*(0.003) + df['Close'][-2]
+            short = df['Close'][-2]*(0.9999)
+            long = df['Close'][-2]*(0.001) + df['Close'][-2]
             
             print(dfr['high_accumulation'][-2])
             print(dfr['low_accumulation'][-2])
+            print(dfr['order_block'][-2])
                                              
             if df is None:
                 continue
             #Contratendencia:
             
-            if dfr['high_accumulation'][-2] == True and df['rsi'][-2] > 70:
-                
+            if dfr['low_accumulation'][-2] == True and df['rsi'][-2] > 70:
+                if df['sl_short'][-2] == 1:    
                     
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]} \n⏳ 5 Minutos")
                     PICKERSHORT = {
@@ -102,8 +103,8 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT)                         
                     
                     
-            if dfr['high_accumulation'][-2] == True and df['rsi'][-2] < 30:
-                
+            if dfr['low_accumulation'][-2] == True and df['rsi'][-2] < 30:
+                if df['sl_long'][-2] == 1:
                 
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5 Minutos")
                     PICKERLONG = {
@@ -118,8 +119,8 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)
             
             #Tendencia:        
-            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi'][-2] >= 70:
-                
+            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi'][-2] > 70:
+                                    
                     Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                     
                     FISHINGSHORT = {
@@ -134,8 +135,8 @@ def run_strategy():
    
                     requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)
                     
-             if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi'][-2] <= 30:
-                
+            if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi'][-2] < 30:
+                                    
                     Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}")
                     
                     FISHINGLONG = {

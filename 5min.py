@@ -82,7 +82,7 @@ def run_strategy():
             short = df['Close'][-2]*(0.9999)
             long = df['Close'][-2]*(0.001) + df['Close'][-2]
             
-            dfr['acu_symbol'] = np.where(df['high_accumulation'][-2] == True ,"🟢","🔴")
+            dfr['acu_symbol'] = np.where(df['high_accumulation'][-2] == True ,"Si","No")
                        
             print(dfr['high_accumulation'][-2])
             print(dfr['low_accumulation'][-2])
@@ -128,7 +128,7 @@ def run_strategy():
             #Tendencia:        
             if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and  df['rsi_long'][-2] == 1:
                     
-                    Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n⏳ 5 Minutos")
+                    Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n💲 HA: {df['acu_symbol'][-2]}\n⏳ 5 Minutos")
                     
                     FISHINGLONG = {
                             "name": "FISHING LONG",
@@ -144,7 +144,7 @@ def run_strategy():
                     
             if dfr['high_accumulation'][-2] == True and dfr['order_block'][-2] == True and df['rsi_short'][-2] == 1:
                     
-                    Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n⏳ 5 Minutos")
+                    Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n💲 HA: {df['acu_symbol'][-2]}\n⏳ 5 Minutos")
                     
                     FISHINGSHORT = {
                             "name": "FISHING SHORT",

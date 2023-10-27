@@ -93,7 +93,7 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT)                         
                     
                     
-            if dfr['order_block'][-2] == True and df['rsi'][-2] < 70 and dfr['high_accumulation'][-2] == True:
+            if dfr['order_block'][-2] == True and df['rsi'][-2] < 30 and dfr['high_accumulation'][-2] == True:
                 #if df['sl_long'][-2] == 1:
                 
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5 Minutos")

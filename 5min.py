@@ -80,7 +80,7 @@ def run_strategy():
                 continue
             #Contratendencia:
             
-            if df['ema_short'] == 1 and  dfr['order_block'][-2] == True and dfr['high_accumulation'][-2] == True:
+            if df['ema_short'] == 1 and  dfr['order_block'][-2] == True and dfr['high_accumulation'][-2] == True and df['rsi'][-2] > 50:
                 #if df['sl_short'][-2] == 1:    
                     
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5 Minutos")
@@ -97,7 +97,7 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT)                         
                     
                     
-            if df['ema_long'] == 1 and  dfr['order_block'][-2] == True and dfr['high_accumulation'][-2] == True:
+            if df['ema_long'] == 1 and  dfr['order_block'][-2] == True and dfr['high_accumulation'][-2] == True and df['rsi'][-2] < 50:
                 #if df['sl_long'][-2] == 1:
                 
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5 Minutos")

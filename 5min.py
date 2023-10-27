@@ -53,7 +53,10 @@ def calculate_indicators(symbol):
     
     rsi = ta.RSI(df['Close'], timeperiod=14)
     df['rsi'] = rsi
-    df['rsi_sma'] = ta.SMA(df['rsi'], timeperiod=14)
+     
+    df['ema200'] = df['Close'].ewm(span=200, adjust=False).mean()
+    df['ema_short'] = np.where( df['ema200'] > df['Close'],1,0)
+    df['ema_long'] = np.where( df['ema200'] < df['Close'],1,0)
    
     return df[-3:]
         
@@ -77,7 +80,7 @@ def run_strategy():
                 continue
             #Contratendencia:
             
-            if dfr['order_block'][-2] == True and 65 < df['rsi_sma'][-2] < 70 and dfr['high_accumulation'][-2] == True:
+            if df['ema_short'] == 1 and  dfr['order_block'][-2] == True and dfr['high_accumulation'][-2] == True:
                 #if df['sl_short'][-2] == 1:    
                     
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5 Minutos")
@@ -94,7 +97,7 @@ def run_strategy():
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT)                         
                     
                     
-            if dfr['order_block'][-2] == True and 35 > df['rsi_sma'][-2] > 30 and dfr['high_accumulation'][-2] == True:
+            if df['ema_long'] == 1 and  dfr['order_block'][-2] == True and dfr['high_accumulation'][-2] == True:
                 #if df['sl_long'][-2] == 1:
                 
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5 Minutos")

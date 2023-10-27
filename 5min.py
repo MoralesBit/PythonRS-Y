@@ -53,7 +53,10 @@ def calculate_indicators(symbol):
     
     rsi = ta.RSI(df['Close'], timeperiod=14)
     df['rsi'] = rsi
-                       
+    df['rsi_sma'] = ta.SMA(df['rsi'], timeperiod=14)
+    df['rsi_signal_s'] = np.where(df['rsi'] < df['rsi_sma'],1,0)   
+    df['rsi_signal_l'] = np.where(df['rsi'] > df['rsi_sma'],1,0) 
+                    
     return df[-3:]
         
 def run_strategy():
@@ -76,7 +79,7 @@ def run_strategy():
                 continue
             #Contratendencia:
             
-            if dfr['order_block'][-2] == True and df['rsi'][-2] > 80:
+            if dfr['order_block'][-2] == True and df['rsi'][-2] > 70 and df['rsi_signal_s'][-2] == 1:
                 #if df['sl_short'][-2] == 1:    
                     
                     Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5 Minutos")
@@ -86,14 +89,14 @@ def run_strategy():
                             "side": "sell",
                             "symbol": symbol,
                             "open": {
-                            "price": df['Close'][-2] 
+                            "price": df['Close'][-1] 
                             }
                             }
    
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT)                         
                     
                     
-            if dfr['order_block'][-2] == True and df['rsi'][-2] < 20:
+            if dfr['order_block'][-2] == True and df['rsi'][-2] < 70 and df['rsi_signal_l'][-2] == 1:
                 #if df['sl_long'][-2] == 1:
                 
                     Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5 Minutos")
@@ -103,7 +106,7 @@ def run_strategy():
                             "side": "buy",
                             "symbol": symbol,
                             "open": {
-                            "price": df['Close'][-2]
+                            "price": df['Close'][-1]
                             }
                             }
                     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)

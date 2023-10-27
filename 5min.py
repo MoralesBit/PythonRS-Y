@@ -53,18 +53,7 @@ def calculate_indicators(symbol):
     
     rsi = ta.RSI(df['Close'], timeperiod=14)
     df['rsi'] = rsi
-    
-    slowk, slowd = ta.STOCH(df['High'], df['Low'], df['Close'], 14, 14, 0, 3)
-    df['slowk'] = slowk
-    df['slowd'] = slowd
-    
-    df['sl_short'] = np.where(df['slowk'][-3] > df['slowd'][-3] and df['slowk'][-2] <= df['slowd'][-2],1,0)
-    df['sl_long'] = np.where(df['slowk'][-3] < df['slowd'][-3] and df['slowk'][-2] >= df['slowd'][-2],1,0)
-    
-    df['rsi_short'] = np.where(df['rsi'][-3] < 30 and df['rsi'][-2] >= 30,1,0)
-    df['rsi_long'] = np.where(df['rsi'][-3] > 70 and df['rsi'][-2] <= 70,1,0)
-    
-                              
+                       
     return df[-3:]
         
 def run_strategy():
@@ -79,87 +68,46 @@ def run_strategy():
            
             df = calculate_indicators(symbol)
             dfr = calculate_order_block(df)
-            short = df['Close'][-2]*(0.9999)
-            long = df['Close'][-2]*(0.001) + df['Close'][-2]
-            
-            dfr['acu_symbol'] = np.where(df['high_accumulation'][-2] == True ,"Si","No")
-                       
-            print(dfr['high_accumulation'][-2])
-            print(dfr['low_accumulation'][-2])
+                     
             print(dfr['order_block'][-2])
-            print(dfr['acu_symbol'] [-2])
+         
                                              
             if df is None:
                 continue
             #Contratendencia:
             
-            if dfr['low_accumulation'][-2] == True and df['rsi'][-2] > 70:
-                if df['sl_short'][-2] == 1:    
+            if dfr['order_block'][-2] == True and df['rsi'][-2] > 70:
+                #if df['sl_short'][-2] == 1:    
                     
-                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n💲 HA: {df['acu_symbol'][-2]}\n⏳ 5 Minutos")
+                    Tb.telegram_canal_3por(f"🔴 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5 Minutos")
                     PICKERSHORT = {
                             "name": "PICKER SHORT",
                             "secret": "ao2cgree8fp",
                             "side": "sell",
                             "symbol": symbol,
                             "open": {
-                            "price": short 
+                            "price": df['Close'][-2] 
                             }
                             }
    
                     requests.post('https://hook.finandy.com/a58wyR0gtrghSupHq1UK', json=PICKERSHORT)                         
                     
                     
-            if dfr['low_accumulation'][-2] == True and df['rsi'][-2] < 30:
-                if df['sl_long'][-2] == 1:
+            if dfr['order_block'][-2] == True and df['rsi'][-2] < 30:
+                #if df['sl_long'][-2] == 1:
                 
-                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n💲 HA: {df['acu_symbol'][-2]}\n⏳ 5 Minutos")
+                    Tb.telegram_canal_3por(f"🟢 {symbol} \n💵 Precio: {df['Close'][-2]}\n⏳ 5 Minutos")
                     PICKERLONG = {
                             "name": "PICKER LONG",
                             "secret": "nwh2tbpay1r",
                             "side": "buy",
                             "symbol": symbol,
                             "open": {
-                            "price": long
+                            "price": df['Close'][-2]
                             }
                             }
                     requests.post('https://hook.finandy.com/o5nDpYb88zNOU5RHq1UK', json=PICKERLONG)
-            
-            #Tendencia:        
-            if dfr['low_accumulation'][-2] == True and 50 < df['rsi'][-2] < 40:
-                if df['sl_long'][-2] == 1:
-                        
-                    Tb.telegram_send_message(f"🟢 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n💲 HA: {df['acu_symbol'][-2]}\n⏳ 5 Minutos")
-                    
-                    FISHINGLONG = {
-                            "name": "FISHING LONG",
-                            "secret": "0kivpja7tz89",
-                            "side": "buy",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2])
-                                }
-                            }
-                    requests.post('https://hook.finandy.com/OVz7nTomirUoYCLeqFUK', json=FISHINGLONG)                
-                    
-                    
-            if dfr['low_accumulation'][-2] == True and 60 < df['rsi'][-2] < 50:
-                if df['sl_short'][-2] == 1:  
-                        
-                    Tb.telegram_send_message(f"🔴 {symbol} \n💵 Precio: {round(df['Close'][-1],4)}\n💲 HA: {df['acu_symbol'][-2]}\n⏳ 5 Minutos")
-                    
-                    FISHINGSHORT = {
-                            "name": "FISHING SHORT",
-                            "secret": "azsdb9x719",
-                            "side": "sell",
-                            "symbol": symbol,
-                            "open": {
-                            "price": float(df['Close'][-2])
-                                }
-                            }
-   
-                    requests.post('https://hook.finandy.com/q-1NIQZTgB4tzBvSqFUK', json=FISHINGSHORT)                
-
+       
         except Exception as e:
           
             print(f"Error en el símbolo {symbol}: {e}")
